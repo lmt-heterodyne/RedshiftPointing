@@ -1,0 +1,333 @@
+"""Module with definition of classes of containers for fit results.
+
+Classes: RSRMapFit, RSRM2Fit
+Uses:    RSRMap, m2_model, TempSens, numpy, math
+Author:  FPS
+Date:    May 5, 2014
+Changes:
+"""
+from RSRMap import RSRMap
+from RSRUtilities import m2_model, TempSens
+import numpy
+import math
+
+
+class RSRMapFit():
+    """RSRMapFit holds and analyzes variables from pointing fits."""
+    def __init__(self,process_list):
+        """__init__ creates useful variables and prepares to load data from a fit."""
+        self.band_order = [0,2,1,3,5,4]
+        self.band_freq = [75.703906,82.003906,89.396094,94.599906,100.899906,108.292094]
+
+        self.nchassis = len(process_list)
+        nresults = 0
+        for i in range(self.nchassis):
+            nresults = nresults + len(process_list[i])
+        self.nresults = nresults
+        self.chassis_id_numbers = numpy.zeros(nresults)
+        self.board_id_numbers = numpy.zeros(nresults)
+        self.az_map_offset = numpy.zeros(nresults)
+        self.el_map_offset = numpy.zeros(nresults)
+        self.az_model_offset = numpy.zeros(nresults)
+        self.el_model_offset = numpy.zeros(nresults)
+        self.az_total_offset = numpy.zeros(nresults)
+        self.el_total_offset = numpy.zeros(nresults)
+        self.tracking_beam_position = True
+        self.Intensity = numpy.zeros(nresults)
+        self.hpbw = numpy.zeros(nresults)
+        self.sep = numpy.zeros(nresults)
+        self.ang = numpy.zeros(nresults)
+        self.modrev = -1
+        self.pointing_result = False
+        self.hpbw_result = False
+        # header variables we average 
+        self.utdate = []
+        self.ut1_h = []
+        self.azim = []
+        self.elev = []
+        self.duration = []
+        # subreflector parameters
+        self.m2x = []
+        self.m2y = []
+        self.m2z = []
+        self.el_m2 = []
+        # tiltmeter parameters
+        self.tilt_x = []
+        self.tilt_y = []
+        # temperature sensor parameters
+        self.TemperatureSensors = []
+                              
+    def load_average_parameters(self,m):
+        """Takes header data from RSRMap and adds it to the lists maintained by this object.
+
+        Fits of data in multiple chassis have slightly different header variables.
+        This procedure allows us to take averages later on.
+        input m is an instance of an RSRMap..
+        """
+        # header variables
+        self.utdate.append(m.utdate)
+        self.ut1_h.append(m.ut1_h)
+        self.azim.append(m.azim)
+        self.elev.append(m.elev)
+        self.m2z.append(m.m2z)
+        self.m2y.append(m.m2y)
+        self.m2x.append(m.m2x)
+        self.el_m2.append(m.el_m2)
+        self.duration.append(m.duration)
+        # tiltmeters
+        self.tilt_x.append(m.tilt0_x)
+        self.tilt_y.append(m.tilt0_y)
+        # Temperatures
+        self.TemperatureSensors.append(m.T.tempsens)
+    
+    def get_duration(self):
+        return (numpy.mean(self.duration),numpy.std(self.duration))
+
+    def get_el_m2(self):
+        return (numpy.mean(self.el_m2),numpy.std(self.el_m2))
+
+    def get_tilt_x(self):
+        return (numpy.mean(self.tilt_x),numpy.std(self.tilt_x))
+
+    def get_tilt_y(self):
+        return (numpy.mean(self.tilt_y),numpy.std(self.tilt_y))
+
+    def get_m2z(self):
+        return (numpy.mean(self.m2z),numpy.std(self.m2z))
+    
+    def get_m2y(self):
+        return (numpy.mean(self.m2y),numpy.std(self.m2y))
+    
+    def get_m2x(self):
+        return (numpy.mean(self.m2x),numpy.std(self.m2x))
+    
+    def get_azim(self):
+        return (numpy.mean(self.azim),numpy.std(self.azim))
+
+    def get_elev(self):
+        return (numpy.mean(self.elev),numpy.std(self.elev))
+
+    def get_TemperatureSensors(self):
+        """Returns an array of temperature data for this observation."""
+        array = numpy.zeros(64)
+        n = len(self.TemperatureSensors)
+        for i in range(64):
+            x = 0.
+            for j in range(n):
+                array[i] = array[i] + self.TemperatureSensors[j][i]
+            array[i] = array[i]/n
+        return array
+
+    def load_chassis_board_result(self,m,index,chassis_id,board,board_id):
+        """Loads all resuts and relevant parameters for a particular chassis and board.""" 
+        if index == 0:
+            # for the first one loaded, we set things that don't change
+            self.modrev = m.modrev
+            self.source = m.source
+            self.date = m.date
+            self.obsnum = m.obsnum
+            self.beamthrow = m.beamthrow
+            self.beamthrow_angle = m.beamthrow_angle
+            self.tracking_beam = m.tracking_beam
+            self.tracking_single_beam_position = m.tracking_single_beam_position
+            self.single_beam_fit = m.single_beam_fit
+            self.fit_beam = m.fit_beam
+
+        # now load things that change from one board/chassis to the next
+        self.chassis_id_numbers[index] = m.chassis
+        self.board_id_numbers[index] = board
+        # compute pointing results based on whether we are doing a single beam or two.
+        if self.single_beam_fit:
+            if self.tracking_single_beam_position == True:
+                # if doing a single beam fit and tracking the beam, we can analyze easily
+                self.az_map_offset[index] = m.azoff[board]
+                self.el_map_offset[index] = m.eloff[board]
+                self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle
+                self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle
+                self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_receiver
+            # 10.00 is the m2 y offset pointing in arcsec per mm
+                self.el_total_offset[index] = m.eloff[board]+m.el_total-10.00*m.m2y-m.el_receiver
+            else:
+                # on the other hand, if we are doing single beam and tracking the other: be careful
+                elev_r = (m.elev+m.beamthrow_angle)*math.pi/180.
+                if self.fit_beam == 0:
+                    yoffset =  m.beamthrow*math.sin(elev_r) - m.el_receiver
+                    xoffset = -m.beamthrow*math.cos(elev_r) - m.az_receiver
+                else:
+                    yoffset = -m.beamthrow*math.sin(elev_r) - m.el_receiver
+                    xoffset =  m.beamthrow*math.cos(elev_r) - m.az_receiver
+                self.el_map_offset[index] = m.eloff[board] - yoffset
+                self.az_map_offset[index] = m.azoff[board] - xoffset
+                self.az_model_offset[index] = m.azoff[board] - xoffset +m.az_user+m.az_paddle
+                self.el_model_offset[index] = m.eloff[board] - yoffset +m.el_user+m.el_paddle
+                self.az_total_offset[index] = m.azoff[board] - xoffset +m.az_total-m.az_receiver
+                # 10.00 is the m2 y offset pointing in arcsec per mm
+                self.el_total_offset[index] = m.eloff[board] - yoffset +m.el_total-10.00*m.m2y-m.el_receiver
+        else:
+            # this is analysis of traditional two-beam map
+            self.az_map_offset[index] = m.azoff[board]+m.az_receiver
+            self.el_map_offset[index] = m.eloff[board]+m.el_receiver
+            self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle+m.az_receiver
+            self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle+m.el_receiver
+            self.az_total_offset[index] = m.azoff[board]+m.az_total
+            # 10.00 is the m2 y offset pointing in arcsec per mm
+            self.el_total_offset[index] = m.eloff[board]+m.el_total-10.00*m.m2y
+        
+        self.Intensity[index] = m.I[board]
+        self.hpbw[index] = m.hpbw[board]
+        self.sep[index] = m.beamsep[board]
+        if self.sep[index] == 0:
+            self.ang[index] = 0
+        else:
+            if m.beamang[board]<0:
+                self.ang[index] = -m.beamang[board]-m.elev
+            else:
+                self.ang[index] = 180.0-m.beamang[board]-m.elev
+
+
+    def find_pointing_result(self):
+        """Finds the final results and standard deviation after all results are loaded."""
+        self.pointing_result = True
+        self.mean_az_map_offset = numpy.mean(self.az_map_offset)
+        self.std_az_map_offset = numpy.std(self.az_map_offset)
+        self.mean_el_map_offset = numpy.mean(self.el_map_offset)
+        self.std_el_map_offset = numpy.std(self.el_map_offset)
+
+        self.mean_az_model_offset = numpy.mean(self.az_model_offset)
+        self.std_az_model_offset = numpy.std(self.az_model_offset)
+        self.mean_el_model_offset = numpy.mean(self.el_model_offset)
+        self.std_el_model_offset = numpy.std(self.el_model_offset)
+
+        self.mean_az_total_offset = numpy.mean(self.az_total_offset)
+        self.std_az_total_offset = numpy.std(self.az_total_offset)
+        self.mean_el_total_offset = numpy.mean(self.el_total_offset)
+        self.std_el_total_offset = numpy.std(self.el_total_offset)
+
+        self.mean_sep = numpy.mean(self.sep)
+        self.std_sep = numpy.std(self.sep)
+
+        self.mean_ang = numpy.mean(self.ang)
+        self.std_ang = numpy.std(self.ang)
+
+    def find_hpbw_result(self):
+        """Derives the Half Power Beam Widths of fits."""
+        self.mean_hpbw = numpy.zeros(6)
+        self.std_hpbw = numpy.zeros(6)
+        self.ratio_hpbw = []
+        for band in range(6):
+            band_list = []
+            for i in range(self.nresults):
+                if self.board_id_numbers[i] == self.band_order[band]:
+                    band_list.append(self.hpbw[i])
+            if len(band_list)>0:
+                self.mean_hpbw[band] = numpy.mean(band_list)
+                self.std_hpbw[band] = numpy.std(band_list)
+                self.ratio_hpbw.append((self.band_freq[band] * 1.0e9
+                                        / 3.0e8 
+                                        * 32.5
+                                        * self.mean_hpbw[band]
+                                        / 206265.)
+                                       )
+        # the "ratio" HPBW is ratio of HPBW to Lambda/D for each board
+        # in this way we can combine results for different frequencies
+        self.mean_hpbw_ratio = numpy.mean(self.ratio_hpbw)
+        self.std_hpbw_ratio = numpy.std(self.ratio_hpbw)
+        self.hpbw_result = True
+    
+class RSRM2Fit():
+    """RSRM2Fit holds and analyzes variables for fitting pointing maps to derive M2 parameters.
+
+    ONLY DOING Z RIGHT NOW>>>>
+    """
+    def __init__(self,F,m2pos=0):
+        """__init__ sets up parameters to hold data from pointing maps for focus fit.
+
+        
+        input F is an array of RSRMapFit instances with data from pointing maps to be fit.
+        """
+        # get common information from first instance of RSRMapFit array
+        self.source = F[0].source
+        self.date = F[0].date
+        self.obsnum = F[0].obsnum
+        self.n = F[0].nresults
+        self.nscans = len(F)
+        self.result_relative = numpy.zeros(self.n)
+        self.result_absolute = numpy.zeros(self.n)
+        self.data = numpy.zeros((self.nscans,self.n))
+        self.board_id = numpy.zeros(self.n)
+        self.chassis_id = numpy.zeros(self.n)
+        for index in range(self.n):
+            self.board_id[index] = F[0].board_id_numbers[index]
+            self.chassis_id[index] = F[0].chassis_id_numbers[index]
+
+        # now we load the data for each of the scans
+        for scan_id in range(self.nscans):
+            for index in range(self.n):
+                self.data[scan_id,index] = F[scan_id].Intensity[index]
+        self.m2pos = m2pos
+        self.m2_position = numpy.zeros(self.nscans)
+        self.elev = numpy.zeros(self.nscans)
+        for scan_id in range(self.nscans):
+            self.elev[scan_id],sig = F[scan_id].get_elev()
+            ave,sig = F[scan_id].get_m2z()
+            self.m2_position[scan_id] = ave - m2_model(self.m2pos,self.elev[scan_id])
+        self.parameters = numpy.zeros((self.n,3))
+    
+    def find_focus(self):
+        """Uses data loaded in during creation of this instance to fit focus."""
+        for index in range(self.n):
+            ptp = numpy.zeros((3,3))
+            ptr = numpy.zeros(3)
+            f = numpy.zeros(3)
+            ee = []
+            I = []
+            par = []
+            for scan_id in range(self.nscans):
+                I.append(self.data[scan_id,index])
+                par.append(self.m2_position[scan_id])
+                f[0] = 1.
+                f[1] = par[scan_id]
+                f[2] = par[scan_id]*par[scan_id]
+                for ii in range(3):
+                    for jj in range(3):
+                        ptp[ii][jj] = ptp[ii][jj] + f[ii]*f[jj]
+                    ptr[ii] = ptr[ii] + f[ii]*I[scan_id]
+            ptpinv = numpy.linalg.inv(ptp)
+            self.parameters[index,:] = numpy.dot(ptpinv,ptr)
+            self.result_relative[index] = -self.parameters[index,1]/self.parameters[index,2]/2.
+            self.result_absolute[index] = self.result_relative[index] + m2_model(0,numpy.mean(self.elev))
+
+
+    def fit_focus_model(self):
+        """Uses best fit focus (Z) for each chassis/board result to fit linear focus model."""
+        xband = [-1,-.2,-.6,.2,1.,.6]
+        ptp = numpy.zeros((2,2))
+        ptr = numpy.zeros(2)
+        pta = numpy.zeros(2)
+        f = numpy.zeros(2)
+        for index in range(self.n):
+            f[0] = 1.
+            f[1] = xband[int(self.board_id[index])]
+            for ii in range(2):
+                for jj in range(2):
+                    ptp[ii][jj] = ptp[ii][jj] + f[ii]*f[jj]
+                ptr[ii] = ptr[ii] + f[ii]*self.result_relative[index]
+                pta[ii] = pta[ii] + f[ii]*self.result_absolute[index]
+        ptpinv = numpy.linalg.inv(ptp)
+        relative_focus_fit = numpy.dot(ptpinv,ptr)
+        absolute_focus_fit = numpy.dot(ptpinv,pta)
+        self.resids = numpy.zeros(self.n)
+        resids_squared = 0.
+        for index in range(self.n):
+            self.resids[index] = self.result_relative[index] - relative_focus_fit[0] - relative_focus_fit[1]*xband[int(self.board_id[index])]
+            resids_squared = resids_squared + self.resids[index]*self.resids[index]
+        rms = math.sqrt(resids_squared/self.n)
+        focus_error = math.sqrt(ptpinv[0][0])*rms
+
+        self.relative_focus_fit = relative_focus_fit[0]
+        self.focus_error = focus_error
+        self.absolute_focus_fit = absolute_focus_fit[0]
+        self.focus_slope = relative_focus_fit[1]
+        self.fit_rms = rms
+
+
