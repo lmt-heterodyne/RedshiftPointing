@@ -22,7 +22,7 @@ real_tint = 0.0
 
 
 ### CHANGE THESE ObsNum for every science spectrum ###
-Obslist = [23563, 23564]
+Obslist = [25581]
 
 
 for ObsNum in Obslist:
@@ -48,7 +48,7 @@ for ObsNum in Obslist:
 
         
 hdu = hdulist[0]  # get the first observation
-hdu.average_scans(hdulist[1:], threshold_sigma=0.1)
+hdu.average_scans(hdulist[1:])#, threshold_sigma=0.1)
 hdu.average_all_repeats()
 
 
