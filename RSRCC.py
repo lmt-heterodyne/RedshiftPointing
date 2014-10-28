@@ -35,9 +35,12 @@ class RSRCC():
             self.ut1_h = self.nc.variables['Header.TimePlace.UT1'][:][0]/2./math.pi*24.
             self.azim = self.nc.variables['Header.Sky.AzReq'][:][0]*180./math.pi
             self.elev = self.nc.variables['Header.Sky.ElReq'][:][0]*180./math.pi
-            self.m2x = self.nc.variables['Header.M2.XCmd'][:][0]
-            self.m2y = self.nc.variables['Header.M2.YCmd'][:][0]
-            self.m2z = self.nc.variables['Header.M2.ZCmd'][:][0]
+            self.m2x = self.nc.variables['Header.M2.XReq'][:][0]
+            self.m2y = self.nc.variables['Header.M2.YReq'][:][0]
+            self.m2z = self.nc.variables['Header.M2.ZReq'][:][0]
+            self.m2xPcor = self.nc.variables['Header.M2.XPcor'][:][0]
+            self.m2yPcor = self.nc.variables['Header.M2.YPcor'][:][0]
+            self.m2zPcor = self.nc.variables['Header.M2.ZPcor'][:][0]
             self.m2tip = self.nc.variables['Header.M2.TipCmd'][:][0] #rotation about X
             self.m2tilt = self.nc.variables['Header.M2.TiltCmd'][:][0] #rotation about Y
 
