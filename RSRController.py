@@ -110,7 +110,7 @@ class RSRHandleArgs():
                  flag_windows=[],
                  show_it=False,
                  show_type=1,
-                 select_beam=-1
+                 select_beam=1
                  ):
         """Initializes parameters which control fitting functionality"""
         # basic file parameters
