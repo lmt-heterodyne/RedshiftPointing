@@ -707,6 +707,11 @@ class RSRM2FitViewer(RSRViewer):
                     M.parameters[index,2]/result_max)
                    )
     
+    def print_summary_fit(self,M):
+        print '--------------------------------------------------'
+        print ('Summary: Rel %6.2f (%6.2f)   Abs %6.2f (%6.2f)' % (numpy.mean(M.result_relative),numpy.std(M.result_relative),numpy.mean(M.result_absolute),numpy.std(M.result_absolute)))
+        print ' '
+    
     def plot_fits(self,M,figno=1):
         """Plots graphs of all data and fits.
 
@@ -715,7 +720,10 @@ class RSRM2FitViewer(RSRViewer):
         """
         pl.figure(num=figno,figsize=(12,8))
         pl.clf()
-        prange = numpy.arange(-7,7.1,.1)
+        if M.m2pos == 0:
+            prange = numpy.arange(-7,7.1,.1)
+        else:
+            prange = numpy.arange(-36,36.1,.1)
         for index in range(M.n):
             model = (M.parameters[index,0]
                      + M.parameters[index,1]*prange
@@ -747,14 +755,17 @@ class RSRM2FitViewer(RSRViewer):
         
     def print_focus_model_fit(self,M):
         """Prints result of focus model fit."""
-        print ('%s %d %6.2f %6.2f %6.3f %6.2f %5.2f' %
+        print ('%s %d %6.2f %6.2f %6.3f %6.2f %5.2f %6.2f %6.2f %6.2f' %
                (M.date,
                 M.obsnum,
                 M.relative_focus_fit,
                 M.focus_error,
                 M.focus_slope,
                 M.absolute_focus_fit,
-                M.fit_rms)
+                M.fit_rms,
+                M.M2zfocus,
+                M.M2yfocus,
+                M.M2xfocus)
               )
 
     def plot_focus_model_fit(self,M,figno):
