@@ -50,6 +50,9 @@ class RSRMapFit():
         self.m2x = []
         self.m2y = []
         self.m2z = []
+        self.m2xPcor = []
+        self.m2yPcor = []
+        self.m2zPcor = []
         self.el_m2 = []
         # tiltmeter parameters
         self.tilt_x = []
@@ -72,6 +75,9 @@ class RSRMapFit():
         self.m2z.append(m.m2z)
         self.m2y.append(m.m2y)
         self.m2x.append(m.m2x)
+        self.m2zPcor.append(m.m2zPcor)
+        self.m2yPcor.append(m.m2yPcor)
+        self.m2xPcor.append(m.m2xPcor)
         self.el_m2.append(m.el_m2)
         self.duration.append(m.duration)
         # tiltmeters
@@ -100,6 +106,15 @@ class RSRMapFit():
     
     def get_m2x(self):
         return (numpy.mean(self.m2x),numpy.std(self.m2x))
+    
+    def get_m2zPcor(self):
+        return (numpy.mean(self.m2zPcor),numpy.std(self.m2zPcor))
+    
+    def get_m2yPcor(self):
+        return (numpy.mean(self.m2yPcor),numpy.std(self.m2yPcor))
+    
+    def get_m2xPcor(self):
+        return (numpy.mean(self.m2xPcor),numpy.std(self.m2xPcor))
     
     def get_azim(self):
         return (numpy.mean(self.azim),numpy.std(self.azim))
@@ -264,13 +279,68 @@ class RSRM2Fit():
         for scan_id in range(self.nscans):
             for index in range(self.n):
                 self.data[scan_id,index] = F[scan_id].Intensity[index]
-        self.m2pos = m2pos
+        # determine x,y,or z
+        M2zReq = []
+        M2yReq = []
+        M2xReq = []
+        for scan_id in range(self.nscans):
+            M2zReq.append(F[scan_id].m2z)
+            M2yReq.append(F[scan_id].m2y)
+            M2xReq.append(F[scan_id].m2x)
+        M2z = [item for sublist in M2zReq for item in sublist]
+        M2y = [item for sublist in M2yReq for item in sublist]
+        M2x = [item for sublist in M2xReq for item in sublist]
+        dx=max(M2x)-min(M2x)
+        dy=max(M2y)-min(M2y)
+        dz=max(M2z)-min(M2z)
+        if (dx == dy and dx == dz and dx == 0):
+            #nothing's changing, an error should be thrown
+            self.msg = "M2 offsets are not changing in these files."
+            return -2
+        if (dx != 0):
+            if (dy != 0 or dz != 0):
+                #more than one offset changing, throw an error
+                self.msg = "More than one M2 offset is changing in these files."
+                return -2
+            self.M2zfocus = max(M2z)
+            self.M2yfocus = max(M2y)
+            m2pos = 2
+        elif (dy != 0):
+            if (dx != 0 or dz != 0):
+                #more than one offset changing, throw an error
+                self.msg = "More than one M2 offset is changing in these files."
+                return -2
+            self.M2zfocus = max(M2z)
+            self.M2xfocus = max(M2x)
+            m2pos = 1
+        elif (dz != 0):
+            if (dx != 0 or dy != 0):
+                #more than one offset changing, throw an error
+                self.msg = "More than one M2 offset is changing in these files."
+                return -2
+            self.M2yfocus = max(M2y)
+            self.M2xfocus = max(M2x)
+            m2pos = 0
+        
         self.m2_position = numpy.zeros(self.nscans)
+        self.m2_pcor = numpy.zeros(self.nscans)
         self.elev = numpy.zeros(self.nscans)
+        self.m2pos = m2pos
+        print "m2pos = ", m2pos
         for scan_id in range(self.nscans):
             self.elev[scan_id],sig = F[scan_id].get_elev()
-            ave,sig = F[scan_id].get_m2z()
-            self.m2_position[scan_id] = ave - m2_model(self.m2pos,self.elev[scan_id])
+            if self.m2pos == 0:
+                ave,sig = F[scan_id].get_m2z()
+                pcor,pcorsig = F[scan_id].get_m2zPcor()
+            elif self.m2pos == 1:
+                ave,sig = F[scan_id].get_m2y()
+                pcor,pcorsig = F[scan_id].get_m2yPcor()
+            else:
+                ave,sig = F[scan_id].get_m2x()
+                pcor,pcorsig = F[scan_id].get_m2xPcor()
+
+            self.m2_position[scan_id] = ave
+            self.m2_pcor[scan_id] = pcor
         self.parameters = numpy.zeros((self.n,3))
     
     def find_focus(self):
@@ -282,9 +352,11 @@ class RSRM2Fit():
             ee = []
             I = []
             par = []
+            pcor = []
             for scan_id in range(self.nscans):
                 I.append(self.data[scan_id,index])
                 par.append(self.m2_position[scan_id])
+                pcor.append(self.m2_pcor[scan_id])
                 f[0] = 1.
                 f[1] = par[scan_id]
                 f[2] = par[scan_id]*par[scan_id]
@@ -295,7 +367,7 @@ class RSRM2Fit():
             ptpinv = numpy.linalg.inv(ptp)
             self.parameters[index,:] = numpy.dot(ptpinv,ptr)
             self.result_relative[index] = -self.parameters[index,1]/self.parameters[index,2]/2.
-            self.result_absolute[index] = self.result_relative[index] + m2_model(0,numpy.mean(self.elev))
+            self.result_absolute[index] = self.result_relative[index] + numpy.mean(pcor)
 
 
     def fit_focus_model(self):
@@ -329,5 +401,11 @@ class RSRM2Fit():
         self.absolute_focus_fit = absolute_focus_fit[0]
         self.focus_slope = relative_focus_fit[1]
         self.fit_rms = rms
+        if self.m2pos == 0:
+            self.M2zfocus = self.relative_focus_fit
+        elif self.m2pos == 1:
+            self.M2yfocus = self.relative_focus_fit
+        elif self.m2pos == 2:
+            self.M2xfocus = self.relative_focus_fit
 
 
