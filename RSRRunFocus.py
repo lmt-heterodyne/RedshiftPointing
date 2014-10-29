@@ -4,7 +4,7 @@ from RSRViewer import RSRM2FitViewer
 from RSRController import RSRMapController,RSRHandleArgs
 
 class RSRRunFocus():
-    def run(self, argv, filelist=False):
+    def run(self, argv, filelist=False, obsNumArg=False):
 
         print "filelist = ", filelist
         c = RSRMapController()
@@ -30,7 +30,7 @@ class RSRRunFocus():
                 v.init(a)
                 if a.show_ion == 1:
                     v.plot_fits(m,figno=1)
-                v.plot_focus_model_fit(m,figno=2)
+                v.plot_focus_model_fit(m,figno=2,obsNumArg=obsNumArg)
 
             return m
 
