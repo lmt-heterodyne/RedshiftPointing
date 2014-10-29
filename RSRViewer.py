@@ -721,8 +721,20 @@ class RSRM2FitViewer(RSRViewer):
         pl.figure(num=figno,figsize=(12,8))
         pl.clf()
         if M.m2pos == 0:
+            self.xlabel = 'Z Offset'
+            self.ylabel = 'Z offset (mm)'
             prange = numpy.arange(-7,7.1,.1)
+        elif M.m2pos == 1:
+            self.xlabel = 'Y Offset'
+            self.ylabel = 'Y offset (mm)'
+            prange = numpy.arange(-36,36.1,.1)
+        elif M.m2pos == 2:
+            self.xlabel = 'X Offset'
+            self.ylabel = 'X offset (mm)'
+            prange = numpy.arange(-36,36.1,.1)
         else:
+            self.xlabel = 'Offset'
+            self.ylabel = 'Offset (mm)'
             prange = numpy.arange(-36,36.1,.1)
         for index in range(M.n):
             model = (M.parameters[index,0]
@@ -738,7 +750,7 @@ class RSRM2FitViewer(RSRViewer):
                 ax.set_xticklabels([])
             else:
                 ###ax.tick_params(axis='both',which='major',labelsize=6)
-                pl.xlabel('Z offset')
+                pl.xlabel(self.xlabel)
             if M.board_id[index] > 0:
                 ax.set_yticklabels([])
             else:
@@ -768,7 +780,7 @@ class RSRM2FitViewer(RSRViewer):
                 M.M2xfocus)
               )
 
-    def plot_focus_model_fit(self,M,figno):
+    def plot_focus_model_fit(self,M,figno,obsNumArg):
         """Plots data and focus model fit."""
         pl.figure(figno)
         pl.clf()
@@ -786,11 +798,31 @@ class RSRM2FitViewer(RSRViewer):
         the_model = M.relative_focus_fit+M.focus_slope*brange
         pl.plot(f,the_model,'r')
         pl.xlabel('Frequency (GHz)')
-        pl.ylabel('Z offset (mm)')
-        pl.title('%20s %s %d' %
+        if M.m2pos == 0:
+            self.xlabel = 'Z Offset'
+            self.ylabel = 'Z offset (mm)'
+            prange = numpy.arange(-7,7.1,.1)
+        elif M.m2pos == 1:
+            self.xlabel = 'Y Offset'
+            self.ylabel = 'Y offset (mm)'
+            prange = numpy.arange(-36,36.1,.1)
+        elif M.m2pos == 2:
+            self.xlabel = 'X Offset'
+            self.ylabel = 'X offset (mm)'
+            prange = numpy.arange(-36,36.1,.1)
+        else:
+            self.xlabel = 'Offset'
+            self.ylabel = 'Offset (mm)'
+            prange = numpy.arange(-36,36.1,.1)
+        pl.ylabel(self.ylabel)
+        if obsNumArg == False:
+            titleObsNum = M.obsnum
+        else:
+            titleObsNum = obsNumArg
+        pl.title('%20s %s %s' %
                  (M.source[0:20],
                   M.date,
-                  M.obsnum)
+                  titleObsNum)
                  )
         textstr =           'Relative Focus:   ' +str(round(M.relative_focus_fit,4)) + '\n' 
         textstr = textstr + 'Focus Error:         ' +str(round(M.focus_error,4)) + '\n' 
