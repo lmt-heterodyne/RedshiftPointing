@@ -1,5 +1,4 @@
 # Temperature Sensor Management
-#
 
 import numpy as np
 
