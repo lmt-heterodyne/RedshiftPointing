@@ -587,12 +587,12 @@ class RSRFitViewer(RSRViewer):
         pl.title('%20s'%(F.source[0:20]))
         pl.axis('equal')
         pl.axis(axis)
-        pl.text(0,axis[3]*0.95,'Map Offset',horizontalalignment='center',verticalalignment='top')
         pl.grid()
+        textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
         textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
         textstr = textstr + 'El Map Offset:   %6.4f'%(F.mean_el_map_offset)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        pl.text(0, axis[2]*0.7, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
+        pl.text(0, axis[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
         pl.subplot(1,2,2)
         pl.plot(F.az_model_offset,F.el_model_offset,'o')
         pl.xlabel('Az Offset (arcsec)')
@@ -600,12 +600,11 @@ class RSRFitViewer(RSRViewer):
         pl.axis('equal')
         axis2 = [x * 2 for x in axis] 
         pl.axis(axis2)
-        pl.text(0,axis2[3]*0.95,'Model %d Offset'%(F.modrev),horizontalalignment='center',verticalalignment='top')
         pl.grid()
         textstr =           'Az Model %d Offset:   %6.4f'%(F.modrev, F.mean_az_model_offset) + '\n' 
         textstr = textstr + 'El Model %d Offset:   %6.4f'%(F.modrev, F.mean_el_model_offset)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        pl.text(0, axis2[2]*0.7, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
+        pl.text(0, axis2[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
     def write_temperature_log_entry(self,F,tfile):
