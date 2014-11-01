@@ -585,7 +585,7 @@ class RSRFitViewer(RSRViewer):
         pl.xlabel('Az Offset (arcsec)')
         pl.ylabel('El Offset (arcsec)')
         pl.title('%20s'%(F.source[0:20]))
-        pl.axis('equal')
+#        pl.axis('equal')
         pl.axis(axis)
         pl.grid()
         textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
@@ -597,9 +597,10 @@ class RSRFitViewer(RSRViewer):
         pl.plot(F.az_model_offset,F.el_model_offset,'o')
         pl.xlabel('Az Offset (arcsec)')
         pl.title('%s %d'%(F.date,F.obsnum))
-        pl.axis('equal')
+#        pl.axis('equal')
         axis2 = [x * 2 for x in axis] 
         pl.axis(axis2)
+        print axis2
         pl.grid()
         textstr =           'Az Model %d Offset:   %6.4f'%(F.modrev, F.mean_az_model_offset) + '\n' 
         textstr = textstr + 'El Model %d Offset:   %6.4f'%(F.modrev, F.mean_el_model_offset)
