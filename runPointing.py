@@ -6,6 +6,7 @@ from RSRRunPointing import RSRRunPointing
 
 argv = ["-d", "2014-08-20", "-s", "101000003", "--show", "True"]
 argv = ["-d", "2014-03-03", "-s", "16887", "--show", "True"]
+argv = ["-d", "2014-11-01", "-s", "27064", "--show", "True"]
 rsr = RSRRunPointing()
 F = rsr.run(argv)
 print ('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
