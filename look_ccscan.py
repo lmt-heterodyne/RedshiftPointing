@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+
 """Module with script to look at an RSR Compressed Continuum Scan
 
 Uses:   RSRHandleArgs, RSRScanViewer, RSRCC
@@ -15,11 +18,11 @@ def main(argv):
     V = RSRScanViewer()
     check = a.parse_args(argv,'look_ccscan')
     if check == 0:
-        V.init()
+        V.init(a)
         index = 0
         scan = a.scan_list[0]
         for chassis_id,chassis in enumerate(a.chassis_list):
-            cc = RSRCC(a.date,scan,chassis,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
+            cc = RSRCC(False,a.date,scan,chassis,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
             if len(a.chassis_list)>1:
                 if chassis_id == 0:
                     V.init_big_fig(figno=1)
