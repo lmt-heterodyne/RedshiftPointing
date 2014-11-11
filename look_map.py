@@ -1,3 +1,6 @@
+#!/usr/bin/env python
+
+
 import sys
 import getopt
 
@@ -10,10 +13,10 @@ def main(argv):
     V = RSRMapViewer()
     check = a.parse_args(argv,'look_map')
     if check == 0:
-        V.init()
+        V.init(a)
         scan = a.scan_list[0]
         for chassis_id,chassis in enumerate(a.chassis_list):
-            m = RSRMap(a.date,scan,chassis,beamthrow=a.beam_throw,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
+            m = RSRMap(False,a.date,scan,chassis,beamthrow=a.beam_throw,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
             if m.check():
                 if len(a.chassis_list)>1:
                     if chassis_id == 0:
