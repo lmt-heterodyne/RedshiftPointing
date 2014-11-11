@@ -5,7 +5,7 @@ from scipy.stats import nanmean
 
 def main(argv):
     # defaults
-    data = '2013-06-12'
+    date = '2013-06-12'
     scan = '10491'
     chassis = '0'
 
@@ -49,7 +49,7 @@ def main(argv):
 
 def make_filename(date,scan,chassis):
     # makes a filename from date and obnum
-    filename = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_%s_%06d_00_0001.nc' % (chassis, chassis, date, scan)
+    filename = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_%s_%06d_01_0001.nc' % (chassis, chassis, date, scan)
     return filename
 
 
