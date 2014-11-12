@@ -30,8 +30,8 @@ def main(argv):
         M.fit_focus_model()
         V.print_focus_model_fit(M)
         if a.show_it:
-            V.init()
+            V.init(a)
             V.plot_fits(M,figno=1)
-            V.plot_focus_model_fit(M,figno=2)
+            V.plot_focus_model_fit(M,figno=2,obsNumArg=False)
 
 main(sys.argv[1:])

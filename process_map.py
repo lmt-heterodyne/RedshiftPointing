@@ -20,7 +20,7 @@ def main(argv):
     if check == 0:
         # prepare to plot if this is selected
         if a.show_it:
-            v.init()
+            v.init(a)
 
         # we reduce the map for first scan in a possible scan_list 
         scan = a.scan_list[0]

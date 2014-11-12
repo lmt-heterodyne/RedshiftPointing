@@ -29,7 +29,7 @@ def main(argv):
         V.print_summary_fit(M)
 
         if a.show_it:
-            V.init()
+            V.init(a)
             V.plot_fits(M,figno=1)
 
 main(sys.argv[1:])
