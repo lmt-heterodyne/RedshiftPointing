@@ -112,6 +112,7 @@ class RSRCC():
         self.nc.close()
     
     def make_filename(self,filelist):
+        filename = ""
         """Builds an LMT filename from date and obsnum."""
         if filelist != False:
             print "Get filename from filelist"
