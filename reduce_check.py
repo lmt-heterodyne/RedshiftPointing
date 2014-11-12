@@ -22,8 +22,7 @@ real_tint = 0.0
 
 
 ### CHANGE THESE ObsNum for every science spectrum ###
-Obslist = [25581]
-
+Obslist = [28129,28130]
 
 for ObsNum in Obslist:
     for chassis in [0,1,2,3]:
@@ -52,54 +51,17 @@ hdu.average_scans(hdulist[1:])#, threshold_sigma=0.1)
 hdu.average_all_repeats()
 
 
-#hdu.smooth(nchan=3)
+
 hdu.make_composite_scan()
-#hdu.baseline_compspectrum(order = 1, subtract=True)
-pl1 = RedshiftPlot()
-#pl2 = RedshiftPlot()
 pl = RedshiftPlot()
-pl1.plot_spectra(hdu)
-# pl1.plot_line_frequencies(hdu, elim=['H', 'EtCN', 'SO2', 'CH3OH',
-#                                    '13CS', 'N2H+', 'C34S', 'H13CN',
-#                                    'OCS', '34SO', '(CH3)2O', 'CH3CN',
-#                                     'SiO'],
-#                                   'H13CO+', 'HNCO', 'C18O', 'C17O',
-#                          z=3.26)
 
 pl.clear()
 pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
 pl.set_xlim(72.5, 111.5)
-#pl.set_ylim(-1., 2.)
+
 pl.set_xlabel('Frequency (GHz)')
 pl.set_ylabel('TA* (mK)')
 pl.set_subplot_title("%s Tint=%f hrs" %(hdu.header.SourceName, real_tint/4.0/3600.0))
 
 
-yloc = 0.023
-yline = [0.021, 0.022]
-z = 2.479
-
-lines = [(r'CO (3-2)', (345.7959899, 1.5)),
-         (r'CO (4-3)', (461.0407682, 2.4)),
-         (r'CO (5-4)', (576.2679305, 5)),
-         (r'CO (6-5)', (691.4730763, 4)),
-         (r'CO (7-6)', (806.6518060, 4)),
-         #(r'$\ ^{\rm 13}$CO', (330.587960, 4.0))
-         ]
-
-#print "Used data %d of %d" % (usedChassis, totalChassis)
-
-#for lname, (freq, yl) in lines:
-#    f  = freq/(z + 1)
-#    pl.set_text(f, yl, lname, rotation='vertical', horizontalalignment='center',
-#                verticalalignment='center', size=10.0)
-
-cc = CrossCorrelation(hdu)
-zb, ts, zvalues, corr_funct = cc.cross_correlate(zmin=2, zmax=5, zinc=0.0005, species={'CO': 1.0}, linewidth=250) #'HCN' : 0.3,'HNC' : 0.3,'HCOP' : 0.3}, linewidth=250)
-#zb, ts, zvalues, corr_funct = cc.cross_correlate(zmin=0.002, zmax=0.3, zinc=0.000005, species={'CO': 2.0,'HCN':1.0}, linewidth=120)
-
-#pl2 = RedshiftPlot()
-#pl2.plot(zvalues, corr_funct, linestyle='steps')
-#pl2.set_xlabel('z')
-#pl2.set_ylabel('Cross-corr Probability')
 
