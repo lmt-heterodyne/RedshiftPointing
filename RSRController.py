@@ -114,6 +114,8 @@ class RSRHandleArgs():
                  ):
         """Initializes parameters which control fitting functionality"""
         # basic file parameters
+        self.ion = True
+        self.show_ion = 1
         self.path = path
         self.date = date
         self.decode_scan_string(scan_arg)
