@@ -19,7 +19,12 @@ class RSRMap(RSRCC):
         try:
             a=self.n
             # set the beam throw parameter
-            self.beamthrow = beamthrow
+            if self.beam_throw != -1:
+                self.beamthrow = self.beam_throw
+                print '-----------from self'
+            else:
+                self.beamthrow = beamthrow
+                print '-----------from arg'
             self.beamthrow_angle = beamthrow_angle
 
             # map parameters

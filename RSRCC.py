@@ -45,9 +45,22 @@ class RSRCC():
             self.m2tilt = self.nc.variables['Header.M2.TiltCmd'][:][0] #rotation about Y
 
             # sometimes the Receiver designation is wrong; check and warn but don't stop
+            self.beam_throw = -1
+            self.beam_throw2 = -1
             rx = ''.join(self.nc.variables['Header.Dcs.Receiver'][:])
             if rx[0] == 'R':
                 self.tracking_beam = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][:][0]
+                self.azPointOff = self.nc.variables['Header.RedshiftReceiver.AzPointOff'][:][0]
+                self.elPointOff = self.nc.variables['Header.RedshiftReceiver.ElPointOff'][:][0]
+                self.skyElReq = self.nc.variables['Header.Sky.ElReq'][:][0]
+                self.beam_throw = np.abs(np.round(self.azPointOff/np.cos(self.skyElReq)*3600*180/np.pi))
+                self.beam_throw2 = np.abs(np.round(self.elPointOff/np.sin(self.skyElReq)*3600*180/np.pi))
+                if(self.beam_throw != self.beam_throw2):
+                    self.beam_throw = self.beam_throw2 = -1
+                print 'AzPointOff ',self.azPointOff
+                print 'ElPointOff ',self.elPointOff
+                print 'SkyElReq ',self.skyElReq
+                print 'beam throw ', self.beam_throw,self.beam_throw2
                 if self.tracking_beam != -1:
                     print 'TRACKING BEAM ',self.tracking_beam
             else:
