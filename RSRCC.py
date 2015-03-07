@@ -157,13 +157,14 @@ class RSRCC():
         self.nc.close()
     
     def make_filename(self,filelist):
-        filename = self.make_filename_rx(filelist,'R')
-        if os.path.isfile(filename):
-            print "is RSR"
-            return filename
-        else:
-            print "is not RSR"
-            return self.make_filename_rx(filelist,'V')
+        # look for vlbi 1st since redshift has multiple chassis and one of them
+        # might not have a file
+        for rx in ['VLBI1mm', 'RSR']:
+            filename = self.make_filename_rx(filelist,rx)
+            if os.path.isfile(filename):
+                print "is ", rx
+                return filename
+        return ""
 
     def make_filename_rx(self,filelist,rx):
         filename = ""
