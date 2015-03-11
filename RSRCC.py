@@ -119,7 +119,12 @@ class RSRCC():
                     for board in range(6):
                         self.bias[board] = np.median(self.data[:,board])
                 elif rx[0] == 'V':
-                    self.bufpos = self.nc.variables['Data.Sky.BufPos'][:]
+                    try:
+                        print 'get bufpos from dcs'
+                        self.bufpos = self.nc.variables['Data.Dcs.BufPos'][:]
+                    except:
+                        print 'get bufpos from sky'
+                        self.bufpos = self.nc.variables['Data.Sky.BufPos'][:]
                     self.apower = self.nc.variables['Data.Vlbi1mmTpm.APower'][:]
                     self.bpower = self.nc.variables['Data.Vlbi1mmTpm.BPower'][:]
                     self.samples_exist = True
