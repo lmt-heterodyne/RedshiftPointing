@@ -22,7 +22,7 @@ real_tint = 0.0
 
 
 ### CHANGE THESE ObsNum for every science spectrum ###
-Obslist = [28129,28130]
+Obslist = [27870,27871]
 
 for ObsNum in Obslist:
     for chassis in [0,1,2,3]:

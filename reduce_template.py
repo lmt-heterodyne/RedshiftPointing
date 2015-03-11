@@ -23,7 +23,7 @@ real_tint = 0.0
 
 ### CHANGE THESE ObsNum for every science spectrum ###
 
-Obslist = [28134,28135]
+Obslist = [27870,27871]
 
 
 

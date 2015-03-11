@@ -161,6 +161,7 @@ class RSRCC():
         # might not have a file
         for rx in ['VLBI1mm', 'RSR']:
             filename = self.make_filename_rx(filelist,rx)
+            print filename
             if os.path.isfile(filename):
                 print "is ", rx
                 return filename
@@ -185,7 +186,7 @@ class RSRCC():
                 filename = ('%s/RedshiftChassis%d/RedshiftChassis%d_%s_%06d_%02d_%04d.nc' % (self.path, self.chassis, self.chassis, self.date,self.scan,self.groupscan,self.subscan))
             elif rx[0] == 'V':
                 filename = ('%s/vlbi1mm/vlbi1mm_%s_%06d_%02d_%04d.nc' % (self.path, self.date,self.scan,self.groupscan,self.subscan))
-            return filename
+        return filename
 
     def check(self):
         """Provides a way to test whether this is a good instance."""
