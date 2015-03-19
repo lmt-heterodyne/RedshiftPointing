@@ -26,6 +26,7 @@ class RSRMapFit():
         self.nresults = nresults
         self.chassis_id_numbers = numpy.zeros(nresults)
         self.board_id_numbers = numpy.zeros(nresults)
+        self.isGood = numpy.zeros(nresults)
         self.az_map_offset = numpy.zeros(nresults)
         self.el_map_offset = numpy.zeros(nresults)
         self.az_model_offset = numpy.zeros(nresults)
@@ -152,6 +153,7 @@ class RSRMapFit():
         self.chassis_id_numbers[index] = m.chassis
         self.board_id_numbers[index] = board
         # compute pointing results based on whether we are doing a single beam or two.
+        self.isGood[index] = m.isGood[board]
         if self.single_beam_fit:
             if self.tracking_single_beam_position == True:
                 # if doing a single beam fit and tracking the beam, we can analyze easily
@@ -202,21 +204,27 @@ class RSRMapFit():
 
     def find_pointing_result(self):
         """Finds the final results and standard deviation after all results are loaded."""
+        print self.az_map_offset
+        print self.el_map_offset
+        print self.isGood
+        print self.az_map_offset[numpy.nonzero(self.isGood)]
+        print self.el_map_offset[numpy.nonzero(self.isGood)]
+
         self.pointing_result = True
-        self.mean_az_map_offset = numpy.mean(self.az_map_offset)
-        self.std_az_map_offset = numpy.std(self.az_map_offset)
-        self.mean_el_map_offset = numpy.mean(self.el_map_offset)
-        self.std_el_map_offset = numpy.std(self.el_map_offset)
+        self.mean_az_map_offset = numpy.mean(self.az_map_offset[numpy.nonzero(self.isGood)])
+        self.std_az_map_offset = numpy.std(self.az_map_offset[numpy.nonzero(self.isGood)])
+        self.mean_el_map_offset = numpy.mean(self.el_map_offset[numpy.nonzero(self.isGood)])
+        self.std_el_map_offset = numpy.std(self.el_map_offset[numpy.nonzero(self.isGood)])
 
-        self.mean_az_model_offset = numpy.mean(self.az_model_offset)
-        self.std_az_model_offset = numpy.std(self.az_model_offset)
-        self.mean_el_model_offset = numpy.mean(self.el_model_offset)
-        self.std_el_model_offset = numpy.std(self.el_model_offset)
+        self.mean_az_model_offset = numpy.mean(self.az_model_offset[numpy.nonzero(self.isGood)])
+        self.std_az_model_offset = numpy.std(self.az_model_offset[numpy.nonzero(self.isGood)])
+        self.mean_el_model_offset = numpy.mean(self.el_model_offset[numpy.nonzero(self.isGood)])
+        self.std_el_model_offset = numpy.std(self.el_model_offset[numpy.nonzero(self.isGood)])
 
-        self.mean_az_total_offset = numpy.mean(self.az_total_offset)
-        self.std_az_total_offset = numpy.std(self.az_total_offset)
-        self.mean_el_total_offset = numpy.mean(self.el_total_offset)
-        self.std_el_total_offset = numpy.std(self.el_total_offset)
+        self.mean_az_total_offset = numpy.mean(self.az_total_offset[numpy.nonzero(self.isGood)])
+        self.std_az_total_offset = numpy.std(self.az_total_offset[numpy.nonzero(self.isGood)])
+        self.mean_el_total_offset = numpy.mean(self.el_total_offset[numpy.nonzero(self.isGood)])
+        self.std_el_total_offset = numpy.std(self.el_total_offset[numpy.nonzero(self.isGood)])
 
         self.mean_sep = numpy.mean(self.sep)
         self.std_sep = numpy.std(self.sep)

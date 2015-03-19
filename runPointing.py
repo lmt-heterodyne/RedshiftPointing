@@ -9,6 +9,8 @@ argv = ["-d", "2014-03-03", "-s", "16887", "--show", "True"]
 argv = ["-d", "2014-11-01", "-s", "27064", "--show", "True"]
 argv = ["-d", "2015-03-01", "-s", "37603", "--show", "True", "--chassis", "[0]"]
 argv = ["-d", "2015-03-02", "-s", "37668", "--show", "True", "--throw" , "0", "--chassis", "[0]", "--board", "[0,1]", "--beam", "0"]
+argv = ["-d", "2015-03-18", "-s", "38496", "--show", "True"]
+
 rsr = RSRRunPointing()
 F = rsr.run(argv)
 print ('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 

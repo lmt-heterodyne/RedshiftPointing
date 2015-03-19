@@ -49,6 +49,8 @@ class RSRMap(RSRCC):
             self.ap = np.zeros((6,2))
             self.hpx = np.zeros((6,2))
             self.hpy = np.zeros((6,2))
+            self.goodx = np.zeros((6,2))
+            self.goody = np.zeros((6,2))
         
             # circumstances of beam fitting
             self.single_beam_fit = False
@@ -59,6 +61,7 @@ class RSRMap(RSRCC):
             self.I = np.zeros(6)
             self.azoff = np.zeros(6)
             self.eloff = np.zeros(6)
+            self.isGood = np.zeros(6)
             self.beamsep = np.zeros(6)
             self.beamang = np.zeros(6)
             self.hpbw = np.zeros(6)
@@ -188,15 +191,19 @@ class RSRMap(RSRCC):
         if arg < 0:
             print 'warning: bad gaussian fit in azimuth: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
             self.hpx[board,pid] = 1
+            self.goodx[board,pid] = 0
         else:
             self.hpx[board,pid] = math.sqrt(arg)
+            self.goodx[board,pid] = 1
         
         arg = -4*math.log(2.)/p[4]
         if arg < 0:
             print 'warning: bad gaussian fit in elevation: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
-            self.hpx[board,pid] = 1
+            self.hpy[board,pid] = 1
+            self.goody[board,pid] = 0
         else:
             self.hpy[board,pid] = math.sqrt(arg)
+            self.goody[board,pid] = 1
     
 
     def find_dual_beam(self, board=0, w=16):
@@ -206,6 +213,7 @@ class RSRMap(RSRCC):
         self.fit_peak(board, 0, w)
         # then calculate the results
         self.I[board] = self.ap[board,1]-self.ap[board,0]
+        self.isGood[board] = (self.goodx[board,1]*self.goodx[board,0])*(self.goody[board,1]*self.goody[board,0])
         self.azoff[board] = (self.xp[board,1]+self.xp[board,0])/2.
         self.eloff[board] = (self.yp[board,1]+self.yp[board,0])/2.
         self.hpbw[board] = (math.sqrt(self.hpx[board,1]*self.hpy[board,1]) +
@@ -258,6 +266,7 @@ class RSRMap(RSRCC):
         self.fit_beam = select_beam
         self.fit_peak(board, pid, w)
         self.I[board] = self.peak[pid]*self.ap[board,pid]
+        self.isGood[board] = self.goodx[board,pid]*self.goody[board,pid]
         self.azoff[board] = self.xp[board,pid]
         self.eloff[board] = self.yp[board,pid]
         self.beamsep[board] = 0.0
