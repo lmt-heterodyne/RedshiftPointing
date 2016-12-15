@@ -35,6 +35,7 @@ class RSRCC():
             self.ut1_h = self.nc.variables['Header.TimePlace.UT1'][:][0]/2./math.pi*24.
             self.azim = self.nc.variables['Header.Sky.AzReq'][:][0]*180./math.pi
             self.elev = self.nc.variables['Header.Sky.ElReq'][:][0]*180./math.pi
+            self.m1ZernikeC0 = self.nc.variables['Header.M1.ZernikeC'][:][0]
             self.m2x = self.nc.variables['Header.M2.XReq'][:][0]
             self.m2y = self.nc.variables['Header.M2.YReq'][:][0]
             self.m2z = self.nc.variables['Header.M2.ZReq'][:][0]
