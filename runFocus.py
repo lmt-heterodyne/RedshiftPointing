@@ -4,7 +4,7 @@
 import sys
 from RSRRunFocus import RSRRunFocus
 
-argv = ["-d", "2014-02-22", "-s", "16664:16667", "--show", "True"]
+argv = ["-d", "2016-02-16", "-s", "56830:56833", "--show", "True"]
 rsr = RSRRunFocus()
 F = rsr.run(argv)
 
