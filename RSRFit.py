@@ -47,6 +47,8 @@ class RSRMapFit():
         self.azim = []
         self.elev = []
         self.duration = []
+        # m1 params
+        self.m1ZernikeC0 = []
         # subreflector parameters
         self.m2x = []
         self.m2y = []
@@ -73,6 +75,7 @@ class RSRMapFit():
         self.ut1_h.append(m.ut1_h)
         self.azim.append(m.azim)
         self.elev.append(m.elev)
+        self.m1ZernikeC0.append(m.m1ZernikeC0)
         self.m2z.append(m.m2z)
         self.m2y.append(m.m2y)
         self.m2x.append(m.m2x)
@@ -99,6 +102,9 @@ class RSRMapFit():
     def get_tilt_y(self):
         return (numpy.mean(self.tilt_y),numpy.std(self.tilt_y))
 
+    def get_m1zer(self):
+        return (numpy.mean(self.m1ZernikeC0),numpy.std(self.m1ZernikeC0))
+    
     def get_m2z(self):
         return (numpy.mean(self.m2z),numpy.std(self.m2z))
     
@@ -287,48 +293,69 @@ class RSRM2Fit():
         for scan_id in range(self.nscans):
             for index in range(self.n):
                 self.data[scan_id,index] = F[scan_id].Intensity[index]
-        # determine x,y,or z
+        # determine x,y,z or zernike
         M2zReq = []
         M2yReq = []
         M2xReq = []
+        M1zer0 = []
         for scan_id in range(self.nscans):
             M2zReq.append(F[scan_id].m2z)
             M2yReq.append(F[scan_id].m2y)
             M2xReq.append(F[scan_id].m2x)
+            M1zer0.append(F[scan_id].m1ZernikeC0)
         M2z = [item for sublist in M2zReq for item in sublist]
         M2y = [item for sublist in M2yReq for item in sublist]
         M2x = [item for sublist in M2xReq for item in sublist]
+        M1zer0 = [item for sublist in M1zer0 for item in sublist]
         dx=max(M2x)-min(M2x)
         dy=max(M2y)-min(M2y)
         dz=max(M2z)-min(M2z)
-        if (dx == dy and dx == dz and dx == 0):
+        dzer=max(M1zer0)-min(M1zer0)
+        if (dx == dy and dx == dz and dx == 0 and dzer == 0):
             #nothing's changing, an error should be thrown
-            self.msg = "M2 offsets are not changing in these files."
-            return -2
-        if (dx != 0):
-            if (dy != 0 or dz != 0):
+            self.msg = "M2 or Zernike offsets are not changing in these files."
+            m2Pos = -1
+        elif (dx != 0):
+            if (dy != 0 or dz != 0 or dzer != 0):
                 #more than one offset changing, throw an error
                 self.msg = "More than one M2 offset is changing in these files."
-                return -2
-            self.M2zfocus = max(M2z)
-            self.M2yfocus = max(M2y)
-            m2pos = 2
+                m2pos = -1
+            else:
+                self.M2zfocus = max(M2z)
+                self.M2yfocus = max(M2y)
+                m2pos = 2
         elif (dy != 0):
-            if (dx != 0 or dz != 0):
+            if (dx != 0 or dz != 0 or dzer != 0):
                 #more than one offset changing, throw an error
-                self.msg = "More than one M2 offset is changing in these files."
-                return -2
-            self.M2zfocus = max(M2z)
-            self.M2xfocus = max(M2x)
-            m2pos = 1
+                self.msg = "More than one M2 or Zernike offset is changing in these files."
+                m2pos = -1
+            else:
+                self.M2zfocus = max(M2z)
+                self.M2xfocus = max(M2x)
+                m2pos = 1
         elif (dz != 0):
-            if (dx != 0 or dy != 0):
+            if (dx != 0 or dy != 0 or dzer != 0):
                 #more than one offset changing, throw an error
-                self.msg = "More than one M2 offset is changing in these files."
-                return -2
-            self.M2yfocus = max(M2y)
-            self.M2xfocus = max(M2x)
-            m2pos = 0
+                self.msg = "More than one M2 or Zernike offset is changing in these files."
+                m2pos = -1
+            else:
+                self.M2yfocus = max(M2y)
+                self.M2xfocus = max(M2x)
+                m2pos = 0
+        elif (dzer != 0):
+            if (dx != 0 or dy != 0 or dz != 0):
+                #more than one offset changing, throw an error
+                self.msg = "More than one M2 or Zernike offset is changing in these files."
+                m2pos = -1
+            else:
+                self.M2xfocus = max(M2x)
+                self.M2yfocus = max(M2y)
+                self.M2zfocus = max(M2z)
+                m2pos = 3
+
+        if (m2pos == -1):
+            print(self.msg)
+            return -2
         
         self.m2_position = numpy.zeros(self.nscans)
         self.m2_pcor = numpy.zeros(self.nscans)
@@ -343,9 +370,12 @@ class RSRM2Fit():
             elif self.m2pos == 1:
                 ave,sig = F[scan_id].get_m2y()
                 pcor,pcorsig = F[scan_id].get_m2yPcor()
-            else:
+            elif self.m2pos == 2:
                 ave,sig = F[scan_id].get_m2x()
                 pcor,pcorsig = F[scan_id].get_m2xPcor()
+            else:
+                ave,sig = F[scan_id].get_m1zer()
+                pcor,pcorsig = [0,0]
 
             self.m2_position[scan_id] = ave
             self.m2_pcor[scan_id] = pcor
