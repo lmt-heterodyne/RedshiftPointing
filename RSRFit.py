@@ -445,5 +445,7 @@ class RSRM2Fit():
             self.M2yfocus = self.relative_focus_fit
         elif self.m2pos == 2:
             self.M2xfocus = self.relative_focus_fit
+        elif self.m2pos == 3:
+            self.M1ZernikeC0 = self.relative_focus_fit
 
 
