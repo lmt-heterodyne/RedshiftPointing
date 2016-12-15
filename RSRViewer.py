@@ -733,6 +733,10 @@ class RSRM2FitViewer(RSRViewer):
             self.xlabel = 'X Offset'
             self.ylabel = 'X offset (mm)'
             prange = numpy.arange(-36,36.1,.1)
+        elif M.m2pos == 3:
+            self.xlabel = 'ZernikeC0'
+            self.ylabel = 'ZernikeC0 (um)'
+            prange = numpy.arange(-1000,1000,10)
         else:
             self.xlabel = 'Offset'
             self.ylabel = 'Offset (mm)'
@@ -825,11 +829,19 @@ class RSRM2FitViewer(RSRViewer):
                   M.date,
                   titleObsNum)
                  )
-        textstr =           'Relative Focus:   ' +str(round(M.relative_focus_fit,4)) + '\n' 
-        textstr = textstr + 'Focus Error:         ' +str(round(M.focus_error,4)) + '\n' 
-        textstr = textstr + 'Focus Slope:       ' +str(round(M.focus_slope,4)) + '\n' 
-        textstr = textstr + 'Absolute Focus:  ' +str(round(M.absolute_focus_fit,4)) + '\n' 
+        if M.m2pos == 2:
+            fitype = 'M2.X'
+        if M.m2pos == 1:
+            fitype = 'M2.Y'
+        if M.m2pos == 0:
+            fitype = 'M2.Z'
+        if M.m2pos == 3:
+            fitype = 'M1.ZernikeC0'
+        textstr =           'Relative '+fitype+':   ' +str(round(M.relative_focus_fit,4)) + '\n' 
+        textstr = textstr + fitype+' Error:         ' +str(round(M.focus_error,4)) + '\n' 
+        textstr = textstr + fitype+' Slope:       ' +str(round(M.focus_slope,4)) + '\n' 
+        textstr = textstr + 'Absolute '+fitype+':  ' +str(round(M.absolute_focus_fit,4)) + '\n' 
         textstr = textstr + 'Fit RMS:                ' +str(round(M.fit_rms,4))
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        pl.text(95, M.result_relative.max()-3*(M.result_relative.max()-M.result_relative.min())/10, textstr, bbox=props, color='red')
+        pl.text(93, M.result_relative.max()-3*(M.result_relative.max()-M.result_relative.min())/10, textstr, bbox=props, color='red')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
