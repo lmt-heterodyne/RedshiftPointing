@@ -162,7 +162,10 @@ class RSRCC():
         self.nc.sync()
 
     def close(self):
-        self.nc.close()
+        try:
+            self.nc.close()
+        except AttributeError:
+            print "from close(): ncfile not open"
     
     def make_filename(self,filelist):
         # look for vlbi 1st since redshift has multiple chassis and one of them
