@@ -798,7 +798,6 @@ class RSRM2FitViewer(RSRViewer):
 
         band_freq = []
         result_relative = []
-        print(type(M.result_relative))
         for index in range(M.n):
             if(math.isnan(M.result_relative[index])):
                 continue
