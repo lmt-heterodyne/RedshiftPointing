@@ -35,6 +35,11 @@ class RSRMapController():
         print '           process=%s'%(str(a.process_list))
         for chassis_id, chassis in enumerate(a.chassis_list):
             m = RSRMap(filelist,a.date,scan,chassis,a.beam_throw)
+            try:
+                fnc = m.nc
+            except AttributeError:
+                print "map doesn't have a file"
+                continue
             F.load_average_parameters(m)        
             for board_id,board in enumerate(a.process_list[chassis_id]):
                 m.process_single_board(board, 
