@@ -694,6 +694,8 @@ class RSRM2FitViewer(RSRViewer):
         M is the input RSRM2Fit instance with the results.
         """
         for index in range(M.n):
+            if(math.isnan(M.result_relative[index])):
+                continue
             result_max = (M.parameters[index,0] 
                           + M.parameters[index,1]*M.result_relative[index]
                           + M.parameters[index,2]*M.result_relative[index]*M.result_relative[index]
@@ -742,6 +744,8 @@ class RSRM2FitViewer(RSRViewer):
             self.ylabel = 'Offset (mm)'
             prange = numpy.arange(-36,36.1,.1)
         for index in range(M.n):
+            if(math.isnan(M.result_relative[index])):
+                continue
             model = (M.parameters[index,0]
                      + M.parameters[index,1]*prange
                      + M.parameters[index,2]*prange*prange
@@ -792,10 +796,17 @@ class RSRM2FitViewer(RSRViewer):
         band_order = [0,2,1,3,5,4]
         freq = [75.703906,82.003906,89.396094,94.599906,100.899906,108.292094]
 
-        band_freq = numpy.zeros(M.n)
+        band_freq = []
+        result_relative = []
+        print(type(M.result_relative))
         for index in range(M.n):
-            band_freq[index] = freq[band_order[int(M.board_id[index])]]
-        pl.plot(band_freq,M.result_relative,'o')
+            if(math.isnan(M.result_relative[index])):
+                continue
+            band_freq.append(freq[band_order[int(M.board_id[index])]])
+            result_relative.append(M.result_relative[index])
+        band_freq = numpy.array(band_freq)
+        result_relative = numpy.array(result_relative)
+        pl.plot(band_freq,result_relative,'o')
         freq_0 = (freq[0]+freq[5])/2.
         d_freq = (freq[5]-freq_0)
         brange = numpy.arange(-1.2,1.3,.1)
@@ -843,5 +854,5 @@ class RSRM2FitViewer(RSRViewer):
         textstr = textstr + 'Absolute '+fitype+':  ' +str(round(M.absolute_focus_fit,4)) + '\n' 
         textstr = textstr + 'Fit RMS:                ' +str(round(M.fit_rms,4))
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        pl.text(93, M.result_relative.max()-3*(M.result_relative.max()-M.result_relative.min())/10, textstr, bbox=props, color='red')
+        pl.text(93, result_relative.max()-3*(result_relative.max()-result_relative.min())/10, textstr, bbox=props, color='red')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
