@@ -404,8 +404,12 @@ class RSRM2Fit():
                     ptr[ii] = ptr[ii] + f[ii]*I[scan_id]
             ptpinv = numpy.linalg.inv(ptp)
             self.parameters[index,:] = numpy.dot(ptpinv,ptr)
-            self.result_relative[index] = -self.parameters[index,1]/self.parameters[index,2]/2.
-            self.result_absolute[index] = self.result_relative[index] + numpy.mean(pcor)
+            if self.parameters[index,2] != 0:
+                self.result_relative[index] = -self.parameters[index,1]/self.parameters[index,2]/2.
+                self.result_absolute[index] = self.result_relative[index] + numpy.mean(pcor)
+            else:
+                self.result_relative[index] = None
+                self.result_absolute[index] = None
 
 
     def fit_focus_model(self):
@@ -416,6 +420,8 @@ class RSRM2Fit():
         pta = numpy.zeros(2)
         f = numpy.zeros(2)
         for index in range(self.n):
+            if(math.isnan(self.result_relative[index])):
+                continue
             f[0] = 1.
             f[1] = xband[int(self.board_id[index])]
             for ii in range(2):
@@ -428,10 +434,14 @@ class RSRM2Fit():
         absolute_focus_fit = numpy.dot(ptpinv,pta)
         self.resids = numpy.zeros(self.n)
         resids_squared = 0.
+        actual_n = 0
         for index in range(self.n):
+            if(math.isnan(self.result_relative[index])):
+                continue
             self.resids[index] = self.result_relative[index] - relative_focus_fit[0] - relative_focus_fit[1]*xband[int(self.board_id[index])]
             resids_squared = resids_squared + self.resids[index]*self.resids[index]
-        rms = math.sqrt(resids_squared/self.n)
+            actual_n = actual_n + 1
+        rms = math.sqrt(resids_squared/actual_n)
         focus_error = math.sqrt(ptpinv[0][0])*rms
 
         self.relative_focus_fit = relative_focus_fit[0]
