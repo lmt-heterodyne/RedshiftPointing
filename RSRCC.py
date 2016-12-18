@@ -4,7 +4,7 @@ Classes: RSRCC
 Uses:    netCDF4, os, numpy, math, Tempsens
 Author:  FPS
 Date:    May 5, 2014
-Changes:
+Changes: 05/13/2014: caught use of "band" instead of "board" in line 159.
 """
 import netCDF4
 import os
@@ -241,7 +241,7 @@ class RSRCC():
         counter2 = 0
         for i in range(d,self.n-d+1):
             if abs(r[i])>rcut:
-                self.flag[band,i] = 1
+                self.flag[board,i] = 1
                 counter2 = counter2+1
         print "Bad Points: ", counter2
     
