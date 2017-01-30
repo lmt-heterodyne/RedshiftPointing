@@ -15,7 +15,8 @@ class RSRRunLineCheck():
         real_tint = 0.0
 
         for obsNum in obsList:
-            for chassis in [0,1,2,3]:
+            #for chassis in [0,1,2,3]:
+            for chassis in [1,2,3]:
 
                 filename = rsrFileSearch (obsNum, chassis)
 	
