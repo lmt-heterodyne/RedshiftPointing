@@ -36,6 +36,7 @@ class Vlbi1mmRunTsys():
         fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.text(0.1, 0.5, plotlabel, clip_on=True)
+	ax.set_title("ObsNum: %d"% obsNum)  
         ax.set_yticklabels([])
         ax.set_xticklabels([])
 #        plt.axis('off')

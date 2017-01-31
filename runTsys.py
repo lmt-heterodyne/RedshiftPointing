@@ -8,6 +8,7 @@ from Vlbi1mmRunTsys import Vlbi1mmRunTsys
 ### CHANGE THESE ObsNum for every science spectrum ###
 #obsNum = 27869
 obsNum = 65223
+obsNum = 65309
 
 #rsr = RSRRunTsys()
 #F = rsr.run(sys.argv,obsNum)
