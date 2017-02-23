@@ -41,7 +41,9 @@ class RSRMapController():
                 print "map doesn't have a file"
                 continue
             F.load_average_parameters(m)        
+            print '           chassis_id=%d, chassis=%d'%(chassis_id,chassis)
             for board_id,board in enumerate(a.process_list[chassis_id]):
+                print '           board_id=%d, board=%d'%(board_id,board)
                 m.process_single_board(board, 
                                        a.fit_window, 
                                        a.remove_baseline, 
