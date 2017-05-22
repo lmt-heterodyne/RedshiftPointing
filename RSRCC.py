@@ -89,8 +89,10 @@ class RSRCC():
             self.az_receiver = self.nc.variables['Header.PointModel.AzReceiverOff'][:][0]*206264.8
             self.el_receiver = self.nc.variables['Header.PointModel.ElReceiverOff'][:][0]*206264.8
             try:
+                self.az_m2 = self.nc.variables['Header.PointModel.AzM2Cor'][:][0]*206264.8
                 self.el_m2 = self.nc.variables['Header.PointModel.ElM2Cor'][:][0]*206264.8
             except:
+                self.az_m2 = 0.0
                 self.el_m2 = 0.0
 
             # TILTMETER Information
