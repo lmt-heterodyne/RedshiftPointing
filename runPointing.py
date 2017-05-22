@@ -20,11 +20,13 @@ filelist.append("./data_lmt/RedshiftChassis3_2016-02-16_10056830_01_0001.nc");
 rsr = RSRRunPointing()
 F = rsr.run(argv, filelist)
 #F = rsr.run(argv)
-print ('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
+print ('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
        (F.mean_az_map_offset,
         F.mean_el_map_offset,
         F.mean_az_model_offset,
         F.mean_el_model_offset,
+        F.mean_az_total_offset,
+        F.mean_el_total_offset,
         F.mean_sep,
         F.mean_ang)
        )
