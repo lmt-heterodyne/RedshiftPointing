@@ -172,8 +172,8 @@ class RSRMapFit():
                 self.el_map_offset[index] = m.eloff[board]
                 self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle
                 self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle
-                self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_receiver-m.az_m2[board]
-                self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_receiver-m.el_m2[board]
+                self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_receiver-m.az_m2
+                self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_receiver-m.el_m2
             else:
                 # on the other hand, if we are doing single beam and tracking the other: be careful
                 elev_r = (m.elev+m.beamthrow_angle)*math.pi/180.
@@ -187,16 +187,16 @@ class RSRMapFit():
                 self.az_map_offset[index] = m.azoff[board] - xoffset
                 self.az_model_offset[index] = m.azoff[board] - xoffset +m.az_user+m.az_paddle
                 self.el_model_offset[index] = m.eloff[board] - yoffset +m.el_user+m.el_paddle
-                self.az_total_offset[index] = m.azoff[board] - xoffset +m.az_total-m.az_receiver-m.az_m2[board]
-                self.el_total_offset[index] = m.eloff[board] - yoffset +m.el_total-m.el_receiver-m.el_m2[board]
+                self.az_total_offset[index] = m.azoff[board] - xoffset +m.az_total-m.az_receiver-m.az_m2
+                self.el_total_offset[index] = m.eloff[board] - yoffset +m.el_total-m.el_receiver-m.el_m2
         else:
             # this is analysis of traditional two-beam map
             self.az_map_offset[index] = m.azoff[board]+m.az_receiver
             self.el_map_offset[index] = m.eloff[board]+m.el_receiver
             self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle+m.az_receiver
             self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle+m.el_receiver
-            self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_m2[board]
-            self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_m2[board]
+            self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_m2
+            self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_m2
         
         self.Intensity[index] = m.I[board]
         self.hpbw[index] = m.hpbw[board]
