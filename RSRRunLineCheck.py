@@ -31,8 +31,8 @@ class RSRRunLineCheck():
                 tint += integ
                 real_tint += (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()        
                 hdulist.append(nc.hdu)
-                nc.sync()
-                nc.close()
+                nc.nc.sync()
+                nc.nc.close()
 
         
         hdu = hdulist[0]  # get the first observation
