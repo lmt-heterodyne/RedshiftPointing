@@ -28,8 +28,9 @@ class RSRRunFocus():
             v.print_focus_model_fit(m)
             if a.show_it:
                 v.init(a)
-                if a.show_ion == 1:
-                    v.plot_fits(m,figno=1)
+                #if a.show_ion == 1:
+                    #v.plot_fits(m,figno=1)
+                v.plot_fits(m,figno=1)
                 v.plot_focus_model_fit(m,figno=2,obsNumArg=obsNumArg)
 
             return m
