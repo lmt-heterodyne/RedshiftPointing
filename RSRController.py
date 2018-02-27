@@ -59,7 +59,7 @@ class RSRMapController():
                                        )
                 F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                 index = index + 1
-            if plot_option == True and a.show_ion==1:
+            if plot_option == True and a.show_ion==1 or True:
                 if len(a.process_list[chassis_id]) > 1:
                     if a.show_type==1:
                         if len(a.chassis_list)>1:
@@ -75,7 +75,7 @@ class RSRMapController():
                             V.master_model_scan_plot(m,a.process_list[chassis_id])
                         else:
                             V.plot_all_model_scans(m,a.process_list[chassis_id],figno=chassis_id+1)
-                else:
+                elif len(a.process_list[chassis_id]) == 1:
                     V.init_fig(figno=chassis_id+1)
                     if a.show_type==1:
                         V.plot_map(m,a.process_list[chassis_id][0],fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
