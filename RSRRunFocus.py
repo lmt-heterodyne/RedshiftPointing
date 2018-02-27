@@ -29,35 +29,27 @@ class RSRRunFocus():
             v.print_focus_model_fit(m)
             if a.show_it:
                 v.init(a)
-                #if a.show_ion == 1:
-                    #v.plot_fits(m,figno=1)
-                v.plot_fits(m,figno=1)
+                if a.show_ion == 1 or True:
+                    v.plot_fits(m,figno=1)
                 v.plot_focus_model_fit(m,figno=2,obsNumArg=obsNumArg)
 
             images = map(Image.open, ['rsr_summary.png', 'rsr_focus_fits.png'])
             widths, heights = zip(*(i.size for i in images))
 
             total_width = sum(widths)
+            total_height = sum(heights)
+            max_width = max(widths)
             max_height = max(heights)
 
-            new_im = Image.new('RGB', (total_width, max_height))
+            new_im = Image.new('RGB', (max_width, total_height))
 
             x_offset = 0
+            y_offset = 0
             for im in images:
-                new_im.paste(im.resize((im.size[0], max_height), Image.ANTIALIAS), (x_offset,0))
-                x_offset += im.size[0]
+                new_im.paste(im.resize((max_width, im.size[1]), Image.ANTIALIAS), (x_offset,y_offset))
+                y_offset += im.size[1]
 
-            desired_size = images[0].size[0]
-            old_size = new_im.size
-            ratio = float(desired_size)/max(old_size)
-            new_size = tuple([int(x*ratio) for x in old_size])
-            new_im = new_im.resize(new_size, Image.ANTIALIAS)
-            new_im2 = Image.new("RGB", (desired_size, desired_size))
-            new_im2.paste(new_im, ((desired_size-new_size[0])//2,
-                                   (desired_size-new_size[1])//2))
-
-
-            new_im2.save('rsr_summary.png')
+            new_im.save('rsr_summary.png')
 
             return m
 

@@ -1,4 +1,5 @@
 import sys
+from PIL import Image
 from RSRFit import RSRMapFit
 from RSRViewer import RSRFitViewer
 from RSRController import RSRMapController,RSRHandleArgs
@@ -31,10 +32,28 @@ class RSRRunPointing():
  
             # plot the pointing errors for this map
             if F.nresults > 1:
-                if a.show_it:
+                if a.show_it or True:
                     v.plot_pointing_summary(F, figno=(F.nchassis+1))
             # print the hpbw results too
             ###v.print_hpbw_result(F)
+
+            images = map(Image.open, ['rsr_summary.png', 'rsr_pointing_maps.png'])
+            widths, heights = zip(*(i.size for i in images))
+
+            total_width = sum(widths)
+            total_height = sum(heights)
+            max_width = max(widths)
+            max_height = max(heights)
+
+            new_im = Image.new('RGB', (max_width, total_height))
+
+            x_offset = 0
+            y_offset = 0
+            for im in images:
+                new_im.paste(im.resize((max_width, im.size[1]), Image.ANTIALIAS), (x_offset,y_offset))
+                y_offset += im.size[1]
+
+            new_im.save('rsr_summary.png')
 
             return F
 
