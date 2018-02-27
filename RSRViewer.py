@@ -743,6 +743,7 @@ class RSRM2FitViewer(RSRViewer):
             self.xlabel = 'Offset'
             self.ylabel = 'Offset (mm)'
             prange = numpy.arange(-36,36.1,.1)
+        prange = numpy.arange(min(M.m2_position)-.1,max(M.m2_position)+.1,.1)
         for index in range(M.n):
             if(math.isnan(M.result_relative[index])):
                 continue
