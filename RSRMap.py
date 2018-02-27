@@ -32,12 +32,12 @@ class RSRMap(RSRCC):
 
             # map parameters
             try:
-                self.hpbw = self.nc.variables['Header.Map.HPBW'][:][0]*206264.8
-                self.xlength = self.nc.variables['Header.Map.XLength'][:][0]*204264.8
-                self.ylength = self.nc.variables['Header.Map.YLength'][:][0]*206264.8
-                self.xstep = self.nc.variables['Header.Map.XStep'][:][0]
-                self.ystep = self.nc.variables['Header.Map.YStep'][:][0]
-                self.rows = self.nc.variables['Header.Map.RowsPerScan'][:][0]
+                self.hpbw = self.nc.variables['Header.Map.HPBW'][0]*206264.8
+                self.xlength = self.nc.variables['Header.Map.XLength'][0]*204264.8
+                self.ylength = self.nc.variables['Header.Map.YLength'][0]*206264.8
+                self.xstep = self.nc.variables['Header.Map.XStep'][0]
+                self.ystep = self.nc.variables['Header.Map.YStep'][0]
+                self.rows = self.nc.variables['Header.Map.RowsPerScan'][0]
             except:
                 print self.file+' does not have map parameters'
     

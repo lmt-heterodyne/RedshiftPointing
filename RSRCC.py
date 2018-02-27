@@ -30,33 +30,33 @@ class RSRCC():
 
             # load useful header variables
             self.source = ''.join(self.nc.variables['Header.Source.SourceName'][:])
-            self.obsnum = self.nc.variables['Header.Dcs.ObsNum'][:][0]
-            self.utdate = self.nc.variables['Header.TimePlace.UTDate'][:][0]
-            self.ut1_h = self.nc.variables['Header.TimePlace.UT1'][:][0]/2./math.pi*24.
-            self.azim = self.nc.variables['Header.Sky.AzReq'][:][0]*180./math.pi
-            self.elev = self.nc.variables['Header.Sky.ElReq'][:][0]*180./math.pi
-            self.m1ZernikeC0 = self.nc.variables['Header.M1.ZernikeC'][:][0]
-            self.m2x = self.nc.variables['Header.M2.XReq'][:][0]
-            self.m2y = self.nc.variables['Header.M2.YReq'][:][0]
-            self.m2z = self.nc.variables['Header.M2.ZReq'][:][0]
-            self.m2xPcor = self.nc.variables['Header.M2.XPcor'][:][0]
-            self.m2yPcor = self.nc.variables['Header.M2.YPcor'][:][0]
-            self.m2zPcor = self.nc.variables['Header.M2.ZPcor'][:][0]
-            self.m2tip = self.nc.variables['Header.M2.TipCmd'][:][0] #rotation about X
-            self.m2tilt = self.nc.variables['Header.M2.TiltCmd'][:][0] #rotation about Y
+            self.obsnum = self.nc.variables['Header.Dcs.ObsNum'][0]
+            self.utdate = self.nc.variables['Header.TimePlace.UTDate'][0]
+            self.ut1_h = self.nc.variables['Header.TimePlace.UT1'][0]/2./math.pi*24.
+            self.azim = self.nc.variables['Header.Sky.AzReq'][0]*180./math.pi
+            self.elev = self.nc.variables['Header.Sky.ElReq'][0]*180./math.pi
+            self.m1ZernikeC0 = self.nc.variables['Header.M1.ZernikeC'][0]
+            self.m2x = self.nc.variables['Header.M2.XReq'][0]
+            self.m2y = self.nc.variables['Header.M2.YReq'][0]
+            self.m2z = self.nc.variables['Header.M2.ZReq'][0]
+            self.m2xPcor = self.nc.variables['Header.M2.XPcor'][0]
+            self.m2yPcor = self.nc.variables['Header.M2.YPcor'][0]
+            self.m2zPcor = self.nc.variables['Header.M2.ZPcor'][0]
+            self.m2tip = self.nc.variables['Header.M2.TipCmd'][0] #rotation about X
+            self.m2tilt = self.nc.variables['Header.M2.TiltCmd'][0] #rotation about Y
 
             # sometimes the Receiver designation is wrong; check and warn but don't stop
             self.beam_throw = -1
             self.beam_throw2 = -1
             rx = ''.join(self.nc.variables['Header.Dcs.Receiver'][:])
             if rx[0] == 'R':
-                self.tracking_beam = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][:][0]
-                #self.azPointOff = self.nc.variables['Header.RedshiftReceiver.AzPointOff'][:][0]
-                #self.elPointOff = self.nc.variables['Header.RedshiftReceiver.ElPointOff'][:][0]
-                #self.skyElReq = self.nc.variables['Header.Sky.ElReq'][:][0]
+                self.tracking_beam = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
+                #self.azPointOff = self.nc.variables['Header.RedshiftReceiver.AzPointOff'][0]
+                #self.elPointOff = self.nc.variables['Header.RedshiftReceiver.ElPointOff'][0]
+                #self.skyElReq = self.nc.variables['Header.Sky.ElReq'][0]
                 #self.beam_throw = np.abs(np.round(self.azPointOff/np.cos(self.skyElReq)*3600*180/np.pi))
                 #self.beam_throw2 = np.abs(np.round(self.elPointOff/np.sin(self.skyElReq)*3600*180/np.pi))
-                self.beam_throw = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][:][0])*3600*180/np.pi
+                self.beam_throw = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][0])*3600*180/np.pi
                 self.beam_throw2 = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][:][1])*3600*180/np.pi
                 if(self.beam_throw != self.beam_throw2):
                     self.beam_throw = self.beam_throw2 = -1
@@ -68,9 +68,9 @@ class RSRCC():
                     print 'TRACKING BEAM ',self.tracking_beam
             elif rx[0] == 'V':
                 self.tracking_beam = 0
-                self.azPointOff = self.nc.variables['Header.Vlbi1mmReceiver.AzPointOff'][:][0]
-                self.elPointOff = self.nc.variables['Header.Vlbi1mmReceiver.ElPointOff'][:][0]
-                self.skyElReq = self.nc.variables['Header.Sky.ElReq'][:][0]
+                self.azPointOff = self.nc.variables['Header.Vlbi1mmReceiver.AzPointOff'][0]
+                self.elPointOff = self.nc.variables['Header.Vlbi1mmReceiver.ElPointOff'][0]
+                self.skyElReq = self.nc.variables['Header.Sky.ElReq'][0]
                 print 'AzPointOff ',self.azPointOff
                 print 'ElPointOff ',self.elPointOff
                 print 'SkyElReq ',self.skyElReq
@@ -79,27 +79,27 @@ class RSRCC():
                 self.tracking_beam = -1
 
             # Pointing Variables
-            self.modrev = self.nc.variables['Header.PointModel.ModRev'][:][0]
-            self.az_user = self.nc.variables['Header.PointModel.AzUserOff'][:][0]*206264.8 
-            self.el_user = self.nc.variables['Header.PointModel.ElUserOff'][:][0]*206264.8 
-            self.az_paddle = self.nc.variables['Header.PointModel.AzPaddleOff'][:][0]*206264.8 
-            self.el_paddle = self.nc.variables['Header.PointModel.ElPaddleOff'][:][0]*206264.8 
-            self.az_total = self.nc.variables['Header.PointModel.AzTotalCor'][:][0]*206264.8 
-            self.el_total = self.nc.variables['Header.PointModel.ElTotalCor'][:][0]*206264.8 
-            self.az_receiver = self.nc.variables['Header.PointModel.AzReceiverOff'][:][0]*206264.8
-            self.el_receiver = self.nc.variables['Header.PointModel.ElReceiverOff'][:][0]*206264.8
+            self.modrev = self.nc.variables['Header.PointModel.ModRev'][0]
+            self.az_user = self.nc.variables['Header.PointModel.AzUserOff'][0]*206264.8 
+            self.el_user = self.nc.variables['Header.PointModel.ElUserOff'][0]*206264.8 
+            self.az_paddle = self.nc.variables['Header.PointModel.AzPaddleOff'][0]*206264.8 
+            self.el_paddle = self.nc.variables['Header.PointModel.ElPaddleOff'][0]*206264.8 
+            self.az_total = self.nc.variables['Header.PointModel.AzTotalCor'][0]*206264.8 
+            self.el_total = self.nc.variables['Header.PointModel.ElTotalCor'][0]*206264.8 
+            self.az_receiver = self.nc.variables['Header.PointModel.AzReceiverOff'][0]*206264.8
+            self.el_receiver = self.nc.variables['Header.PointModel.ElReceiverOff'][0]*206264.8
             try:
-                self.az_m2 = self.nc.variables['Header.PointModel.AzM2Cor'][:][0]*206264.8
-                self.el_m2 = self.nc.variables['Header.PointModel.ElM2Cor'][:][0]*206264.8
+                self.az_m2 = self.nc.variables['Header.PointModel.AzM2Cor'][0]*206264.8
+                self.el_m2 = self.nc.variables['Header.PointModel.ElM2Cor'][0]*206264.8
             except:
                 self.az_m2 = 0.0
                 self.el_m2 = 0.0
 
             # TILTMETER Information
-            self.tilt0_x = self.nc.variables['Header.Tiltmeter_0_.TiltX'][:][0]*206264.8
-            self.tilt0_y = self.nc.variables['Header.Tiltmeter_0_.TiltY'][:][0]*206264.8
-            self.tilt1_x = self.nc.variables['Header.Tiltmeter_1_.TiltX'][:][0]*206264.8
-            self.tilt1_y = self.nc.variables['Header.Tiltmeter_1_.TiltY'][:][0]*206264.8
+            self.tilt0_x = self.nc.variables['Header.Tiltmeter_0_.TiltX'][0]*206264.8
+            self.tilt0_y = self.nc.variables['Header.Tiltmeter_0_.TiltY'][0]*206264.8
+            self.tilt1_x = self.nc.variables['Header.Tiltmeter_1_.TiltX'][0]*206264.8
+            self.tilt1_y = self.nc.variables['Header.Tiltmeter_1_.TiltY'][0]*206264.8
 
             # TEMPERATURE SENSOR Information
             self.T = TempSens(self.nc.variables['Header.TempSens.TempSens'][:]/100.)
