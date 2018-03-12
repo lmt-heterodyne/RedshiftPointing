@@ -412,6 +412,10 @@ class RSRMapViewer(RSRScanViewer):
                 plot_array[i] = 0.#numpy.nan
             else:
                 plot_array[i] = -(m.data[i,board]-m.bias[board]) # sign flip to match dreampy??
+        for i in range(m.xpos.shape[0]-1):
+            if m.xpos[i] == m.xpos[i+1] and m.ypos[i] == m.ypos[i+1] and plot_array[i] != plot_array[i+1]:
+                print 'two points have the same x/y coordinates but different values', i, m.ypos[i], m.xpos[i], plot_array[i], plot_array[i+1]
+                plot_array[i] = plot_array[i+1]
         zi = mlab.griddata(m.xpos,m.ypos,plot_array,xi,yi)
 
         elev_r = m.elev/180*math.pi
@@ -600,7 +604,7 @@ class RSRFitViewer(RSRViewer):
 #        pl.axis('equal')
         axis2 = [x * 2 for x in axis] 
         pl.axis(axis2)
-        print axis2
+        #print axis2
         pl.grid()
         textstr =           'Az Model %d Offset:   %6.4f'%(F.modrev, F.mean_az_model_offset) + '\n' 
         textstr = textstr + 'El Model %d Offset:   %6.4f'%(F.modrev, F.mean_el_model_offset)
