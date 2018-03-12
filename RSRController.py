@@ -62,7 +62,7 @@ class RSRMapController():
             if plot_option == True and a.show_ion==1 or True:
                 if len(a.process_list[chassis_id]) > 1:
                     if a.show_type==1:
-                        if len(a.chassis_list)>1:
+                        if len(a.chassis_list)>0:
                             if chassis_id == 0:
                                 V.init_big_fig(figno=1)
                             V.master_map_plot(m,a.process_list[chassis_id])
