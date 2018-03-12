@@ -3,6 +3,8 @@
 
 import sys
 from RSRRunPointing import RSRRunPointing
+from rsrFileSearch import rsrFileSearch
+from vlbi1mmFileSearch import vlbi1mmFileSearch
 
 argv = ["-d", "2014-08-20", "-s", "101000003", "--show", "True"]
 argv = ["-d", "2014-03-03", "-s", "16887", "--show", "True"]
@@ -13,11 +15,27 @@ argv = ["-d", "2015-03-18", "-s", "38496", "--show", "True"]
 argv = ["-d", "2016-02-16", "-s", "10056830", "--show", "True"]
 argv = ["-d", "2018-02-27", "-s", "73014", "--chassis", "[1,2,3]", "--show", "True"]
 
-filelist = [
-"./data_lmt/RedshiftChassis1/RedshiftChassis1_2018-02-27_073014_01_0000.nc", 
-"./data_lmt/RedshiftChassis2/RedshiftChassis2_2018-02-27_073014_01_0000.nc", 
-"./data_lmt/RedshiftChassis3/RedshiftChassis3_2018-02-27_073014_01_0000.nc", 
-    ]
+obsnum = 70880
+chassis = [1]
+board = [0,1]
+
+obsnum = 73014
+chassis = [1, 2, 3]
+board = [0,1,2,3,4,5]
+
+root = "./data_lmt"
+filelist = []
+
+argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--show", "True"]
+
+for chassis1 in chassis:
+    f = rsrFileSearch (obsnum, chassis1, root, full = True)
+    if f is not None and f != '':
+        filelist.append(f)
+f = vlbi1mmFileSearch (obsnum, root, full = True)
+if f is not None and f != '':
+    filelist.append(f)
+
 rsr = RSRRunPointing()
 F = rsr.run(argv, filelist)
 #F = rsr.run(argv)
