@@ -146,7 +146,7 @@ class RSRMapFit():
         return array
 
     def load_chassis_board_result(self,m,index,chassis_id,board,board_id):
-        """Loads all resuts and relevant parameters for a particular chassis and board.""" 
+        """Loads all resuts and relevant parameters for a particular chassis and board."""
         if index == 0:
             # for the first one loaded, we set things that don't change
             self.modrev = m.modrev
@@ -212,11 +212,11 @@ class RSRMapFit():
 
     def find_pointing_result(self):
         """Finds the final results and standard deviation after all results are loaded."""
-        print self.az_map_offset
-        print self.el_map_offset
-        print self.isGood
-        print self.az_map_offset[numpy.nonzero(self.isGood)]
-        print self.el_map_offset[numpy.nonzero(self.isGood)]
+        print 'az_map_offset',self.az_map_offset
+        print 'el_map_offset',self.el_map_offset
+        print 'isGood',self.isGood
+        print 'az_map_offset[isGood]',self.az_map_offset[numpy.nonzero(self.isGood)]
+        print 'az_map_offset[isGood]',self.el_map_offset[numpy.nonzero(self.isGood)]
 
         self.pointing_result = True
         self.mean_az_map_offset = numpy.mean(self.az_map_offset[numpy.nonzero(self.isGood)])
