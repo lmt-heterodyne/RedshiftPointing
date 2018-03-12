@@ -67,7 +67,9 @@ class RSRCC():
                 if self.tracking_beam != -1:
                     print 'TRACKING BEAM ',self.tracking_beam
             elif rx[0] == 'V':
-                self.tracking_beam = 0
+                self.tracking_beam = 1
+                self.beam_throw = 0
+                self.beam_throw2 = 0
                 self.azPointOff = self.nc.variables['Header.Vlbi1mmReceiver.AzPointOff'][0]
                 self.elPointOff = self.nc.variables['Header.Vlbi1mmReceiver.ElPointOff'][0]
                 self.skyElReq = self.nc.variables['Header.Sky.ElReq'][0]
@@ -143,12 +145,12 @@ class RSRCC():
                         self.data[j][0] = self.apower[j]
                         self.samples[j][0] = 3936
                     for j in range(nb):
-                        self.data[j][1] = self.apower[j]
+                        self.data[j][1] = self.bpower[j]
                         self.samples[j][1] = 3936
                     self.n = np.shape(self.data)[0]
                     self.bias = np.zeros(2)
                     self.flag = np.zeros((2,self.n))
-                    for board in range(1):
+                    for board in range(2):
                         self.bias[board] = np.median(self.data[:,board])
             except Exception as e:
                 print 'Trouble with data block for file '+self.filename
