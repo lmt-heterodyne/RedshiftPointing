@@ -16,7 +16,7 @@ def lmtTpmFileSearch (obsnum, root='/data_lmt', full = True):
 
 	return "" 
 
-def lmtTpmFileSearch (obsnum, root='/data_lmt', full = True):
+def lmtTpmFileSearchAll (obsnum, root='/data_lmt', full = True):
         all = []
 	
 	baseDir = "%s/LmtTpm/"%root
