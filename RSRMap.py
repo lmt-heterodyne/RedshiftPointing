@@ -1,14 +1,28 @@
 """Module with definition of the RSR Map class for analyzing pointing maps.
 
 Classes: RSRMap
-Uses:    RSRCC, numpy, math
+Uses:    RSRCC, numpy, math, scipy.optimize.leastsq
 Author:  FPS
 Date:    May 5, 2014
-Changes:
+Changes: 03/15/18: changed fit_peak to use scipy.optimize.leastsq
 """
 from RSRCC import RSRCC
 import numpy as np
 import math
+
+from scipy.optimize import leastsq
+
+def compute_model(v,xdata,ydata):
+    """computes gaussian 2d model from x,y; added 3/15/18 for least squares fit to beam"""
+    model = v[0]*np.exp(-4.*np.log(2.)*((xdata-v[1])**2/v[2]**2+(ydata-v[3])**2/v[4]**2))
+    return(model)
+
+def compute_the_residuals(v,xdata,ydata,data):
+    """computes residuals to gaussian 2d model; added 3/15/18 for least squares fit to beam"""
+    n = len(data)
+    model = compute_model(v,xdata,ydata)
+    residuals = data-model
+    return(residuals)
 
 class RSRMap(RSRCC):
     """RSRMap is derived from RSRCC; it provides methods for analysis of pointing maps"""
@@ -16,15 +30,17 @@ class RSRMap(RSRCC):
         """__init__ loads file parameters and data which are needed for pointing analysis"""
         RSRCC.__init__(self,filelist,date,scan,chassis,groupscan=groupscan,subscan=subscan,path=path)
         # check to see if we have a valid instance after RSRCC loads data
+        if self.n < 0:
+            return
         try:
             a=self.n
             # set the beam throw parameter
             if self.beam_throw != -1:
                 self.beamthrow = self.beam_throw
-                print '-----------from self'
+                print '    from file beamthrow', self.beamthrow
             else:
                 self.beamthrow = beamthrow
-                print '-----------from arg'
+                print '    from arg beamthrow', self.beamthrow
             if self.beamthrow == 0:
                 self.beamthrow_angle = 0
             else:
@@ -39,18 +55,22 @@ class RSRMap(RSRCC):
                 self.ystep = self.nc.variables['Header.Map.YStep'][0]
                 self.rows = self.nc.variables['Header.Map.RowsPerScan'][0]
             except:
-                print self.file+' does not have map parameters'
+                print '    ',self.filename+' does not have map parameters'
     
             # define space for results of indivual beams in chassis
             self.peak = [-1.0,+1.0]
-            self.set_pid = [[1,0],[0,1],[0,1],[1,0]]
-            self.xp = np.zeros((6,2))
-            self.yp = np.zeros((6,2))
-            self.ap = np.zeros((6,2))
-            self.hpx = np.zeros((6,2))
-            self.hpy = np.zeros((6,2))
-            self.goodx = np.zeros((6,2))
-            self.goody = np.zeros((6,2))
+            if self.receiver == 'RedshiftReceiver':
+                self.set_pid = [[1,0],[0,1],[0,1],[1,0]]
+            else:
+                self.set_pid = [[1,1],[1,1],[1,1],[1,1]]
+                self.set_pid = [[1,0],[0,1],[0,1],[1,0]]
+            self.xp = np.zeros((32,2))
+            self.yp = np.zeros((32,2))
+            self.ap = np.zeros((32,2))
+            self.hpx = np.zeros((32,2))
+            self.hpy = np.zeros((32,2))
+            self.goodx = np.zeros((32,2))
+            self.goody = np.zeros((32,2))
         
             # circumstances of beam fitting
             self.single_beam_fit = False
@@ -58,17 +78,18 @@ class RSRMap(RSRCC):
             self.fit_beam = -1
 
             # define space for final fitted parameters
-            self.I = np.zeros(6)
-            self.azoff = np.zeros(6)
-            self.eloff = np.zeros(6)
-            self.isGood = np.zeros(6)
-            self.beamsep = np.zeros(6)
-            self.beamang = np.zeros(6)
-            self.hpbw = np.zeros(6)
+            self.I = np.zeros(32)
+            self.azoff = np.zeros(32)
+            self.eloff = np.zeros(32)
+            self.isGood = np.zeros(32)
+            self.beamsep = np.zeros(32)
+            self.beamang = np.zeros(32)
+            self.hpbw = np.zeros(32)
             # define space for model
-            self.model = np.zeros((6,self.n))
-        except AttributeError:
-            print self.filename+' is not valid MAP file'
+            self.model = np.zeros((32,self.n))
+        except AttributeError as e:
+            print '    ',e
+            print '    ',self.filename+' is not valid MAP file'
 
     def check(self):
         """Provides a way to check for a valid instance of an RSRMap"""
@@ -145,9 +166,9 @@ class RSRMap(RSRCC):
                 d1 = math.sqrt((self.xpos[i]-x1)**2 + (self.ypos[i]-y1)**2)
                 #print "%4d %6.2f %6.2f   %6.1f   %6.2f %6.2f" % (i,self.xpos[i],self.ypos[i],self.data[i,band],d0,d1)
                 if (d0<dd or d1<dd):
-                    if self.peak[pid]*self.data[i,board]>bmax:
+                    if self.peak[pid]*(self.data[i,board]-self.bias[board])>bmax:
                         imax = i
-                        bmax = self.peak[pid]*self.data[i,board]
+                        bmax = self.peak[pid]*(self.data[i,board]-self.bias[board])
         
         #print bmax,imax,self.xpos[imax],self.ypos[imax]
         return bmax,self.xpos[imax],self.ypos[imax]
@@ -159,50 +180,44 @@ class RSRMap(RSRCC):
         w specifies the window (arcsec) within which we will fit data.
         """
         bmax,xmax,ymax = self.find_peak(board,pid)
-        ptp = np.zeros((5,5))
-        ptz = np.zeros(5)
-        f = np.zeros(5)
         # looks at all points in map and finds those within "w" for fit
+        XPOS_LIST = []
+        YPOS_LIST = []
+        DATA_LIST = []
+        COUNT_LIST = 0
         for i in range(self.n):
             delta = math.sqrt((self.xpos[i]-xmax)*(self.xpos[i]-xmax)+(self.ypos[i]-ymax)*(self.ypos[i]-ymax))
             if self.flag[board,i] == 0:
                 if delta < w:
-                    check_z = self.peak[pid]*(self.data[i,board]-self.bias[board])
-                    if check_z > 0:
-                        z = math.log(check_z)            
-                        f[0] = 1
-                        f[1] = self.xpos[i]
-                        f[2] = self.xpos[i]*self.xpos[i]
-                        f[3] = self.ypos[i]
-                        f[4] = self.ypos[i]*self.ypos[i]
-                        #print '%6.2f %6.2f   %f %f    %f %f' % (f[1],f[3],pid,self.peak[pid],self.data[i,band]-self.bias[band],z)
-                        for ii in range(5):
-                            for jj in range(5):
-                                ptp[ii][jj] = ptp[ii][jj]+f[ii]*f[jj]
-                            ptz[ii] = ptz[ii] + f[ii]*z
-        ptpinv = np.linalg.inv(ptp)
-        p = np.dot(ptpinv,ptz)
-        self.xp[board,pid] = -p[1]/p[2]/2.0
-        self.yp[board,pid] = -p[3]/p[4]/2.0
-        self.ap[board,pid] = self.peak[pid]*math.exp(p[0]+p[1]*self.xp[board,pid]+p[2]*self.xp[board,pid]*self.xp[board,pid]+p[3]*self.yp[board,pid]+p[4]*self.yp[board,pid]*self.yp[board,pid])
+                    COUNT_LIST = COUNT_LIST + 1
+                    XPOS_LIST.append(self.xpos[i])
+                    YPOS_LIST.append(self.ypos[i])
+                    DATA_LIST.append(self.peak[pid]*(self.data[i,board]-self.bias[board]))
 
-        # we test the signs of the second derivatives to be sure we have a peak.  if not, print a warning
-        arg = -4*math.log(2.)/p[2]
-        if arg < 0:
+        xdata = np.array(XPOS_LIST)
+        ydata = np.array(YPOS_LIST)
+        fit_data = np.array(DATA_LIST)
+        v0 = np.array([bmax, 0., 15., 0., 15.])
+        lsq_fit = leastsq(compute_the_residuals,v0,args=(xdata,ydata,fit_data))
+
+        self.ap[board,pid] = self.peak[pid]*lsq_fit[0][0]
+        self.xp[board,pid] = lsq_fit[0][1]
+        self.yp[board,pid] = lsq_fit[0][3]
+
+        if lsq_fit[0][2] < 0:
             print 'warning: bad gaussian fit in azimuth: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
-            self.hpx[board,pid] = 1
+            self.hpx[board,pid] = np.abs(lsq_fit[0][2])
             self.goodx[board,pid] = 0
         else:
-            self.hpx[board,pid] = math.sqrt(arg)
+            self.hpx[board,pid] = lsq_fit[0][2]
             self.goodx[board,pid] = 1
         
-        arg = -4*math.log(2.)/p[4]
-        if arg < 0:
+        if lsq_fit[0][4] < 0:
             print 'warning: bad gaussian fit in elevation: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
-            self.hpy[board,pid] = 1
+            self.hpy[board,pid] = np.abs(lsq_fit[0][4])
             self.goody[board,pid] = 0
         else:
-            self.hpy[board,pid] = math.sqrt(arg)
+            self.hpy[board,pid] = lsq_fit[0][4]
             self.goody[board,pid] = 1
     
 
@@ -279,7 +294,7 @@ class RSRMap(RSRCC):
 
     def process(self, w=16, remove_baseline=False, dd=50, ww=50, despike_scan=False, elim_bad_integrations = False, checksum=3936, flag_data=False, flag_windows=(),process_dual_beam=True,select_beam=1):
         """Runs the full fitting procedure for all boards."""
-        for board in range(6):
+        for board in range(32):
             # clean up each scan
             if(elim_bad_integrations):
                 self.elim_bad_integrations(board,checksum)

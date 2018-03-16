@@ -214,11 +214,11 @@ class RSRMapFit():
         """Finds the final results and standard deviation after all results are loaded."""
         print 'az_map_offset',self.az_map_offset
         print 'el_map_offset',self.el_map_offset
-        print 'isGood',self.isGood
+        print 'isGood',self.isGood, self.isGood.any()
         print 'az_map_offset[isGood]',self.az_map_offset[numpy.nonzero(self.isGood)]
-        print 'az_map_offset[isGood]',self.el_map_offset[numpy.nonzero(self.isGood)]
+        print 'el_map_offset[isGood]',self.el_map_offset[numpy.nonzero(self.isGood)]
 
-        self.pointing_result = True
+        self.pointing_result = self.isGood.any()
         self.mean_az_map_offset = numpy.mean(self.az_map_offset[numpy.nonzero(self.isGood)])
         self.std_az_map_offset = numpy.std(self.az_map_offset[numpy.nonzero(self.isGood)])
         self.mean_el_map_offset = numpy.mean(self.el_map_offset[numpy.nonzero(self.isGood)])
@@ -242,10 +242,10 @@ class RSRMapFit():
 
     def find_hpbw_result(self):
         """Derives the Half Power Beam Widths of fits."""
-        self.mean_hpbw = numpy.zeros(6)
-        self.std_hpbw = numpy.zeros(6)
+        self.mean_hpbw = numpy.zeros(32)
+        self.std_hpbw = numpy.zeros(32)
         self.ratio_hpbw = []
-        for band in range(6):
+        for band in range(32):
             band_list = []
             for i in range(self.nresults):
                 if self.board_id_numbers[i] == self.band_order[band]:

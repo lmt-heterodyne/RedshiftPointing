@@ -15,7 +15,7 @@ from RSRUtilities import TempSens
 class RSRCC():
     """RSRCC is the base class for compressed continuum data scans"""
     def __init__(self,filelist,date,scan,chassis,groupscan=0,subscan=1,path='/data_lmt'):
-        """__init__ reads the netcdf file and fills in parameters and arrays""" 
+        """__init__ reads the netcdf file and fills in parameters and arrays"""
         self.path = path
         self.date = date
         self.scan = scan
@@ -23,7 +23,11 @@ class RSRCC():
         self.subscan = subscan
         self.chassis = chassis
         self.filename = self.make_filename(filelist)
-        print 'process file ',self.filename
+        if self.filename == '':
+            print '    file not found'
+            self.n = -1
+            return
+        print '    process file', self.filename
         if os.path.isfile(self.filename):
             # open file as a dataset
             self.nc = netCDF4.Dataset(self.filename)
@@ -48,37 +52,22 @@ class RSRCC():
             # sometimes the Receiver designation is wrong; check and warn but don't stop
             self.beam_throw = -1
             self.beam_throw2 = -1
-            rx = ''.join(self.nc.variables['Header.Dcs.Receiver'][:])
-            if rx[0] == 'R':
+            self.receiver = ''.join(self.nc.variables['Header.Dcs.Receiver'][:]).strip()
+            if self.receiver == 'RedshiftReceiver':
+                print '    receiver =', self.receiver
                 self.tracking_beam = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
-                #self.azPointOff = self.nc.variables['Header.RedshiftReceiver.AzPointOff'][0]
-                #self.elPointOff = self.nc.variables['Header.RedshiftReceiver.ElPointOff'][0]
-                #self.skyElReq = self.nc.variables['Header.Sky.ElReq'][0]
-                #self.beam_throw = np.abs(np.round(self.azPointOff/np.cos(self.skyElReq)*3600*180/np.pi))
-                #self.beam_throw2 = np.abs(np.round(self.elPointOff/np.sin(self.skyElReq)*3600*180/np.pi))
                 self.beam_throw = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][0])*3600*180/np.pi
                 self.beam_throw2 = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][:][1])*3600*180/np.pi
                 if(self.beam_throw != self.beam_throw2):
                     self.beam_throw = self.beam_throw2 = -1
-                #print 'AzPointOff ',self.azPointOff
-                #print 'ElPointOff ',self.elPointOff
-                #print 'SkyElReq ',self.skyElReq
-                print 'beam throw ', self.beam_throw,self.beam_throw2
+                print '    beam throw ', self.beam_throw,self.beam_throw2
                 if self.tracking_beam != -1:
-                    print 'TRACKING BEAM ',self.tracking_beam
-            elif rx[0] == 'V':
+                    print '    TRACKING BEAM ',self.tracking_beam
+            else:
+                print '    receiver =', self.receiver
                 self.tracking_beam = 1
                 self.beam_throw = 0
                 self.beam_throw2 = 0
-                self.azPointOff = self.nc.variables['Header.Vlbi1mmReceiver.AzPointOff'][0]
-                self.elPointOff = self.nc.variables['Header.Vlbi1mmReceiver.ElPointOff'][0]
-                self.skyElReq = self.nc.variables['Header.Sky.ElReq'][0]
-                print 'AzPointOff ',self.azPointOff
-                print 'ElPointOff ',self.elPointOff
-                print 'SkyElReq ',self.skyElReq
-            else:
-                print 'WARNING: NOT AN RSR FILE'
-                self.tracking_beam = -1
 
             # Pointing Variables
             self.modrev = self.nc.variables['Header.PointModel.ModRev'][0]
@@ -108,30 +97,38 @@ class RSRCC():
 
             # Data Block - sometimes this isn't written, so check it and handle exception
             try:
-                self.xpos = self.nc.variables['Data.Sky.XPos'][:]*206264.8
-                self.ypos = self.nc.variables['Data.Sky.YPos'][:]*206264.8
-                self.time = self.nc.variables['Data.Sky.Time'][:]
-                self.duration = self.time[len(self.time)-1]-self.time[0]
-                if rx[0] == 'R':
+                if self.receiver == 'RedshiftReceiver':
+                    this_chassis = 'Data.RedshiftChassis_'+str(self.chassis)
+                    self.xpos = self.nc.variables['Data.Sky.XPos'][:]*206264.8
+                    self.ypos = self.nc.variables['Data.Sky.YPos'][:]*206264.8
+                    self.time = self.nc.variables['Data.Sky.Time'][:]
+                    self.duration = self.time[len(self.time)-1]-self.time[0]
                     self.bufpos = self.nc.variables['Data.Dcs.BufPos'][:]
-                    self.data = self.nc.variables['Data.RedshiftChassis_'+str(self.chassis)+'_.AccAverage'][:]
-                    if 'Data.RedshiftChassis_'+str(self.chassis)+'_.AccSamples' in self.nc.variables.keys():
-                        self.samples = self.nc.variables['Data.RedshiftChassis_'+str(self.chassis)+'_.AccSamples'][:]
+                    self.data = self.nc.variables[this_chassis+'_.AccAverage'][:]
+                    if this_chassis+'_.AccSamples' in self.nc.variables.keys():
+                        self.samples = self.nc.variables[this_chassis+'_.AccSamples'][:]
                         self.samples_exist = True
                     else:
                         self.samples_exist = False
                     self.n =  np.shape(self.data)[0]
-                    self.bias = np.zeros(6)
-                    self.flag = np.zeros((6,self.n))
-                    for board in range(6):
+                    self.nchan = 6
+                    self.bias = np.zeros(self.nchan)
+                    self.flip = np.zeros(self.nchan)
+                    self.flag = np.zeros((self.nchan,self.n))
+                    for board in range(self.nchan):
+                        self.flip[board] = -1
                         self.bias[board] = np.median(self.data[:,board])
-                elif rx[0] == 'V':
+                elif 'vlbi1mm' in self.filename:
+                    self.xpos = self.nc.variables['Data.Sky.XPos'][:]*206264.8
+                    self.ypos = self.nc.variables['Data.Sky.YPos'][:]*206264.8
+                    self.time = self.nc.variables['Data.Sky.Time'][:]
+                    self.duration = self.time[len(self.time)-1]-self.time[0]
                     try:
-                        print 'get bufpos from dcs'
                         self.bufpos = self.nc.variables['Data.Dcs.BufPos'][:]
+                        print '    got bufpos from dcs'
                     except:
-                        print 'get bufpos from sky'
                         self.bufpos = self.nc.variables['Data.Sky.BufPos'][:]
+                        print '    got bufpos from sky'
                     self.apower = self.nc.variables['Data.Vlbi1mmTpm.APower'][:]
                     self.bpower = self.nc.variables['Data.Vlbi1mmTpm.BPower'][:]
                     self.samples_exist = True
@@ -139,18 +136,54 @@ class RSRCC():
                     nb = len(self.bpower)
                     self.data = [[]]
                     self.samples = [[]]
-                    self.data = np.zeros((na,2))
-                    self.samples = np.zeros((na,2))
-                    for j in range(na):
-                        self.data[j][0] = self.apower[j]
-                        self.samples[j][0] = 3936
-                    for j in range(nb):
-                        self.data[j][1] = self.bpower[j]
-                        self.samples[j][1] = 3936
+                    self.nchan = 32
+                    self.data = np.zeros((na,self.nchan))
+                    self.samples = np.zeros((na,self.nchan))
+                    for b in range(0,self.nchan,2):
+                        for j in range(na):
+                            self.data[j][b+0] = self.apower[j]
+                            self.samples[j][b+0] = 3936
+                        for j in range(nb):
+                            self.data[j][b+1] = self.bpower[j]
+                            self.samples[j][b+1] = 3936
+                            
                     self.n = np.shape(self.data)[0]
-                    self.bias = np.zeros(2)
-                    self.flag = np.zeros((2,self.n))
-                    for board in range(2):
+                    self.bias = np.zeros(self.nchan)
+                    self.flip = np.zeros(self.nchan)
+                    self.flag = np.zeros((self.nchan,self.n))
+                    for board in range(self.nchan):
+                        self.flip[board] = 1
+                        self.bias[board] = np.median(self.data[:,board])
+                elif 'LmtTpm' in self.filename:
+                    self.xpos = self.nc.variables['Data.TelescopeBackend.TelAzMap'][:]*206264.8
+                    self.ypos = self.nc.variables['Data.TelescopeBackend.TelElMap'][:]*206264.8
+                    self.time = self.nc.variables['Data.TelescopeBackend.TelTime'][:]
+                    self.duration = self.time[len(self.time)-1]-self.time[0]
+                    self.bufpos = self.nc.variables['Data.TelescopeBackend.BufPos'][:]
+                    self.signal0 = self.nc.variables['Data.LmtTpm.Signal'][:][:,0]
+                    self.signal1 = self.nc.variables['Data.LmtTpm.Signal'][:][:,1]
+                    self.samples_exist = True
+                    na = len(self.signal0)
+                    nb = len(self.signal1)
+                    self.data = [[]]
+                    self.samples = [[]]
+                    self.nchan = 32
+                    self.data = np.zeros((na,self.nchan))
+                    self.samples = np.zeros((na,self.nchan))
+                    for b in range(0,self.nchan,2):
+                        for j in range(na):
+                            self.data[j][b+0] = self.signal0[j]
+                            self.samples[j][b+0] = 3936
+                        for j in range(nb):
+                            self.data[j][b+1] = self.signal1[j]
+                            self.samples[j][b+1] = 3936
+                            
+                    self.n = np.shape(self.data)[0]
+                    self.bias = np.zeros(self.nchan)
+                    self.flip = np.zeros(self.nchan)
+                    self.flag = np.zeros((self.nchan,self.n))
+                    for board in range(self.nchan):
+                        self.flip[board] = 1
                         self.bias[board] = np.median(self.data[:,board])
             except Exception as e:
                 print 'Trouble with data block for file '+self.filename
@@ -172,35 +205,24 @@ class RSRCC():
             print "from close(): ncfile not open"
     
     def make_filename(self,filelist):
-        # look for vlbi 1st since redshift has multiple chassis and one of them
-        # might not have a file
-        for rx in ['VLBI1mm', 'RSR']:
-            filename = self.make_filename_rx(filelist,rx)
-            print filename
-            if os.path.isfile(filename):
-                print "is ", rx
-                return filename
-        return ""
-
-    def make_filename_rx(self,filelist,rx):
         filename = ""
-        """Builds an LMT filename from date and obsnum."""
         if filelist != False:
-            print "Get filename from filelist"
+            print '  get filename from filelist for obsnum', self.scan, 'chassis', self.chassis
             for filel in filelist:
-                if rx[0] == 'R':
+                """Builds an LMT filename filelist and chassis."""
+                if 'RedshiftChassis' in filel:
                     chassis_str = ('RedshiftChassis%d' % self.chassis)
-                elif rx[0] == 'V':
-                    chassis_str = ('vlbi1mm')
-                if chassis_str in filel and str(self.scan) in filel:
+                    if chassis_str in filel and str(self.scan) in filel:
+                        filename = filel
+                        break
+                else:
+                    chassis_str = 'other'
                     filename = filel
                     break
         else:
-            print "Get filename from date and obsnum"
-            if rx[0] == 'R':
-                filename = ('%s/RedshiftChassis%d/RedshiftChassis%d_%s_%06d_%02d_%04d.nc' % (self.path, self.chassis, self.chassis, self.date,self.scan,self.groupscan,self.subscan))
-            elif rx[0] == 'V':
-                filename = ('%s/vlbi1mm/vlbi1mm_%s_%06d_%02d_%04d.nc' % (self.path, self.date,self.scan,self.groupscan,self.subscan))
+            """Builds an LMT filename from date and obsnum."""
+            print '  get filename from date and obsnum'
+            filename = ('%s/RedshiftChassis%d/RedshiftChassis%d_%s_%06d_%02d_%04d.nc' % (self.path, self.chassis, self.chassis, self.date,self.scan,self.groupscan,self.subscan))
         return filename
 
     def check(self):
@@ -307,7 +329,7 @@ class RSRCC():
         The processing steps are: (1) elimination of bad integrations; ;(2) despike;
         (3) baseline removal; (4) bad data flagging.
         """
-        for board in range(6):
+        for board in range(self.nchan):
             if(elim_bad_integrations):
                 self.elim_bad_integrations(board,checksum)
             if(despike_scan):

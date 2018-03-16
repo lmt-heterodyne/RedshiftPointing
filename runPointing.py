@@ -4,7 +4,9 @@
 import sys
 from RSRRunPointing import RSRRunPointing
 from rsrFileSearch import rsrFileSearch
-from vlbi1mmFileSearch import vlbi1mmFileSearch
+from rsrFileSearch import rsrFileSearchAll
+from vlbi1mmFileSearch import vlbi1mmFileSearchAll
+from lmtTpmFileSearch import lmtTpmFileSearchAll
 
 argv = ["-d", "2014-08-20", "-s", "101000003", "--show", "True"]
 argv = ["-d", "2014-03-03", "-s", "16887", "--show", "True"]
@@ -15,26 +17,32 @@ argv = ["-d", "2015-03-18", "-s", "38496", "--show", "True"]
 argv = ["-d", "2016-02-16", "-s", "10056830", "--show", "True"]
 argv = ["-d", "2018-02-27", "-s", "73014", "--chassis", "[1,2,3]", "--show", "True"]
 
-obsnum = 70880
-chassis = [1]
-board = [0,1]
-
-obsnum = 73014
-chassis = [1, 2, 3]
-board = [0,1,2,3,4,5]
-
-root = "./data_lmt"
+root = "/data_lmt"
 filelist = []
 
-argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--show", "True"]
+try:
+    if sys.argv[1][0] == 'v':
+        obsnum = 70868 #70880
+        chassis = [0]
+        board = [i for i in range(10)]
+        #board = [0,1,2,3]
+        filelist = vlbi1mmFileSearchAll (obsnum, root, full = True)
+    elif sys.argv[1][0] == 'l':
+        print 'LmtTpm'
+        obsnum = 102663
+        obsnum = 73677
+        chassis = [0]
+        board = [i for i in range(1)]
+        filelist = lmtTpmFileSearchAll (obsnum, root, full = True)
+except Exception as e:
+    obsnum = 73014
+    chassis = [1,2,3]
+    board = [0,1,2,3,4,5]
+    filelist = rsrFileSearchAll(obsnum, root, full = True)
+    pass
 
-for chassis1 in chassis:
-    f = rsrFileSearch (obsnum, chassis1, root, full = True)
-    if f is not None and f != '':
-        filelist.append(f)
-f = vlbi1mmFileSearch (obsnum, root, full = True)
-if f is not None and f != '':
-    filelist.append(f)
+
+argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--show", "True"]
 
 rsr = RSRRunPointing()
 F = rsr.run(argv, filelist)

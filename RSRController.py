@@ -30,7 +30,7 @@ class RSRMapController():
         if plot_option:
             V.init(a)
         index = 0
-        print 'processing %s %d'%(a.date,scan)
+        print 'processing obsnum %d'%(scan)
         print '           chassis=%s'%(str(a.chassis_list))
         print '           process=%s'%(str(a.process_list))
         for chassis_id, chassis in enumerate(a.chassis_list):
@@ -38,7 +38,7 @@ class RSRMapController():
             try:
                 fnc = m.nc
             except AttributeError:
-                print "map doesn't have a file"
+                print "    map doesn't have a file"
                 continue
             F.load_average_parameters(m)        
             print '           chassis_id=%d, chassis=%d'%(chassis_id,chassis)
@@ -60,12 +60,11 @@ class RSRMapController():
                 F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                 index = index + 1
             if plot_option == True and a.show_ion==1 or True:
-                if len(a.process_list[chassis_id]) > 1:
+                if len(a.process_list[chassis_id]) > 0:
                     if a.show_type==1:
                         if len(a.chassis_list)>0:
-                            if chassis_id == 0:
-                                V.init_big_fig(figno=1)
-                            V.master_map_plot(m,a.process_list[chassis_id])
+                            V.init_big_fig(figno=1,chassis_list=a.chassis_list, process_list=a.process_list,filelist=filelist)
+                            V.master_map_plot(m,chassis,a.process_list[chassis_id])
                         else:
                             V.plot_all(m,a.process_list[chassis_id],figno=chassis_id+1,fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
@@ -81,7 +80,7 @@ class RSRMapController():
                         V.plot_map(m,a.process_list[chassis_id][0],fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
                         V.plot_model_scan(m,a.process_list[chassis_id][0])
-        m.close()
+            m.close()
         return F
 
     def reduce_maps(self,a,filelist=False):

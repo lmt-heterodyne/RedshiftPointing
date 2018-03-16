@@ -12,6 +12,7 @@ from RSRFit import RSRMapFit
 import numpy
 import matplotlib.pyplot as pl
 import matplotlib.mlab as mlab
+from mpl_toolkits.axes_grid import make_axes_locatable
 import math
 
 class RSRViewer():
@@ -23,14 +24,50 @@ class RSRViewer():
             pl.close('all')
         elif a.show_ion == 0:
             pl.ioff()
-    def init_fig(self,figno=1):
-        """Initializes a figure"""
-        pl.figure(figno)
-        pl.clf()
-    def init_big_fig(self,figno=1,figsize=(12,8)):
+        self.bigfig = None
+    def init_fig(self,figno=1,figsize=(12,5)):
         """Initializes a figure"""
         pl.figure(num=figno,figsize=figsize)
         pl.clf()
+    def init_big_fig(self,figno=1,figsize=(12,8),chassis_list=[0],process_list=[[0,1,2,3,4,5]],filelist=None):
+        """Initializes a figure"""
+        if self.bigfig != None:
+            return
+        nplots = 0
+        for index,chassis in enumerate(chassis_list):
+            nplots = nplots + len(process_list[index])
+        self.ncols = min(nplots, 6)
+        if nplots > 24:
+            self.ncols = 8
+        self.nrows = int(math.ceil(float(nplots)/float(self.ncols)))
+        if self.nrows == 0:
+            self.nrows = 1
+        #force nrows for rsr
+        self.nrows_plots = self.nrows
+        print filelist
+        if filelist is not None:
+            for f in filelist:
+                if 'Redshift' in f:
+                    self.nrows = 4
+                    self.nrows_plots = chassis_list[-1]+1
+                    break
+
+        #self.grid = pl.GridSpec(self.nrows, self.ncols)
+        if True:
+            print 'chassis_list', chassis_list
+            print 'process_list', process_list
+            print 'nplots', nplots
+            print 'nrows_plots', self.nrows_plots
+            print 'nrows', self.nrows
+            print 'ncols', self.ncols
+
+        figw = 12
+        figh = 1.75*self.nrows+1
+        if self.nrows == 1:
+            figh = figh + 4
+        self.bigfig = pl.figure(num=figno,figsize=(figw,figh))
+        pl.clf()
+                
 
 class RSRScanViewer(RSRViewer):
     """Viewer with methods to plot basic compressed continuum scans."""
@@ -337,36 +374,44 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('%s %d Chassis %d'%(m.date,m.obsnum,m.chassis))
 
     
-    def master_map_plot(self,m,board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
+    def master_map_plot(self,m,chassis_id,board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
         """Plots all maps together in a single figure."""
-        if m.chassis == 0:
-            label_y_axis = [True, True, True, False, False, False]
-        else:
-            label_y_axis = [False, False, False, False, False, False]
-        label_x_axis = [False, False, True, False, False, True]
+        row = chassis_id
+        col = 0
         for i in board_list:
-            plot_index = 6*m.chassis+i+1
-            ax = pl.subplot(4,6,plot_index)
-            if m.chassis<3:
-                ax.set_xticklabels([])
-            else:
-                ###ax.tick_params(axis='both',which='major',labelsize=6)
-                pl.xlabel('Azimuth (arcsec)')
-            if i > 0:
-                ax.set_yticklabels([])
-            else:
-                ###ax.tick_params(axis='both',which='major',labelsize=6)
-                pl.ylabel('Elevation (arcsec)')
-            if m.chassis == 0:
-                pl.title('Board %d'%(i))
+            # create plot
+            ax = pl.subplot(self.nrows, self.ncols, row*self.ncols+col+1)
+
+            # plot
             self.plot_map(m,i,fit_window,label_it=False,show_samples=show_samples)
+
+            #title the first row
+            if row == 0 and False:
+                ax.set_title('Board %d'%(i))
+                
+            #x label the last row
+            if row+1 == self.nrows_plots:
+                for tick in ax.get_xticklabels():
+                    tick.set_rotation(60)
+                ax.set_xlabel('Azimuth\n(arcsec)')
+            else:
+                ax.set_xticklabels([])
+
+            #y label the first row
+            if col == 0:
+                ax.set_ylabel('Elevation\n(arcsec)')
+            else:
+                ax.set_yticklabels([])
+
+            #now can step
+            col = col + 1
+            if col == self.ncols:
+                col = 0
+                row = row + 1
+            
             pl.subplots_adjust(hspace=0.001,wspace=0.1)
         # titles
-        pl.suptitle('%20s %s %d'% 
-                    (m.source[0:20],
-                     m.date,
-                     m.obsnum),
-                    size=16)
+        #pl.suptitle('%20s %s %d'% (m.source[0:20], m.date, m.obsnum), size=16)
         pl.savefig('rsr_pointing_maps.png', bbox_inches='tight')
     
     def plot_pointing_result(self,m,figno=1):
@@ -392,7 +437,7 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('Offset wrt Model %d'%(m.modrev))
     
 
-    def plot_map(self,m,board=0,fit_window=16,label_it=True, show_samples=False):
+    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False):
         """Plots a single pointing map."""
         if m.single_beam_fit and m.tracking_single_beam_position:
             maplimits = [-50, 50, -50, 50]
@@ -402,6 +447,8 @@ class RSRMapViewer(RSRScanViewer):
             else:
                 maplimits = [-100, 100, -100, 100]
         mapgrid = 10
+        if m.beamthrow == 0:
+            maplimits = [min(m.xpos), max(m.xpos), min(m.ypos), max(m.ypos)]
         nx = (maplimits[1]-maplimits[0])/mapgrid
         ny = (maplimits[3]-maplimits[2])/mapgrid
         xi = numpy.linspace(maplimits[0],maplimits[1],nx)
@@ -411,11 +458,12 @@ class RSRMapViewer(RSRScanViewer):
             if m.flag[board,i] == 1:
                 plot_array[i] = 0.#numpy.nan
             else:
-                plot_array[i] = -(m.data[i,board]-m.bias[board]) # sign flip to match dreampy??
+                plot_array[i] = m.flip[board]*(m.data[i,board]-m.bias[board]) # sign flip to match dreampy??
         for i in range(m.xpos.shape[0]-1):
             if m.xpos[i] == m.xpos[i+1] and m.ypos[i] == m.ypos[i+1] and plot_array[i] != plot_array[i+1]:
-                print 'two points have the same x/y coordinates but different values', i, m.ypos[i], m.xpos[i], plot_array[i], plot_array[i+1]
-                plot_array[i] = plot_array[i+1]
+                #print 'two points have the same x/y coordinates but different values', i, m.ypos[i], m.xpos[i], plot_array[i], plot_array[i+1]
+                #plot_array[i] = plot_array[i+1]
+                m.xpos[i+1] = 1.00001*m.xpos[i+1]
         zi = mlab.griddata(m.xpos,m.ypos,plot_array,xi,yi)
 
         elev_r = m.elev/180*math.pi
@@ -449,6 +497,10 @@ class RSRMapViewer(RSRScanViewer):
         if show_samples:
             pl.plot(m.xpos,m.ypos,'.')
         pl.axis('equal')
+        ax = pl.gca()
+        #divider = make_axes_locatable(ax)
+        #cax = divider.append_axes("right", size="5%", pad=0.05)
+        #cbar=pl.colorbar(cax=cax)
         cbar=pl.colorbar()
         ###cbar.ax.tick_params(labelsize=6)
         #pl.text(maplimits[1],m.beamthrow*.707,('%d'%(board)),horizontalalignment='right')
@@ -585,11 +637,11 @@ class RSRFitViewer(RSRViewer):
         """Plots the pointing offsets determined by the fit."""
         self.init_fig(figno)
         pl.subplot(1,2,1)
-        pl.plot(F.az_map_offset,F.el_map_offset,'o')
+        pl.plot(F.az_map_offset[numpy.nonzero(F.isGood)],F.el_map_offset[numpy.nonzero(F.isGood)],'o')
         pl.xlabel('Az Offset (arcsec)')
         pl.ylabel('El Offset (arcsec)')
         pl.title('%20s'%(F.source[0:20]))
-#        pl.axis('equal')
+        #pl.axis('equal')
         pl.axis(axis)
         pl.grid()
         textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
@@ -598,10 +650,10 @@ class RSRFitViewer(RSRViewer):
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(0, axis[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
         pl.subplot(1,2,2)
-        pl.plot(F.az_model_offset,F.el_model_offset,'o')
+        pl.plot(F.az_model_offset[numpy.nonzero(F.isGood)],F.el_model_offset[numpy.nonzero(F.isGood)],'o')
         pl.xlabel('Az Offset (arcsec)')
         pl.title('%s %d'%(F.date,F.obsnum))
-#        pl.axis('equal')
+        #pl.axis('equal')
         axis2 = [x * 2 for x in axis] 
         pl.axis(axis2)
         #print axis2
