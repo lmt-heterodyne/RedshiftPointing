@@ -17,6 +17,9 @@ import math
 
 class RSRViewer():
     """Base Class of Viewer"""
+    def __init__(self):
+	self.bigfig=None
+   
     def init(self,a):
         """Initializes Interactive pyplot; closes all open windows"""
         if a.show_ion == 1:
