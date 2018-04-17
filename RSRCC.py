@@ -136,7 +136,7 @@ class RSRCC():
                     nb = len(self.bpower)
                     self.data = [[]]
                     self.samples = [[]]
-                    self.nchan = 32
+                    self.nchan = 2
                     self.data = np.zeros((na,self.nchan))
                     self.samples = np.zeros((na,self.nchan))
                     for b in range(0,self.nchan,2):
@@ -154,30 +154,29 @@ class RSRCC():
                     for board in range(self.nchan):
                         self.flip[board] = 1
                         self.bias[board] = np.median(self.data[:,board])
-                elif 'lmttpm' in self.filename:
+                elif 'lmttpm' in self.filename or 'ifproc' in self.filename:
                     self.xpos = self.nc.variables['Data.TelescopeBackend.TelAzMap'][:]*206264.8
                     self.ypos = self.nc.variables['Data.TelescopeBackend.TelElMap'][:]*206264.8
                     self.time = self.nc.variables['Data.TelescopeBackend.TelTime'][:]
                     self.duration = self.time[len(self.time)-1]-self.time[0]
                     self.bufpos = self.nc.variables['Data.TelescopeBackend.BufPos'][:]
-                    self.signal0 = self.nc.variables['Data.LmtTpm.Signal'][:][:,0]
-                    self.signal1 = self.nc.variables['Data.LmtTpm.Signal'][:][:,1]
+                    if 'lmttpm' in self.filename:
+                        self.signals = self.nc.variables['Data.LmtTpm.Signal']
+                    elif 'ifproc' in self.filename:
+                        self.signals = self.nc.variables['Data.IfProc.BasebandLevel']
                     self.samples_exist = True
-                    na = len(self.signal0)
-                    nb = len(self.signal1)
                     self.data = [[]]
                     self.samples = [[]]
-                    self.nchan = 32
-                    self.data = np.zeros((na,self.nchan))
-                    self.samples = np.zeros((na,self.nchan))
-                    for b in range(0,self.nchan,2):
-                        for j in range(na):
-                            self.data[j][b+0] = self.signal0[j]
-                            self.samples[j][b+0] = 3936
-                        for j in range(nb):
-                            self.data[j][b+1] = self.signal1[j]
-                            self.samples[j][b+1] = 3936
-                            
+                    n = len(self.signals)
+                    sigs = np.transpose(self.signals)
+                    self.nchan = len(sigs)
+                    print 'nchan', self.nchan
+                    self.data = np.zeros((n,self.nchan))
+                    self.samples = np.zeros((n,self.nchan))
+                    for b,sig in enumerate(sigs):
+                      for j in range(n):
+                          self.data[j][b] = sig[j]
+                          self.samples[j][b] = 3936
                     self.n = np.shape(self.data)[0]
                     self.bias = np.zeros(self.nchan)
                     self.flip = np.zeros(self.nchan)
@@ -186,8 +185,8 @@ class RSRCC():
                         self.flip[board] = 1
                         self.bias[board] = np.median(self.data[:,board])
             except Exception as e:
-                print 'Trouble with data block for file '+self.filename
-                print e
+              print 'Trouble with data block for file '+self.filename
+              print e
         
             # define special elimination flag
             self.ELIM = -999999.
@@ -356,3 +355,12 @@ class RSRCC():
             self.remove_baseline(board,dd,ww)
                 
 
+def main():
+    filelist = ['/data_lmt/ifproc/ifproc_2018-04-16_074753_00_0001.nc']
+    r = RSRCC(filelist, '', 74753, 0)
+    filelist = ['/data_lmt/lmttpm/lmttpm_2018-03-16_073677_01_0000.nc']
+    r = RSRCC(filelist, '', 73677, 0)
+
+if __name__ == '__main__':
+    main()
+    
