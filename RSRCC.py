@@ -154,7 +154,7 @@ class RSRCC():
                     for board in range(self.nchan):
                         self.flip[board] = 1
                         self.bias[board] = np.median(self.data[:,board])
-                elif 'LmtTpm' in self.filename:
+                elif 'lmttpm' in self.filename:
                     self.xpos = self.nc.variables['Data.TelescopeBackend.TelAzMap'][:]*206264.8
                     self.ypos = self.nc.variables['Data.TelescopeBackend.TelElMap'][:]*206264.8
                     self.time = self.nc.variables['Data.TelescopeBackend.TelTime'][:]

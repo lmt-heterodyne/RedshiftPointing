@@ -28,7 +28,7 @@ try:
         #board = [0,1,2,3]
         filelist = vlbi1mmFileSearchAll (obsnum, root, full = True)
     elif sys.argv[1][0] == 'l':
-        print 'LmtTpm'
+        print 'lmttpm'
         obsnum = 102663
         obsnum = 73677
         chassis = [0]
