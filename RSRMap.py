@@ -197,7 +197,7 @@ class RSRMap(RSRCC):
         xdata = np.array(XPOS_LIST)
         ydata = np.array(YPOS_LIST)
         fit_data = np.array(DATA_LIST)
-        v0 = np.array([bmax, 0., 15., 0., 15.])
+        v0 = np.array([bmax, xmax, 15., ymax, 15.])
         lsq_fit = leastsq(compute_the_residuals,v0,args=(xdata,ydata,fit_data))
 
         self.ap[board,pid] = self.peak[pid]*lsq_fit[0][0]
