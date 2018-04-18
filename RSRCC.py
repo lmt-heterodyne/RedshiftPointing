@@ -216,7 +216,6 @@ class RSRCC():
                         break
                 else:
                     chassis_str = 'other'
-                    #if i == self.chassis_id and str(self.scan) in filel:
                     if str(self.scan) in filel:
                         filename = filel
                         break
