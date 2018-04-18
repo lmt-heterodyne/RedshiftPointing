@@ -71,7 +71,7 @@ filelist = [
 "/data_lmt/ifproc/ifproc_2018-04-18_074795_01_0000.nc",
     ]
 
-argv = ["-d", "2018-04-18", "-s", "74793:74795", "--chassis", "[0]", "--board", "[0]", "--show", "True"]
+argv = ["-d", "2018-04-18", "-s", "74793:74795", "--chassis", "[0]", "--board", "[0,1,2,3]", "--show", "True"]
 
 rsr = RSRRunFocus()
 #F = rsr.run(argv)
