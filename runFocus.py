@@ -81,6 +81,16 @@ filelist = [
 
 argv = ["-d", "2018-04-18", "-s", "74793:74795", "--chassis", "[0]", "--board", "[0, 1, 2, 3]", "--show", "True"]
 
+filelist = [
+"/data_lmt/ifproc/ifproc_2018-04-18_074898_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074899_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074900_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074901_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074902_01_0000.nc",
+    ]
+
+argv = ["-d", "2018-04-18", "-s", "74898:74902", "--chassis", "[0]", "--board", "[0, 1, 2, 3]", "--show", "True"]
+
 rsr = RSRRunFocus()
 #F = rsr.run(argv)
 F = rsr.run(argv, filelist, 7)
