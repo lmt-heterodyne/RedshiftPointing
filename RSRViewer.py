@@ -487,7 +487,11 @@ class RSRMapViewer(RSRScanViewer):
         else:
             imagemax = numpy.max(plot_array)
         levels = [-0.95*imagemax,-0.75*imagemax,-0.5*imagemax,-0.25*imagemax,-0.1*imagemax,-0.05*imagemax,0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax]
-        pl.contour(xi,yi,zi,levels)
+        try:
+            pl.contour(xi,yi,zi,levels)
+        except Exception as e:
+            print e
+            pass
         pl.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
         if m.tracking_single_beam_position and m.single_beam_fit:
             if m.fit_beam == 9:
