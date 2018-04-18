@@ -26,9 +26,9 @@ def compute_the_residuals(v,xdata,ydata,data):
 
 class RSRMap(RSRCC):
     """RSRMap is derived from RSRCC; it provides methods for analysis of pointing maps"""
-    def __init__(self,filelist,date,scan,chassis,beamthrow=38.9,beamthrow_angle=-0.33,groupscan=1,subscan=1,path='/data_lmt'):
+    def __init__(self,filelist,date,scan,chassis_id,chassis,beamthrow=38.9,beamthrow_angle=-0.33,groupscan=1,subscan=1,path='/data_lmt'):
         """__init__ loads file parameters and data which are needed for pointing analysis"""
-        RSRCC.__init__(self,filelist,date,scan,chassis,groupscan=groupscan,subscan=subscan,path=path)
+        RSRCC.__init__(self,filelist,date,scan,chassis_id,chassis,groupscan=groupscan,subscan=subscan,path=path)
         # check to see if we have a valid instance after RSRCC loads data
         if self.n < 0:
             return
@@ -63,7 +63,6 @@ class RSRMap(RSRCC):
                 self.set_pid = [[1,0],[0,1],[0,1],[1,0]]
             else:
                 self.set_pid = [[1,1],[1,1],[1,1],[1,1]]
-                self.set_pid = [[1,0],[0,1],[0,1],[1,0]]
             self.xp = np.zeros((32,2))
             self.yp = np.zeros((32,2))
             self.ap = np.zeros((32,2))
