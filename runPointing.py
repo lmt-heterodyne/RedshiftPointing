@@ -39,6 +39,11 @@ try:
         print 'ifproc'
         obsnum = 73677
         obsnum = 102669
+        obsnum = 74792
+        try:
+            obsnum = int(sys.argv[2])
+        except:
+            pass
         chassis = [0]
         board = [i for i in range(6)]
         filelist = genericFileSearchAll ('ifproc', obsnum, root, full = True)
