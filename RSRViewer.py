@@ -880,7 +880,8 @@ class RSRM2FitViewer(RSRViewer):
             the_model = M.relative_focus_fit+M.focus_slope*brange
             pl.plot(f,the_model,'r')
             pl.xlabel('Frequency (GHz)')
-            textpos = 93
+            xpos = 93
+            ypos = result_relative.max()-3*(result_relative.max()-result_relative.min())/10
         else:
             result_relative = M.result_relative
             brange = numpy.arange(-0.5*(M.n-1),0.5*(M.n-1)+1,1)
@@ -889,7 +890,9 @@ class RSRM2FitViewer(RSRViewer):
             pl.plot(brange,result_relative,'o')
             pl.plot(brange,the_model,'r')
             pl.margins(1,1)
-            textpos = 0.5
+            xpos = 3*brange[0]+.5
+            ypos = result_relative.max()+0.2*(result_relative.max()-result_relative.min())
+            print xpos, ypos
         if M.m2pos == 0:
             self.xlabel = 'Z Offset'
             self.ylabel = 'Z offset (mm)'
@@ -930,5 +933,5 @@ class RSRM2FitViewer(RSRViewer):
         textstr = textstr + 'Absolute '+fitype+':  ' +str(round(M.absolute_focus_fit,4)) + '\n' 
         textstr = textstr + 'Fit RMS:                ' +str(round(M.fit_rms,4))
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        pl.text(textpos, result_relative.max()-3*(result_relative.max()-result_relative.min())/10, textstr, bbox=props, color='red')
+        pl.text(xpos, ypos, textstr, bbox=props, color='red')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
