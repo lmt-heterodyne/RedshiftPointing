@@ -170,7 +170,6 @@ class RSRCC():
                     n = len(self.signals)
                     sigs = np.transpose(self.signals)
                     self.nchan = len(sigs)
-                    print 'nchan', self.nchan
                     self.data = np.zeros((n,self.nchan))
                     self.samples = np.zeros((n,self.nchan))
                     for b,sig in enumerate(sigs):
