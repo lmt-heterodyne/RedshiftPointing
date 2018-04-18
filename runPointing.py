@@ -6,7 +6,8 @@ from RSRRunPointing import RSRRunPointing
 from rsrFileSearch import rsrFileSearch
 from rsrFileSearch import rsrFileSearchAll
 from vlbi1mmFileSearch import vlbi1mmFileSearchAll
-from lmtTpmFileSearch import lmtTpmFileSearchAll
+from genericFileSearch import genericFileSearchAll
+from genericFileSearch import genericFileSearchRecursive
 
 argv = ["-d", "2014-08-20", "-s", "101000003", "--show", "True"]
 argv = ["-d", "2014-03-03", "-s", "16887", "--show", "True"]
@@ -26,15 +27,30 @@ try:
         chassis = [0]
         board = [i for i in range(10)]
         #board = [0,1,2,3]
-        filelist = vlbi1mmFileSearchAll (obsnum, root, full = True)
+        filelist = genericFileSearchAll ('vlbi1mm', obsnum, root, full = True)
     elif sys.argv[1][0] == 'l':
         print 'lmttpm'
-        obsnum = 102663
         obsnum = 73677
+        obsnum = 102669
         chassis = [0]
-        board = [i for i in range(1)]
-        filelist = lmtTpmFileSearchAll (obsnum, root, full = True)
+        board = [i for i in range(6)]
+        filelist = genericFileSearchAll ('lmttpm', obsnum, root, full = True)
+    elif sys.argv[1][0] == 'i':
+        print 'ifproc'
+        obsnum = 73677
+        obsnum = 102669
+        chassis = [0]
+        board = [i for i in range(6)]
+        filelist = genericFileSearchAll ('ifproc', obsnum, root, full = True)
+    elif sys.argv[1][0] == 'a':
+        print 'all'
+        obsnum = 73677
+        obsnum = 102669
+        chassis = [i for i in range(6)]
+        board = [i for i in range(6)]
+        filelist = genericFileSearchRecursive (obsnum, root, full = True)
 except Exception as e:
+    print e
     obsnum = 73014
     chassis = [1,2,3]
     board = [0,1,2,3,4,5]
