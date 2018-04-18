@@ -463,11 +463,12 @@ class RSRMapViewer(RSRScanViewer):
                 plot_array[i] = 0.#numpy.nan
             else:
                 plot_array[i] = m.flip[board]*(m.data[i,board]-m.bias[board]) # sign flip to match dreampy??
-        for i in range(m.xpos.shape[0]-1):
-            if m.xpos[i] == m.xpos[i+1] and m.ypos[i] == m.ypos[i+1] and plot_array[i] != plot_array[i+1]:
-                #print 'two points have the same x/y coordinates but different values', i, m.ypos[i], m.xpos[i], plot_array[i], plot_array[i+1]
-                #plot_array[i] = plot_array[i+1]
-                m.xpos[i+1] = 1.00001*m.xpos[i+1]
+        for i in range(m.xpos.shape[0]-5):
+            for j in range(5):
+                ij = i+j
+                if m.xpos[i] == m.xpos[ij] and m.ypos[i] == m.ypos[ij] and plot_array[i] != plot_array[ij]:
+                    #print 'two points have the same x/y coordinates but different values', i, m.ypos[i], m.xpos[i], plot_array[i], plot_array[ij]
+                    plot_array[i] = plot_array[ij]
         zi = mlab.griddata(m.xpos,m.ypos,plot_array,xi,yi)
 
         elev_r = m.elev/180*math.pi
