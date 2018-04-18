@@ -39,7 +39,7 @@ class RSRViewer():
         nplots = 0
         for index,chassis in enumerate(chassis_list):
             nplots = nplots + len(process_list[index])
-        self.ncols = min(nplots, 6)
+        self.ncols = min(nplots, 4)
         if nplots > 24:
             self.ncols = 8
         self.nrows = int(math.ceil(float(nplots)/float(self.ncols)))
@@ -51,6 +51,7 @@ class RSRViewer():
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
+                    self.ncols = 6
                     self.nrows = 4
                     self.nrows_plots = chassis_list[-1]+1
                     break
