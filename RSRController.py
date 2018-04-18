@@ -30,19 +30,35 @@ class RSRMapController():
         if plot_option:
             V.init(a)
         index = 0
+        clist = []
+        if filelist is None or len(filelist) <= 0:
+            clist = a.chassis_list
+        else:
+            for chassis_id, chassis in enumerate(a.chassis_list):
+                if chassis_id >= len(filelist):
+                    continue
+                clist.append(chassis)
         print 'processing obsnum %d'%(scan)
         print '           chassis=%s'%(str(a.chassis_list))
         print '           process=%s'%(str(a.process_list))
-        for chassis_id, chassis in enumerate(a.chassis_list):
-            m = RSRMap(filelist,a.date,scan,chassis,a.beam_throw)
+        print '           clist', clist
+        for chassis_id, chassis in enumerate(clist):
+            m = RSRMap(filelist,a.date,scan,chassis_id,chassis,a.beam_throw)
             try:
                 fnc = m.nc
             except AttributeError:
                 print "    map doesn't have a file"
                 continue
             F.load_average_parameters(m)        
-            print '           chassis_id=%d, chassis=%d'%(chassis_id,chassis)
+            print '           chassis_id=%d, chassis=%d, nboards=%d'%(chassis_id,chassis,m.nchan)
+            plist = []
             for board_id,board in enumerate(a.process_list[chassis_id]):
+                if board_id >= m.nchan:
+                    continue
+                plist.append(board)
+            print '           plist', plist
+            
+            for board_id,board in enumerate(plist):
                 print '           board_id=%d, board=%d'%(board_id,board)
                 m.process_single_board(board, 
                                        a.fit_window, 
@@ -60,26 +76,26 @@ class RSRMapController():
                 F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                 index = index + 1
             if plot_option == True and a.show_ion==1 or True:
-                if len(a.process_list[chassis_id]) > 0:
+                if len(plist) > 0:
                     if a.show_type==1:
-                        if len(a.chassis_list)>0:
-                            V.init_big_fig(figno=1,chassis_list=a.chassis_list, process_list=a.process_list,filelist=filelist)
-                            V.master_map_plot(m,chassis,a.process_list[chassis_id])
+                        if len(clist)>0:
+                            V.init_big_fig(figno=1,chassis_list=clist, process_list=a.process_list,filelist=filelist)
+                            V.master_map_plot(m,chassis,plist)
                         else:
-                            V.plot_all(m,a.process_list[chassis_id],figno=chassis_id+1,fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
+                            V.plot_all(m,plist,figno=chassis_id+1,fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
-                        if len(a.chassis_list)>1:
+                        if len(clist)>1:
                             if chassis_id == 0:
                                 V.init_big_fig(figno=1)
-                            V.master_model_scan_plot(m,a.process_list[chassis_id])
+                            V.master_model_scan_plot(m,plist)
                         else:
-                            V.plot_all_model_scans(m,a.process_list[chassis_id],figno=chassis_id+1)
-                elif len(a.process_list[chassis_id]) == 1:
+                            V.plot_all_model_scans(m,plist,figno=chassis_id+1)
+                elif len(plist) == 1:
                     V.init_fig(figno=chassis_id+1)
                     if a.show_type==1:
-                        V.plot_map(m,a.process_list[chassis_id][0],fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
+                        V.plot_map(m,plist[0],fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
-                        V.plot_model_scan(m,a.process_list[chassis_id][0])
+                        V.plot_model_scan(m,plist[0])
             m.close()
         return F
 
