@@ -47,7 +47,7 @@ class RSRViewer():
             self.nrows = 1
         #force nrows for rsr
         self.nrows_plots = self.nrows
-        print filelist
+        #print filelist
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
@@ -56,7 +56,7 @@ class RSRViewer():
                     break
 
         #self.grid = pl.GridSpec(self.nrows, self.ncols)
-        if True:
+        if False:
             print 'chassis_list', chassis_list
             print 'process_list', process_list
             print 'nplots', nplots
