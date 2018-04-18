@@ -56,6 +56,23 @@ filelist = [
     "./data_lmt/RedshiftChassis3/RedshiftChassis3_2018-02-27_073103_01_0000.nc",
     ]
 
+filelist = [
+"/data_lmt/ifproc/ifproc_2018-04-18_074793_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074794_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074795_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074796_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074797_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074798_01_0000.nc"
+    ]
+
+filelist = [
+"/data_lmt/ifproc/ifproc_2018-04-18_074793_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074794_01_0000.nc",
+"/data_lmt/ifproc/ifproc_2018-04-18_074795_01_0000.nc",
+    ]
+
+argv = ["-d", "2018-04-18", "-s", "74793:74795", "--chassis", "[0]", "--board", "[0]", "--show", "True"]
+
 rsr = RSRRunFocus()
 #F = rsr.run(argv)
 F = rsr.run(argv, filelist, 7)
