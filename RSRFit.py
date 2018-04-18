@@ -11,7 +11,6 @@ from RSRUtilities import m2_model, TempSens
 import numpy
 import math
 
-
 class RSRMapFit():
     """RSRMapFit holds and analyzes variables from pointing fits."""
     def __init__(self,process_list):
@@ -150,6 +149,7 @@ class RSRMapFit():
         if index == 0:
             # for the first one loaded, we set things that don't change
             self.modrev = m.modrev
+            self.receiver = m.receiver
             self.source = m.source
             self.date = m.date
             self.obsnum = m.obsnum
@@ -277,6 +277,7 @@ class RSRM2Fit():
         input F is an array of RSRMapFit instances with data from pointing maps to be fit.
         """
         # get common information from first instance of RSRMapFit array
+        self.receiver = F[0].receiver
         self.source = F[0].source
         self.date = F[0].date
         self.obsnum = F[0].obsnum
@@ -416,41 +417,52 @@ class RSRM2Fit():
 
     def fit_focus_model(self):
         """Uses best fit focus (Z) for each chassis/board result to fit linear focus model."""
-        xband = [-1,-.2,-.6,.2,1.,.6]
-        ptp = numpy.zeros((2,2))
-        ptr = numpy.zeros(2)
-        pta = numpy.zeros(2)
-        f = numpy.zeros(2)
-        for index in range(self.n):
-            if(math.isnan(self.result_relative[index])):
-                continue
-            f[0] = 1.
-            f[1] = xband[int(self.board_id[index])]
-            for ii in range(2):
-                for jj in range(2):
-                    ptp[ii][jj] = ptp[ii][jj] + f[ii]*f[jj]
-                ptr[ii] = ptr[ii] + f[ii]*self.result_relative[index]
-                pta[ii] = pta[ii] + f[ii]*self.result_absolute[index]
-        ptpinv = numpy.linalg.inv(ptp)
-        relative_focus_fit = numpy.dot(ptpinv,ptr)
-        absolute_focus_fit = numpy.dot(ptpinv,pta)
-        self.resids = numpy.zeros(self.n)
-        resids_squared = 0.
-        actual_n = 0
-        for index in range(self.n):
-            if(math.isnan(self.result_relative[index])):
-                continue
-            self.resids[index] = self.result_relative[index] - relative_focus_fit[0] - relative_focus_fit[1]*xband[int(self.board_id[index])]
-            resids_squared = resids_squared + self.resids[index]*self.resids[index]
-            actual_n = actual_n + 1
-        rms = math.sqrt(resids_squared/actual_n)
-        focus_error = math.sqrt(ptpinv[0][0])*rms
+        if self.n > 1:
+            if self.receiver == 'RedshiftReceiver':
+                xband = [-1,-.2,-.6,.2,1.,.6]
+            else:
+                xband = [index-0.5*(self.n-1) for index in range(self.n)]
+            print xband
+            ptp = numpy.zeros((2,2))
+            ptr = numpy.zeros(2)
+            pta = numpy.zeros(2)
+            f = numpy.zeros(2)
+            for index in range(self.n):
+                if(math.isnan(self.result_relative[index])):
+                    continue
+                f[0] = 1.
+                f[1] = xband[int(self.board_id[index])]
+                for ii in range(2):
+                    for jj in range(2):
+                        ptp[ii][jj] = ptp[ii][jj] + f[ii]*f[jj]
+                    ptr[ii] = ptr[ii] + f[ii]*self.result_relative[index]
+                    pta[ii] = pta[ii] + f[ii]*self.result_absolute[index]
+            ptpinv = numpy.linalg.inv(ptp)
+            relative_focus_fit = numpy.dot(ptpinv,ptr)
+            absolute_focus_fit = numpy.dot(ptpinv,pta)
+            self.resids = numpy.zeros(self.n)
+            resids_squared = 0.
+            actual_n = 0
+            for index in range(self.n):
+                if(math.isnan(self.result_relative[index])):
+                    continue
+                self.resids[index] = self.result_relative[index] - relative_focus_fit[0] - relative_focus_fit[1]*xband[int(self.board_id[index])]
+                resids_squared = resids_squared + self.resids[index]*self.resids[index]
+                actual_n = actual_n + 1
+            rms = math.sqrt(resids_squared/actual_n)
+            focus_error = math.sqrt(ptpinv[0][0])*rms
 
-        self.relative_focus_fit = relative_focus_fit[0]
-        self.focus_error = focus_error
-        self.absolute_focus_fit = absolute_focus_fit[0]
-        self.focus_slope = relative_focus_fit[1]
-        self.fit_rms = rms
+            self.relative_focus_fit = relative_focus_fit[0]
+            self.focus_error = focus_error
+            self.absolute_focus_fit = absolute_focus_fit[0]
+            self.focus_slope = relative_focus_fit[1]
+            self.fit_rms = rms
+        else:
+            self.relative_focus_fit = self.result_relative[0]
+            self.focus_error = 0
+            self.absolute_focus_fit = self.result_absolute[0]
+            self.focus_slope = 0
+            self.fit_rms = 0
         if self.m2pos == 0:
             self.M2zfocus = self.relative_focus_fit
         elif self.m2pos == 1:
@@ -459,5 +471,4 @@ class RSRM2Fit():
             self.M2xfocus = self.relative_focus_fit
         elif self.m2pos == 3:
             self.M1ZernikeC0 = self.relative_focus_fit
-
 
