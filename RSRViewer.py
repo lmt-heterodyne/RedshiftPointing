@@ -859,26 +859,37 @@ class RSRM2FitViewer(RSRViewer):
         """Plots data and focus model fit."""
         pl.figure(figno)
         pl.clf()
-        band_order = [0,2,1,3,5,4]
-        freq = [75.703906,82.003906,89.396094,94.599906,100.899906,108.292094]
-
-        band_freq = []
-        result_relative = []
-        for index in range(M.n):
-            if(math.isnan(M.result_relative[index])):
-                continue
-            band_freq.append(freq[band_order[int(M.board_id[index])]])
-            result_relative.append(M.result_relative[index])
-        band_freq = numpy.array(band_freq)
-        result_relative = numpy.array(result_relative)
-        pl.plot(band_freq,result_relative,'o')
-        freq_0 = (freq[0]+freq[5])/2.
-        d_freq = (freq[5]-freq_0)
-        brange = numpy.arange(-1.2,1.3,.1)
-        f = freq_0+brange*d_freq
-        the_model = M.relative_focus_fit+M.focus_slope*brange
-        pl.plot(f,the_model,'r')
-        pl.xlabel('Frequency (GHz)')
+        
+        if M.receiver == 'RedshiftReceiver':
+            band_order = [0,2,1,3,5,4]
+            freq = [75.703906,82.003906,89.396094,94.599906,100.899906,108.292094]
+            band_freq = []
+            result_relative = []
+            for index in range(M.n):
+                if(math.isnan(M.result_relative[index])):
+                    continue
+                band_freq.append(freq[band_order[int(M.board_id[index])]])
+                result_relative.append(M.result_relative[index])
+            band_freq = numpy.array(band_freq)
+            result_relative = numpy.array(result_relative)
+            pl.plot(band_freq,result_relative,'o')
+            freq_0 = (freq[0]+freq[5])/2.
+            d_freq = (freq[5]-freq_0)
+            brange = numpy.arange(-1.2,1.3,.1)
+            f = freq_0+brange*d_freq
+            the_model = M.relative_focus_fit+M.focus_slope*brange
+            pl.plot(f,the_model,'r')
+            pl.xlabel('Frequency (GHz)')
+            textpos = 93
+        else:
+            result_relative = M.result_relative
+            brange = numpy.arange(-0.5*(M.n-1),0.5*(M.n-1)+1,1)
+            the_model = M.relative_focus_fit+(M.focus_slope)*brange
+            print brange, result_relative
+            pl.plot(brange,result_relative,'o')
+            pl.plot(brange,the_model,'r')
+            pl.margins(1,1)
+            textpos = 0.5
         if M.m2pos == 0:
             self.xlabel = 'Z Offset'
             self.ylabel = 'Z offset (mm)'
@@ -919,5 +930,5 @@ class RSRM2FitViewer(RSRViewer):
         textstr = textstr + 'Absolute '+fitype+':  ' +str(round(M.absolute_focus_fit,4)) + '\n' 
         textstr = textstr + 'Fit RMS:                ' +str(round(M.fit_rms,4))
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
-        pl.text(93, result_relative.max()-3*(result_relative.max()-result_relative.min())/10, textstr, bbox=props, color='red')
+        pl.text(textpos, result_relative.max()-3*(result_relative.max()-result_relative.min())/10, textstr, bbox=props, color='red')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
