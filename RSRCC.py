@@ -14,13 +14,14 @@ from RSRUtilities import TempSens
 
 class RSRCC():
     """RSRCC is the base class for compressed continuum data scans"""
-    def __init__(self,filelist,date,scan,chassis,groupscan=0,subscan=1,path='/data_lmt'):
+    def __init__(self,filelist,date,scan,chassis_id,chassis,groupscan=0,subscan=1,path='/data_lmt'):
         """__init__ reads the netcdf file and fills in parameters and arrays"""
         self.path = path
         self.date = date
         self.scan = scan
         self.groupscan = groupscan
         self.subscan = subscan
+        self.chassis_id = chassis_id
         self.chassis = chassis
         self.filename = self.make_filename(filelist)
         if self.filename == '':
@@ -206,7 +207,7 @@ class RSRCC():
         filename = ""
         if filelist != False:
             print '  get filename from filelist for obsnum', self.scan, 'chassis', self.chassis
-            for filel in filelist:
+            for i,filel in enumerate(filelist):
                 """Builds an LMT filename filelist and chassis."""
                 if 'RedshiftChassis' in filel:
                     chassis_str = ('RedshiftChassis%d' % self.chassis)
@@ -215,8 +216,9 @@ class RSRCC():
                         break
                 else:
                     chassis_str = 'other'
-                    filename = filel
-                    break
+                    if i == self.chassis_id:
+                        filename = filel
+                        break
         else:
             """Builds an LMT filename from date and obsnum."""
             print '  get filename from date and obsnum'
