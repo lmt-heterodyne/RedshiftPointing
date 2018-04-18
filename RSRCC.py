@@ -168,13 +168,13 @@ class RSRCC():
                     self.samples_exist = True
                     self.data = [[]]
                     self.samples = [[]]
-                    n = len(self.signals)
+                    na = len(self.signals)
                     sigs = np.transpose(self.signals)
                     self.nchan = len(sigs)
-                    self.data = np.zeros((n,self.nchan))
-                    self.samples = np.zeros((n,self.nchan))
+                    self.data = np.zeros((na,self.nchan))
+                    self.samples = np.zeros((na,self.nchan))
                     for b,sig in enumerate(sigs):
-                      for j in range(n):
+                      for j in range(na):
                           self.data[j][b] = sig[j]
                           self.samples[j][b] = 3936
                     self.n = np.shape(self.data)[0]
@@ -216,7 +216,8 @@ class RSRCC():
                         break
                 else:
                     chassis_str = 'other'
-                    if i == self.chassis_id:
+                    #if i == self.chassis_id and str(self.scan) in filel:
+                    if str(self.scan) in filel:
                         filename = filel
                         break
         else:
