@@ -43,13 +43,15 @@ class RSRMapController():
         print '           chassis=%s'%(str(a.chassis_list))
         print '           process=%s'%(str(a.process_list))
         print '           clist', clist
+        flist = filelist
         for chassis_id, chassis in enumerate(clist):
-            m = RSRMap(filelist,a.date,scan,chassis_id,chassis,a.beam_throw)
+            m = RSRMap(flist,a.date,scan,chassis_id,chassis,a.beam_throw)
             try:
                 fnc = m.nc
             except AttributeError:
                 print "    map doesn't have a file"
                 continue
+            flist.remove(m.filename)
             F.load_average_parameters(m)        
             print '           chassis_id=%d, chassis=%d, nboards=%d'%(chassis_id,chassis,m.nchan)
             blist = []
