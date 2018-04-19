@@ -33,7 +33,7 @@ class RSRRunPointing():
  
             # plot the pointing errors for this map
             if F.nresults > 0 and F.pointing_result:
-                if a.show_it or True:
+                if a.show_it:
                     v.plot_pointing_summary(F, figno=(F.nchassis+1))
             # print the hpbw results too
             ###v.print_hpbw_result(F)

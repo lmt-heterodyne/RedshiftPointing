@@ -141,7 +141,7 @@ class RSRHandleArgs():
                  baseline_smoothing_window=50,
                  flag_data=False,
                  flag_windows=[],
-                 show_it=False,
+                 show_it=True,
                  show_type=1,
                  select_beam=1
                  ):

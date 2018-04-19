@@ -61,7 +61,6 @@ try:
     elif sys.argv[1][0] == 'r':
         print 'rsr'
         obsnum = 75182
-        obsnum = 73103
         try:
             obsnum = int(sys.argv[2])
         except:
