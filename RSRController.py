@@ -51,7 +51,6 @@ class RSRMapController():
             except AttributeError:
                 print "    map doesn't have a file"
                 continue
-            flist.remove(m.filename)
             F.load_average_parameters(m)        
             print '           chassis_id=%d, chassis=%d, nboards=%d'%(chassis_id,chassis,m.nchan)
             blist = []
@@ -79,11 +78,14 @@ class RSRMapController():
                                        )
                 F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                 index = index + 1
+            m.close()
+        F.update_process_list(plist)
+        for chassis_id, chassis in enumerate(clist):
             if plot_option == True and a.show_ion==1 or True:
                 if len(blist) > 0:
                     if a.show_type==1:
                         if len(clist)>0:
-                            V.init_big_fig(figno=1,chassis_list=clist, process_list=a.process_list,filelist=filelist)
+                            V.init_big_fig(figno=1,chassis_list=clist, process_list=plist,filelist=filelist)
                             V.master_map_plot(m,chassis,blist)
                         else:
                             V.plot_all(m,blist,figno=chassis_id+1,fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
@@ -100,8 +102,6 @@ class RSRMapController():
                         V.plot_map(m,blist[0],fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
                         V.plot_model_scan(m,blist[0])
-            m.close()
-        F.update_process_list(plist)
         return F
 
     def reduce_maps(self,a,filelist=False):
