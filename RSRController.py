@@ -30,30 +30,43 @@ class RSRMapController():
         if plot_option:
             V.init(a)
         index = 0
-        self.plist=[]
-        self.clist = a.chassis_list
+        self.process_list=[]
+        self.chassis_list = list(a.chassis_list)
         print 'processing obsnum %d'%(scan)
         print '           chassis=%s'%(str(a.chassis_list))
         print '           process=%s'%(str(a.process_list))
-        print '           clist', self.clist
+        print '           chassis_list', self.chassis_list
         flist = filelist
-        for chassis_id, chassis in enumerate(self.clist):
+        ## read each file to see if it exists and has good data
+        for chassis_id, chassis in enumerate(a.chassis_list):
             m = RSRMap(flist,a.date,scan,chassis_id,chassis,a.beam_throw)
             try:
                 fnc = m.nc
             except AttributeError:
                 print "    map doesn't have a file"
+                #self.process_list.append([])
+                self.chassis_list.remove(chassis)
                 continue
-            F.load_average_parameters(m)        
-            print '           chassis_id=%d, chassis=%d, nboards=%d'%(chassis_id,chassis,m.nchan)
             blist = []
+            # 
             for board_id,board in enumerate(a.process_list[chassis_id]):
-                if board_id >= m.nchan:
-                    continue
-                blist.append(board)
-            print '           blist', blist
-            self.plist.append(blist)
-            
+                if board_id < m.nchan:
+                    blist.append(board)
+            self.process_list.append(blist)
+            m.close()
+        F.update_process_list(self.process_list)
+
+        print '********'
+        print 'new chassis list', self.chassis_list
+        print 'new process list', self.process_list
+        print '********'
+        
+        for chassis_id, chassis in enumerate(self.chassis_list):
+            m = RSRMap(flist,a.date,scan,chassis_id,chassis,a.beam_throw)
+            # get board list from process list
+            blist = self.process_list[chassis_id]
+            F.load_average_parameters(m)
+            # process
             for board_id,board in enumerate(blist):
                 print '           board_id=%d, board=%d'%(board_id,board)
                 m.process_single_board(board, 
@@ -72,18 +85,17 @@ class RSRMapController():
                 F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                 index = index + 1
             m.close()
-        F.update_process_list(self.plist)
-        for chassis_id, chassis in enumerate(self.clist):
+            # and plot
             if plot_option == True and a.show_ion==1:
                 if len(blist) > 0:
                     if a.show_type==1:
-                        if len(self.clist)>0:
-                            V.init_big_fig(figno=1,chassis_list=self.clist, process_list=self.plist,filelist=filelist)
+                        if len(self.chassis_list)>0:
+                            V.init_big_fig(figno=1,chassis_list=self.chassis_list, process_list=self.process_list,filelist=filelist)
                             V.master_map_plot(m,chassis,blist)
                         else:
                             V.plot_all(m,blist,figno=chassis_id+1,fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
-                        if len(self.clist)>1:
+                        if len(self.chassis_list)>1:
                             if chassis_id == 0:
                                 V.init_big_fig(figno=1)
                             V.master_model_scan_plot(m,blist)
