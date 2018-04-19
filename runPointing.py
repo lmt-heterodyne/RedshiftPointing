@@ -5,7 +5,6 @@ import sys
 from RSRRunPointing import RSRRunPointing
 from rsrFileSearch import rsrFileSearch
 from rsrFileSearch import rsrFileSearchAll
-from vlbi1mmFileSearch import vlbi1mmFileSearchAll
 from genericFileSearch import genericFileSearchAll
 from genericFileSearch import genericFileSearchRecursive
 
