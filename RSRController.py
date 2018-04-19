@@ -30,21 +30,21 @@ class RSRMapController():
         if plot_option:
             V.init(a)
         index = 0
-        plist=[]
-        clist = []
+        self.plist=[]
+        self.clist = []
         if filelist is None or len(filelist) <= 0:
-            clist = a.chassis_list
+            self.clist = a.chassis_list
         else:
             for chassis_id, chassis in enumerate(a.chassis_list):
                 if chassis_id >= len(filelist):
                     continue
-                clist.append(chassis)
+                self.clist.append(chassis)
         print 'processing obsnum %d'%(scan)
         print '           chassis=%s'%(str(a.chassis_list))
         print '           process=%s'%(str(a.process_list))
-        print '           clist', clist
+        print '           clist', self.clist
         flist = filelist
-        for chassis_id, chassis in enumerate(clist):
+        for chassis_id, chassis in enumerate(self.clist):
             m = RSRMap(flist,a.date,scan,chassis_id,chassis,a.beam_throw)
             try:
                 fnc = m.nc
@@ -59,7 +59,7 @@ class RSRMapController():
                     continue
                 blist.append(board)
             print '           blist', blist
-            plist.append(blist)
+            self.plist.append(blist)
             
             for board_id,board in enumerate(blist):
                 print '           board_id=%d, board=%d'%(board_id,board)
@@ -79,18 +79,18 @@ class RSRMapController():
                 F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                 index = index + 1
             m.close()
-        F.update_process_list(plist)
-        for chassis_id, chassis in enumerate(clist):
+        F.update_process_list(self.plist)
+        for chassis_id, chassis in enumerate(self.clist):
             if plot_option == True and a.show_ion==1:
                 if len(blist) > 0:
                     if a.show_type==1:
-                        if len(clist)>0:
-                            V.init_big_fig(figno=1,chassis_list=clist, process_list=plist,filelist=filelist)
+                        if len(self.clist)>0:
+                            V.init_big_fig(figno=1,chassis_list=self.clist, process_list=self.plist,filelist=filelist)
                             V.master_map_plot(m,chassis,blist)
                         else:
                             V.plot_all(m,blist,figno=chassis_id+1,fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
-                        if len(clist)>1:
+                        if len(self.clist)>1:
                             if chassis_id == 0:
                                 V.init_big_fig(figno=1)
                             V.master_model_scan_plot(m,blist)
