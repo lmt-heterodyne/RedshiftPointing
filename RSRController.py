@@ -111,7 +111,8 @@ class RSRMapController():
         """
         FList = []
         for scan_id,scan in enumerate(a.scan_list):
-            FList.append(self.reduce_map(a,scan,False,filelist))
+            flist = [f for f in filelist if str(scan) in f]
+            FList.append(self.reduce_map(a,scan,False,flist))
         return FList
 
 
