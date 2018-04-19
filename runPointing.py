@@ -30,8 +30,9 @@ try:
         print 'lmttpm'
         obsnum = 73677
         obsnum = 102669
-        chassis = [0]
-        board = [i for i in range(6)]
+        chassis = 'all'
+        board = 'all'
+        board = [0]
         filelist = genericFileSearchAll ('lmttpm', obsnum, root, full = True)
     elif sys.argv[1][0] == 'i':
         print 'ifproc'
@@ -42,8 +43,8 @@ try:
             obsnum = int(sys.argv[2])
         except:
             pass
-        chassis = [0]
-        board = [i for i in range(6)]
+        chassis = 'all'
+        board = 'all'
         filelist = genericFileSearchAll ('ifproc', obsnum, root, full = True)
     elif sys.argv[1][0] == 'a':
         print 'all'
@@ -51,19 +52,23 @@ try:
         obsnum = 102669
         board = [i for i in range(6)]
         chassis = [i for i in range(6)]
-        board = [0]
-        chassis = [1]
+        #board = [0]
+        #chassis = [1]
         #plist = [[1],[0]]
+        chassis = 'all'
+        board = 'all'
         filelist = genericFileSearchRecursive (obsnum, root, full = True)
     elif sys.argv[1][0] == 'r':
         print 'rsr'
         obsnum = 75182
+        obsnum = 73103
         try:
             obsnum = int(sys.argv[2])
         except:
             pass
-        chassis = [i for i in range(4)]
-        board = [i for i in range(6)]
+        chassis = [0,1,2,3]
+        board = 'all'
+        plist = [[],[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
         filelist = []
         for ch in chassis:
             inst = 'RedshiftChassis%d'%ch
@@ -71,9 +76,11 @@ try:
             for f in flist:
                 filelist.append(f)
 except Exception as e:
+    print '---------', e
     obsnum = 73014
     chassis = [1,2,3]
     board = [0,1,2,3,4,5]
+    plist = None
     filelist = []
     for ch in chassis:
         inst = 'RedshiftChassis%d'%ch
