@@ -37,38 +37,32 @@ class RSRViewer():
         if self.bigfig != None:
             return
         nplots = 0
+        self.nrows = max(chassis_list)+1
+        self.ncols = 0
+        for proc_l in process_list:
+            self.ncols = max(self.ncols,max(proc_l)+1)
         for index,chassis in enumerate(chassis_list):
             nplots = nplots + len(process_list[index])
-        self.ncols = min(nplots, 4)
-        if nplots > 24:
-            self.ncols = 8
-        self.nrows = int(math.ceil(float(nplots)/float(self.ncols)))
-        if self.nrows == 0:
-            self.nrows = 1
-        #force nrows for rsr
-        self.nrows_plots = self.nrows
         #print filelist
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
                     self.ncols = 6
                     self.nrows = 4
-                    self.nrows_plots = chassis_list[-1]+1
                     break
 
         #self.grid = pl.GridSpec(self.nrows, self.ncols)
-        if False:
+        if True:
             print 'chassis_list', chassis_list
             print 'process_list', process_list
             print 'nplots', nplots
-            print 'nrows_plots', self.nrows_plots
             print 'nrows', self.nrows
             print 'ncols', self.ncols
 
         figw = 12
-        figh = 1.75*self.nrows+1
+        figh = 1.5*self.nrows+1
         if self.nrows == 1:
-            figh = figh + 4
+            figh = figh + 1#4
         self.bigfig = pl.figure(num=figno,figsize=(figw,figh))
         pl.clf()
                 
@@ -381,8 +375,9 @@ class RSRMapViewer(RSRScanViewer):
     def master_map_plot(self,m,chassis_id,board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
         """Plots all maps together in a single figure."""
         row = chassis_id
-        col = 0
+        need_y_label = True
         for i in board_list:
+            col = i
             # create plot
             ax = pl.subplot(self.nrows, self.ncols, row*self.ncols+col+1)
 
@@ -394,7 +389,7 @@ class RSRMapViewer(RSRScanViewer):
                 ax.set_title('Board %d'%(i))
                 
             #x label the last row
-            if row+1 == self.nrows_plots:
+            if row+1 == self.nrows:
                 for tick in ax.get_xticklabels():
                     tick.set_rotation(60)
                 ax.set_xlabel('Azimuth\n(arcsec)')
@@ -402,7 +397,8 @@ class RSRMapViewer(RSRScanViewer):
                 ax.set_xticklabels([])
 
             #y label the first row
-            if col == 0:
+            if need_y_label:
+                need_y_label = False
                 ax.set_ylabel('Elevation\n(arcsec)')
             else:
                 ax.set_yticklabels([])
