@@ -865,7 +865,7 @@ class RSRM2FitViewer(RSRViewer):
             pl.plot(f,the_model,'r')
             pl.xlabel('Frequency (GHz)')
             xpos = 93
-            ypos = result_relative.max()-3*(result_relative.max()-result_relative.min())/10
+            ypos = result_relative.max()-0.3*(result_relative.max()-result_relative.min())
         else:
             result_relative = M.result_relative
             brange = numpy.arange(-0.5*(M.n-1),0.5*(M.n-1)+1,1)
@@ -873,9 +873,13 @@ class RSRM2FitViewer(RSRViewer):
             print brange, result_relative
             pl.plot(brange,result_relative,'o')
             pl.plot(brange,the_model,'r')
-            pl.margins(1,1)
-            xpos = 3*brange[0]+.5
-            ypos = result_relative.max()+0.2*(result_relative.max()-result_relative.min())
+            try:
+                pl.margins(1,1)
+                xpos = 3*brange[0]+.5
+                ypos = result_relative.max()+0.2*(result_relative.max()-result_relative.min())
+            except:
+                xpos = brange[0]+.5
+                ypos = result_relative.max()-0.2*(result_relative.max()-result_relative.min())
             print xpos, ypos
         if M.m2pos == 0:
             self.xlabel = 'Z Offset'
