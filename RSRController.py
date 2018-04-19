@@ -17,17 +17,17 @@ SHOW_MAP_SAMPLING = True
 
 class RSRMapController():
     """Controller class for managing maps and pointing fits."""
-    def reduce_map(self,a,scan,plot_option,filelist=False):
+    def reduce_map(self,a,scan,show_it,filelist=False):
         """Method to reduce an individual pointing observation.
 
         a is list of parameters derived from command line args to control function.
         scan is the obsnum of the data to be processed
-        plot_option specifies whether to show an image of the maps and results.
+        show_it specifies whether to show an image of the maps and results.
         Function returns an RSRMapFit object with the fit results.
         """
         F = RSRMapFit(a.process_list)
         V = RSRMapViewer()
-        if plot_option:
+        if show_it:
             V.init(a)
         index = 0
         self.process_list=[]
@@ -86,7 +86,7 @@ class RSRMapController():
                 index = index + 1
             m.close()
             # and plot
-            if plot_option == True and a.show_ion==1:
+            if show_it:
                 if len(blist) > 0:
                     if a.show_type==1:
                         if len(self.chassis_list)>0:
@@ -383,4 +383,5 @@ class RSRHandleArgs():
         else:
             self.show_it = False
             print 'unknown argument for show keyword'
+        print 'show_it =',self.show_it
 
