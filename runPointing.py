@@ -20,12 +20,13 @@ argv = ["-d", "2018-02-27", "-s", "73014", "--chassis", "[1,2,3]", "--show", "Tr
 
 root = "/data_lmt"
 filelist = []
+plist = None
 
 try:
     if sys.argv[1][0] == 'v':
         obsnum = 70868 #70880
         chassis = [0]
-        board = [i for i in range(10)]
+        board = [i for i in range(6)]
         #board = [0,1,2,3]
         filelist = genericFileSearchAll ('vlbi1mm', obsnum, root, full = True)
     elif sys.argv[1][0] == 'l':
@@ -51,8 +52,11 @@ try:
         print 'all'
         obsnum = 73677
         obsnum = 102669
-        chassis = [i for i in range(6)]
         board = [i for i in range(6)]
+        chassis = [i for i in range(6)]
+        board = [0]
+        chassis = [1]
+        #plist = [[1],[0]]
         filelist = genericFileSearchRecursive (obsnum, root, full = True)
 except Exception as e:
     print e
@@ -64,6 +68,10 @@ except Exception as e:
 
 
 argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--show", "True"]
+
+if plist is not None:
+    argv.append("--list")
+    argv.append(str(plist))
 
 rsr = RSRRunPointing()
 F = rsr.run(argv, filelist)
