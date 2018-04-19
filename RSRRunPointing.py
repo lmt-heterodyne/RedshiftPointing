@@ -56,7 +56,8 @@ class RSRRunPointing():
                     y_offset += im.size[1]*max_width/im.size[0]
 
                 new_im.save('rsr_summary.png')
-            except:
+            except Exception as e:
+                print e
                 pass
 
             return F
