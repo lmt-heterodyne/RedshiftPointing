@@ -29,9 +29,8 @@ class RSRRunFocus():
             v.print_focus_model_fit(m)
             if a.show_it:
                 v.init(a)
-                if a.show_ion == 1:
-                    v.init_big_fig(figno=1,chassis_list=c.chassis_list, process_list=c.process_list,filelist=filelist)
-                    v.plot_fits(m,figno=1)
+                v.init_big_fig(figno=1,chassis_list=c.chassis_list, process_list=c.process_list,filelist=filelist)
+                v.plot_fits(m,figno=1)
                 v.plot_focus_model_fit(m,figno=2,obsNumArg=obsNumArg)
 
             images = map(Image.open, ['rsr_summary.png', 'rsr_focus_fits.png'])
