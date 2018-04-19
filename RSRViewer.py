@@ -39,7 +39,8 @@ class RSRViewer():
         self.nrows = max(chassis_list)+1
         self.ncols = 0
         for proc_l in process_list:
-            self.ncols = max(self.ncols,max(proc_l)+1)
+            if proc_l:
+                self.ncols = max(self.ncols,max(proc_l)+1)
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
@@ -368,9 +369,9 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('%s %d Chassis %d'%(m.date,m.obsnum,m.chassis))
 
     
-    def master_map_plot(self,m,chassis_id,board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
+    def master_map_plot(self,m,chassis,board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
         """Plots all maps together in a single figure."""
-        row = chassis_id
+        row = chassis
         need_y_label = True
         for i in board_list:
             col = i
@@ -395,7 +396,7 @@ class RSRMapViewer(RSRScanViewer):
             #y label the first row
             if need_y_label:
                 need_y_label = False
-                ax.set_ylabel('Elevation\n(arcsec)')
+                ax.set_ylabel('%d\nElevation\n(arcsec)'%chassis)
             else:
                 ax.set_yticklabels([])
 
