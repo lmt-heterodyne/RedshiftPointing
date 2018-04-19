@@ -65,10 +65,10 @@ class IfProcRunTsys():
                 desc = d['desc']
                 val = d['Tsys']
                 print desc, val
-                if 'USB' in desc:
+                if 'P0' in desc:
                     rcp = rcp + val
                     rn = rn + 1
-                elif 'LSB' in desc:
+                elif 'P1' in desc:
                     lcp = lcp + val
                     ln = ln + 1
                 fp.write("%s %3.1f\n" %(desc, val))
