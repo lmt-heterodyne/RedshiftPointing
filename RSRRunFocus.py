@@ -30,6 +30,7 @@ class RSRRunFocus():
             if a.show_it:
                 v.init(a)
                 if a.show_ion == 1 or True:
+                    v.init_big_fig(figno=1,chassis_list=c.clist, process_list=c.plist,filelist=filelist)
                     v.plot_fits(m,figno=1)
                 v.plot_focus_model_fit(m,figno=2,obsNumArg=obsNumArg)
 
