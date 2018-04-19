@@ -36,14 +36,10 @@ class RSRViewer():
         """Initializes a figure"""
         if self.bigfig != None:
             return
-        nplots = 0
         self.nrows = max(chassis_list)+1
         self.ncols = 0
         for proc_l in process_list:
             self.ncols = max(self.ncols,max(proc_l)+1)
-        for index,chassis in enumerate(chassis_list):
-            nplots = nplots + len(process_list[index])
-        #print filelist
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
@@ -51,20 +47,20 @@ class RSRViewer():
                     self.nrows = 4
                     break
 
-        #self.grid = pl.GridSpec(self.nrows, self.ncols)
         if True:
             print 'chassis_list', chassis_list
             print 'process_list', process_list
-            print 'nplots', nplots
             print 'nrows', self.nrows
             print 'ncols', self.ncols
 
+        #self.grid = pl.GridSpec(self.nrows, self.ncols)
         figw = 12
         figh = 1.5*self.nrows+1
         if self.nrows == 1:
             figh = figh + 1#4
         self.bigfig = pl.figure(num=figno,figsize=(figw,figh))
         pl.clf()
+
                 
 
 class RSRScanViewer(RSRViewer):
@@ -779,8 +775,6 @@ class RSRM2FitViewer(RSRViewer):
         M is the input RSRM2Fit instance with the results.
         figno specifies the figure to receive the plot.
         """
-        pl.figure(num=figno,figsize=(12,8))
-        pl.clf()
         if M.m2pos == 0:
             self.xlabel = 'Z Offset'
             self.ylabel = 'Z offset (mm)'
@@ -809,8 +803,8 @@ class RSRM2FitViewer(RSRViewer):
                      + M.parameters[index,1]*prange
                      + M.parameters[index,2]*prange*prange
                      )
-            plot_index = 6*M.chassis_id[index]+M.board_id[index]+1
-            ax = pl.subplot(4,6,plot_index)
+            plot_index = self.ncols*M.chassis_id[index]+M.board_id[index]+1
+            ax = pl.subplot(self.nrows,self.ncols,plot_index)
             pl.plot(M.m2_position,M.data[:,index],'o')
             pl.plot(prange,model,'r')
             pl.subplots_adjust(hspace=0.001, wspace=0.001)
@@ -826,11 +820,7 @@ class RSRM2FitViewer(RSRViewer):
                 pl.ylabel('Chassis %d'%(M.chassis_id[index]))
             if M.chassis_id[index] == 0:
                 pl.title('Board %d'%(M.board_id[index]))
-            pl.suptitle('%20s %s %d'% 
-                        (M.source[0:20],
-                         M.date,
-                         M.obsnum),
-                        size=16)
+            #pl.suptitle('%20s %s %d'% (M.source[0:20], M.date, M.obsnum), size=16)
             pl.savefig('rsr_focus_fits.png', bbox_inches='tight')
         
     def print_focus_model_fit(self,M):
