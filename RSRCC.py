@@ -216,7 +216,7 @@ class RSRCC():
                         break
                 else:
                     chassis_str = 'other'
-                    if str(self.scan) in filel:
+                    if self.chassis == i and str(self.scan) in filel:
                         filename = filel
                         break
         else:
