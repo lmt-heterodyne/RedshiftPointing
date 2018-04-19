@@ -371,7 +371,8 @@ class RSRM2Fit():
         self.m2_pcor = numpy.zeros(self.nscans)
         self.elev = numpy.zeros(self.nscans)
         self.m2pos = m2pos
-        print "m2pos = ", m2pos
+        m2posLabel = {-1: 'Error', 0: 'Z', 1: 'Y', 2: 'X', 3: 'A'}
+        print "m2pos = ", m2pos, m2posLabel[m2pos]
         for scan_id in range(self.nscans):
             self.elev[scan_id],sig = F[scan_id].get_elev()
             if self.m2pos == 0:
