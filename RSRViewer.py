@@ -396,7 +396,7 @@ class RSRMapViewer(RSRScanViewer):
             #y label the first row
             if need_y_label:
                 need_y_label = False
-                ax.set_ylabel('%d\nElevation\n(arcsec)'%chassis)
+                ax.set_ylabel('Chassis %d\nElevation\n(arcsec)'%chassis)
             else:
                 ax.set_yticklabels([])
 
