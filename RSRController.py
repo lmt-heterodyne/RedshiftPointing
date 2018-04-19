@@ -81,7 +81,7 @@ class RSRMapController():
             m.close()
         F.update_process_list(plist)
         for chassis_id, chassis in enumerate(clist):
-            if plot_option == True and a.show_ion==1 or True:
+            if plot_option == True and a.show_ion==1:
                 if len(blist) > 0:
                     if a.show_type==1:
                         if len(clist)>0:
