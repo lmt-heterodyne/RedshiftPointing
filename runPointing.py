@@ -55,6 +55,21 @@ try:
         chassis = [1]
         #plist = [[1],[0]]
         filelist = genericFileSearchRecursive (obsnum, root, full = True)
+    elif sys.argv[1][0] == 'r':
+        print 'rsr'
+        obsnum = 75182
+        try:
+            obsnum = int(sys.argv[2])
+        except:
+            pass
+        chassis = [i for i in range(4)]
+        board = [i for i in range(6)]
+        filelist = []
+        for ch in chassis:
+            inst = 'RedshiftChassis%d'%ch
+            flist = genericFileSearchAll(inst, obsnum, root, full = True)
+            for f in flist:
+                filelist.append(f)
 except Exception as e:
     obsnum = 73014
     chassis = [1,2,3]
