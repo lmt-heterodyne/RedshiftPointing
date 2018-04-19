@@ -31,14 +31,7 @@ class RSRMapController():
             V.init(a)
         index = 0
         self.plist=[]
-        self.clist = []
-        if filelist is None or len(filelist) <= 0:
-            self.clist = a.chassis_list
-        else:
-            for chassis_id, chassis in enumerate(a.chassis_list):
-                if chassis_id >= len(filelist):
-                    continue
-                self.clist.append(chassis)
+        self.clist = a.chassis_list
         print 'processing obsnum %d'%(scan)
         print '           chassis=%s'%(str(a.chassis_list))
         print '           process=%s'%(str(a.process_list))
