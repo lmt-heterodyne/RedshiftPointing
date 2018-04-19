@@ -1,6 +1,6 @@
 try:
     from dreampy.onemm.netcdf import OnemmNetCDFFile
-    from vlbi1mmFileSearch import vlbi1mmFileSearch
+    from genericFileSearch import genericFileSearch
 except:
     pass
 import matplotlib.pyplot as plt
@@ -13,7 +13,7 @@ class Vlbi1mmRunTsys():
 
         plotlabel = ''
         try:
-            filename = vlbi1mmFileSearch(obsNum)
+            filename = genericFileSearch('vlbi1mm',obsNum)
             nc = OnemmNetCDFFile(filename)
             nc.hdu.process_scan()
             try:
