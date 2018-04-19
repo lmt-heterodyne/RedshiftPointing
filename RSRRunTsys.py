@@ -4,12 +4,12 @@ from dreampy.redshift.utils.correlate_lines import CrossCorrelation
 import numpy
 from scipy.stats import nanmean
 import os.path
-from rsrFileSearch import rsrFileSearch
+from genericFileSearch import genericFileSearch
 
 class RSRRunTsys():
     def run(self, argv, obsNum):
 
-        filename = rsrFileSearch (obsNum, 2)
+        filename = genericFileSearch ('RedshiftChassis2', obsNum)
         nc = RedshiftNetCDFFile(filename)
         nc.hdu.get_cal()    
         pl  = RedshiftPlotChart()

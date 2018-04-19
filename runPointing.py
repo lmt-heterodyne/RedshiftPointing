@@ -3,8 +3,6 @@
 
 import sys
 from RSRRunPointing import RSRRunPointing
-from rsrFileSearch import rsrFileSearch
-from rsrFileSearch import rsrFileSearchAll
 from genericFileSearch import genericFileSearchAll
 from genericFileSearch import genericFileSearchRecursive
 
@@ -58,11 +56,15 @@ try:
         #plist = [[1],[0]]
         filelist = genericFileSearchRecursive (obsnum, root, full = True)
 except Exception as e:
-    print e
     obsnum = 73014
     chassis = [1,2,3]
     board = [0,1,2,3,4,5]
-    filelist = rsrFileSearchAll(obsnum, root, full = True)
+    filelist = []
+    for ch in chassis:
+        inst = 'RedshiftChassis%d'%ch
+        flist = genericFileSearchAll(inst, obsnum, root, full = True)
+        for f in flist:
+            filelist.append(f)
     pass
 
 

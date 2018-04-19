@@ -3,7 +3,7 @@ from dreampy.redshift.plots import RedshiftPlotChart
 from dreampy.redshift.utils.correlate_lines import CrossCorrelation
 import numpy
 import os.path
-from rsrFileSearch import rsrFileSearch
+from genericFileSearch import genericFileSearch
 
 
 class RSRRunLineCheck():
@@ -18,7 +18,7 @@ class RSRRunLineCheck():
             #for chassis in [0,1,2,3]:
             for chassis in [1,2,3]:
 
-                filename = rsrFileSearch (obsNum, chassis)
+                filename = genericFileSearch ('RedshiftChassis%d'%chassis, obsNum)
 	
                 if filename == "":
                     raise Exception ('File not found for chassis %d obsNumber: %s ' % (chassis,obsNum))

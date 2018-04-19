@@ -3,7 +3,7 @@ from dreampy.redshift.plots import RedshiftPlot
 from dreampy.redshift.utils.correlate_lines import CrossCorrelation
 import numpy
 import os.path
-from rsrFileSearch import rsrFileSearch
+from genericFileSearch import genericFileSearch
 
 
 
@@ -52,7 +52,7 @@ Obslist = [23481,23482,23483, 23485, 23486, 23487, 23489,23490, 23491, 23493, 23
 
 for ObsNum in Obslist:
     for chassis in (0,1,2,3):
-	filename = rsrFileSearch (ObsNum, chassis)
+	filename = genericFileSearch ('RedshiftChassis%d'%chassis,ObsNum)
 	
 	if filename == "":
 		raise Exception ('File not found for chassis %d ObsNumber: %s ' % (chassis,ObsNum))
