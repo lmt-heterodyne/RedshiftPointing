@@ -17,10 +17,10 @@ def get_telnc_file(obsnum, basepath='/data_lmt/ifproc',
     if fnames:
         return fnames[0]
 
-msip1mm_pixel_description = {0: 'P0 USB',
-                             1: 'P0 LSB',
-                             2: 'P1 LSB',
-                             3: 'P1 USB'}
+msip1mm_pixel_description = {0: 'P0_USB',
+                             1: 'P0_LSB',
+                             2: 'P1_LSB',
+                             3: 'P1_USB'}
 
 def get_Tsys(obsnum, msip1mm=True):
     try:
