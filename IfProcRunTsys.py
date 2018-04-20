@@ -55,32 +55,17 @@ def get_Tsys(obsnum, msip1mm=True):
 class IfProcRunTsys():
     def run(self, argv, obsNum):
 
-        lcp = 0
-        rcp = 0
-        ln = 0
-        rn = 0
+        plotlabel = ""
         time,tsys = get_Tsys(obsNum)
         with open('/var/www/vlbi1mm/vlbi1mm_tsys.html', 'w') as fp:
             for d in tsys:
                 desc = d['desc']
                 val = d['Tsys']
                 print desc, val
-                if 'P0' in desc:
-                    rcp = rcp + val
-                    rn = rn + 1
-                elif 'P1' in desc:
-                    lcp = lcp + val
-                    ln = ln + 1
                 fp.write("%s %3.1f\n" %(desc, val))
-            fp.write("LCP %3.1f\n" %(lcp))
-            fp.write("RCP %3.1f\n" %(rcp))
+                plotlabel = plotlabel + "%s %3.1f\n" %(desc, val)
             fp.write("ObsNum %d\n" %(obsNum))
             fp.write("Time %3.1f\n" %(time))
-            if rn > 0:
-                rcp = rcp / float(rn)
-            if ln > 0:
-                lcp = lcp / float(ln)
-            plotlabel = "LCP %3.1f K, RCP %3.1f K" %(lcp, rcp)
             print plotlabel
 
         fig = plt.figure()
@@ -92,12 +77,13 @@ class IfProcRunTsys():
         plt.savefig('rsr_summary.png', bbox_inches='tight')
 
 def main():
+    obsNum = 74892
     try:
-        tsys = IfProcRunTsys()
-        tsys.run(sys.argv,int(sys.argv[1]))
+        obsNum = int(sys.argv[1])
     except Exception as e:
-        print e
-        print 'need to specify ObsNum'
+        pass
+    tsys = IfProcRunTsys()
+    tsys.run(sys.argv, obsNum)
 
 if __name__ == '__main__':
     main()
