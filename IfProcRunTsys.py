@@ -50,7 +50,7 @@ def get_Tsys(obsnum, msip1mm=True):
         if msip1mm:
             dic['desc'] = msip1mm_pixel_description.get(pixel)
         else:
-            dic['desc'] = "Pixel %d" % (pixel + 1)
+            dic['desc'] = "Pixel %d" % (pixel)
         Tsys.append(dic)
     return time[-1],Tsys,rx
 
