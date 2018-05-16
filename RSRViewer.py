@@ -41,6 +41,9 @@ class RSRViewer():
         for proc_l in process_list:
             if proc_l:
                 self.ncols = max(self.ncols,max(proc_l)+1)
+                if self.nrows == 1 and self.ncols > 4:
+                    self.nrows = int(math.ceil(float(self.ncols)/4.))
+                    self.ncols = 4
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
@@ -369,14 +372,17 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('%s %d Chassis %d'%(m.date,m.obsnum,m.chassis))
 
     
-    def master_map_plot(self,m,chassis,board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
+    def master_map_plot(self,m,chassis,chassis_list=(0,1,2,3),board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
         """Plots all maps together in a single figure."""
         row = chassis
         need_y_label = True
         for i in board_list:
             col = i
             # create plot
-            ax = pl.subplot(self.nrows, self.ncols, row*self.ncols+col+1)
+            index = row*self.ncols+col+1
+            if len(chassis_list) == 1:
+                index = i+1
+            ax = pl.subplot(self.nrows, self.ncols, index)
 
             # plot
             self.plot_map(m,i,fit_window,label_it=False,show_samples=show_samples)

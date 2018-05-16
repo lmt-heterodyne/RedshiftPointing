@@ -91,7 +91,7 @@ class RSRMapController():
                     if a.show_type==1:
                         if len(self.chassis_list)>0:
                             V.init_big_fig(figno=1,chassis_list=self.chassis_list, process_list=self.process_list,filelist=filelist)
-                            V.master_map_plot(m,chassis,blist)
+                            V.master_map_plot(m,chassis,self.chassis_list, blist)
                         else:
                             V.plot_all(m,blist,figno=chassis_id+1,fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:

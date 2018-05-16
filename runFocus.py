@@ -4,6 +4,8 @@
 import sys
 from RSRRunFocus import RSRRunFocus
 
+plist = [[],[0, 1, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
+
 argv = ["-d", "2018-02-27", "-s", "73014:73020", "--chassis", "[1,2,3]", "--show", "True"]
 
 filelist = [
@@ -31,7 +33,11 @@ filelist = [
     ]
 
 
-argv = ["-d", "2018-02-27", "-s", "73098:73103", "--chassis", "[1,2,3]", "--show", "True"]
+argv = ["-d", "2018-02-27", "-s", "73098:73103", "--chassis", "[0,1,2,3]", "--show", "True"]
+
+if plist is not None:
+    argv.append("--list")
+    argv.append(str(plist))
 
 filelist = [
     "/data_lmt/RedshiftChassis1/RedshiftChassis1_2018-02-27_073098_01_0000.nc", 

@@ -28,8 +28,12 @@ try:
         filelist = genericFileSearchAll ('vlbi1mm', obsnum, root, full = True)
     elif sys.argv[1][0] == 'l':
         print 'lmttpm'
-        obsnum = 73677
         obsnum = 102669
+        obsnum = 75342
+        try:
+            obsnum = int(sys.argv[2])
+        except:
+            pass
         chassis = 'all'
         board = 'all'
         board = [0]
@@ -45,11 +49,18 @@ try:
             pass
         chassis = 'all'
         board = 'all'
+        chassis = [0]
+        board = [i for i in range(16)]
         filelist = genericFileSearchAll ('ifproc', obsnum, root, full = True)
     elif sys.argv[1][0] == 'a':
         print 'all'
         obsnum = 73677
         obsnum = 102669
+        obsnum = 75342
+        try:
+            obsnum = int(sys.argv[2])
+        except:
+            pass
         board = [i for i in range(6)]
         chassis = [i for i in range(6)]
         #board = [0]
@@ -67,7 +78,7 @@ try:
             pass
         chassis = [0,1,2,3]
         board = 'all'
-        plist = [[],[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
+        plist = [[],[0, 1, 2, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
         filelist = []
         for ch in chassis:
             inst = 'RedshiftChassis%d'%ch
