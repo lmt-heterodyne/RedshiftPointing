@@ -34,6 +34,9 @@ def get_Tsys(obsnum, msip1mm=True):
     if not telnc.hdu.header.has_key('IfProc'):
         print "Not an IFProc Scan"
         return []
+    rx = telnc.hdu.header.get('Dcs.Receiver')
+    if rx != 'Msip1mm':
+        msip1mm = False
     time = telnc.hdu.data.BasebandTime
     idxh = numpy.where(telnc.hdu.data.BufPos == 3)
     idxc = numpy.where(telnc.hdu.data.BufPos == 2)
@@ -49,35 +52,42 @@ def get_Tsys(obsnum, msip1mm=True):
         else:
             dic['desc'] = "Pixel %d" % (pixel + 1)
         Tsys.append(dic)
-    return time[-1],Tsys
+    return time[-1],Tsys,rx
 
     
 class IfProcRunTsys():
     def run(self, argv, obsNum):
 
         plotlabel = ""
-        time,tsys = get_Tsys(obsNum)
-        with open('/var/www/vlbi1mm/vlbi1mm_tsys.html', 'w') as fp:
-            for d in tsys:
-                desc = d['desc']
-                val = d['Tsys']
-                print desc, val
-                fp.write("%s %3.1f\n" %(desc, val))
-                plotlabel = plotlabel + "%s %3.1f\n" %(desc, val)
-            fp.write("ObsNum %d\n" %(obsNum))
-            fp.write("Time %3.1f\n" %(time))
-            print plotlabel
+        time,tsys,rx = get_Tsys(obsNum)
+        if rx == 'Msip1mm':
+            with open('/var/www/vlbi1mm/vlbi1mm_tsys.html', 'w') as fp:
+                for d in tsys:
+                    desc = d['desc']
+                    val = d['Tsys']
+                    #print desc, val
+                    fp.write("%s %3.1f\n" %(desc, val))
+                    plotlabel = plotlabel + "%s %3.1f\n" %(desc, val)
+                fp.write("ObsNum %d\n" %(obsNum))
+                fp.write("Time %3.1f\n" %(time))
+                print plotlabel
+        for d in tsys:
+            desc = d['desc']
+            val = d['Tsys']
+            #print desc, val
+            plotlabel = plotlabel + "%s %3.1f\n" %(desc, val)
+        print plotlabel
 
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        ax.text(0.1, 0.5, plotlabel, clip_on=True)
+        ax.text(0.1, 0.2, plotlabel, clip_on=True)
 	ax.set_title("ObsNum: %d"% obsNum)  
         ax.set_yticklabels([])
         ax.set_xticklabels([])
         plt.savefig('rsr_summary.png', bbox_inches='tight')
 
 def main():
-    obsNum = 74892
+    obsNum = 76391
     try:
         obsNum = int(sys.argv[1])
     except Exception as e:
