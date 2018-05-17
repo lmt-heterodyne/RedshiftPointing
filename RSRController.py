@@ -50,8 +50,8 @@ class RSRMapController():
             blist = []
             # 
             if m.receiver == "Sequoia":
-                if m.tracking_beam >= 0:
-                    blist = [m.tracking_beam]
+                if m.beam_selected >= 0:
+                    blist = [m.beam_selected]
                 else:
                     blist = [i for i in range(m.num_pixels)]
             else:
