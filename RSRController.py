@@ -49,9 +49,15 @@ class RSRMapController():
                 continue
             blist = []
             # 
-            for board_id,board in enumerate(a.process_list[chassis_id]):
-                if board_id < m.nchan:
-                    blist.append(board)
+            if m.receiver == "Sequoia":
+                if m.tracking_beam >= 0:
+                    blist = [m.tracking_beam]
+                else:
+                    blist = [i for i in range(m.num_pixels)]
+            else:
+                for board_id,board in enumerate(a.process_list[chassis_id]):
+                    if board_id < m.nchan:
+                        blist.append(board)
             self.process_list.append(blist)
             m.close()
         F.update_process_list(self.process_list)
