@@ -64,6 +64,11 @@ class RSRCC():
                 print '    beam throw ', self.beam_throw,self.beam_throw2
                 if self.tracking_beam != -1:
                     print '    TRACKING BEAM ',self.tracking_beam
+            elif self.receiver == 'Sequoia':
+                self.tracking_beam = self.nc.variables['Header.Sequoia.BeamSelected'][0]
+                self.beam_throw = self.nc.variables['Header.Sequoia.PixelDelta'][0]*3600*180/np.pi
+                self.beam_throw2 = self.nc.variables['Header.Sequoia.PixelDelta'][0]*3600*180/np.pi
+                self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
             else:
                 print '    receiver =', self.receiver
                 self.tracking_beam = 1
@@ -156,6 +161,7 @@ class RSRCC():
                         self.flip[board] = 1
                         self.bias[board] = np.median(self.data[:,board])
                 elif 'lmttpm' in self.filename or 'ifproc' in self.filename:
+
                     self.xpos = self.nc.variables['Data.TelescopeBackend.TelAzMap'][:]*206264.8
                     self.ypos = self.nc.variables['Data.TelescopeBackend.TelElMap'][:]*206264.8
                     self.time = self.nc.variables['Data.TelescopeBackend.TelTime'][:]
