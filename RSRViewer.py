@@ -38,12 +38,16 @@ class RSRViewer():
             return
         self.nrows = max(chassis_list)+1
         self.ncols = 0
-        for proc_l in process_list:
-            if proc_l:
-                self.ncols = max(self.ncols,max(proc_l)+1)
-                if self.nrows == 1 and self.ncols > 4:
-                    self.nrows = int(math.ceil(float(self.ncols)/4.))
-                    self.ncols = 4
+        flat_list = [item for sublist in process_list for item in sublist]
+        if len(flat_list) == 1:
+            self.ncols = 1
+        else:
+            for proc_l in process_list:
+                if proc_l:
+                    self.ncols = max(self.ncols,max(proc_l)+1)
+                    if self.nrows == 1 and self.ncols > 4:
+                        self.nrows = int(math.ceil(float(self.ncols)/4.))
+                        self.ncols = 4
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
@@ -376,35 +380,50 @@ class RSRMapViewer(RSRScanViewer):
         """Plots all maps together in a single figure."""
         row = chassis
         need_y_label = True
-        for i in board_list:
-            col = i
-            # create plot
-            index = row*self.ncols+col+1
-            if len(chassis_list) == 1:
-                index = i+1
-            ax = pl.subplot(self.nrows, self.ncols, index)
+        if m.receiver == "Sequoia":
+            index_list = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
+            board_label = 'Pixel'
+        else:
+            index_list = board_list
+            board_label = 'Board'
 
-            # plot
-            self.plot_map(m,i,fit_window,label_it=False,show_samples=show_samples)
+        col = 0
+        
+        for i in range(len(board_list)):
+            if i in board_list or len(board_list) == 1:
+                #col = i
+                # create plot
+                index = row*self.ncols+col
+                if len(chassis_list) == 1:
+                    index = i
+                if len(board_list) == 1:
+                    index = 0
+                ax = pl.subplot(self.nrows, self.ncols, index_list[index]+1)
 
-            #title the first row
-            if row == 0 and False:
-                ax.set_title('Board %d'%(i))
-                
-            #x label the last row
-            if row+1 == self.nrows:
-                for tick in ax.get_xticklabels():
-                    tick.set_rotation(60)
-                ax.set_xlabel('Azimuth\n(arcsec)')
-            else:
-                ax.set_xticklabels([])
+                # plot
+                self.plot_map(m,board_list[i],fit_window,label_it=False,show_samples=show_samples)
 
-            #y label the first row
-            if need_y_label:
-                need_y_label = False
-                ax.set_ylabel('Chassis %d\nElevation\n(arcsec)'%chassis)
-            else:
-                ax.set_yticklabels([])
+                #title the first row
+                if row == 0 and False:
+                    ax.set_title('%s %d'%(board_label, i))
+
+                #x label the last row
+                #if row+1 == self.nrows:
+                if (index_list[index]>=(self.nrows-1)*self.ncols):
+                    for tick in ax.get_xticklabels():
+                        tick.set_rotation(60)
+                    ax.set_xlabel('Azimuth\n(arcsec)')
+                else:
+                    ax.set_xticklabels([])
+
+                #y label the first col
+                if (index_list[index]%self.ncols) == 0:
+                    if m.receiver == 'RedshiftReceiver':
+                        ax.set_ylabel('Chassis %d\nElevation\n(arcsec)'%chassis)
+                    else:
+                        ax.set_ylabel('Elevation\n(arcsec)')
+                else:
+                    ax.set_yticklabels([])
 
             #now can step
             col = col + 1
@@ -513,6 +532,7 @@ class RSRMapViewer(RSRScanViewer):
             pl.xlabel('Azimuth (arcsec)')
             pl.ylabel('Elevation (arcsec)')
             pl.title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
+        pl.text(maplimits[1],m.beamthrow*.9,('%d'%(board)),horizontalalignment='right', color='red', bbox=dict(facecolor='white', alpha=1.0))
 
 class RSRFitViewer(RSRViewer):
     """Viewer class to handle Fit results."""
@@ -782,6 +802,10 @@ class RSRM2FitViewer(RSRViewer):
         M is the input RSRM2Fit instance with the results.
         figno specifies the figure to receive the plot.
         """
+        if M.receiver == "Sequoia":
+            board_label = 'Pixel'
+        else:
+            board_label = 'Board'
         if M.m2pos == 0:
             self.xlabel = 'Z Offset'
             self.ylabel = 'Z offset (mm)'
@@ -826,7 +850,7 @@ class RSRM2FitViewer(RSRViewer):
                 ###ax.tick_params(axis='both',which='major',labelsize=6)
                 pl.ylabel('Chassis %d'%(M.chassis_id[index]))
             if M.chassis_id[index] == 0:
-                pl.title('Board %d'%(M.board_id[index]))
+                pl.title('%s %d'%(board_label, M.board_id[index]))
             #pl.suptitle('%20s %s %d'% (M.source[0:20], M.date, M.obsnum), size=16)
             pl.savefig('rsr_focus_fits.png', bbox_inches='tight')
         
