@@ -74,13 +74,14 @@ try:
     elif sys.argv[1][0] == 'r':
         print 'rsr'
         obsnum = 75182
+        obsnum = 76565
         try:
             obsnum = int(sys.argv[2])
         except:
             pass
         chassis = [0,1,2,3]
         board = 'all'
-        plist = [[],[0, 1, 2, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
+        plist = [[],[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
         filelist = []
         for ch in chassis:
             inst = 'RedshiftChassis%d'%ch

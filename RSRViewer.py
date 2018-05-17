@@ -383,9 +383,12 @@ class RSRMapViewer(RSRScanViewer):
         if m.receiver == "Sequoia":
             index_list = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
             board_label = 'Pixel'
+        elif m.receiver == "RedshiftReceiver":
+            index_list = [i for i in range(24)]
+            board_label = 'Board'
         else:
             index_list = board_list
-            board_label = 'Board'
+            board_label = 'Pixel'
 
         col = 0
         
@@ -398,6 +401,7 @@ class RSRMapViewer(RSRScanViewer):
                     index = i
                 if len(board_list) == 1:
                     index = 0
+                print row, col, index, i, board_list[i], index_list[index]+1
                 ax = pl.subplot(self.nrows, self.ncols, index_list[index]+1)
 
                 # plot
