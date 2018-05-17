@@ -14,6 +14,7 @@ import matplotlib.pyplot as pl
 import matplotlib.mlab as mlab
 from mpl_toolkits.axes_grid import make_axes_locatable
 import math
+import sys
 
 class RSRViewer():
     """Base Class of Viewer"""
@@ -838,22 +839,30 @@ class RSRM2FitViewer(RSRViewer):
                      + M.parameters[index,1]*prange
                      + M.parameters[index,2]*prange*prange
                      )
-            plot_index = self.ncols*M.chassis_id[index]+M.board_id[index]+1
+            if self.nrows == 1 and self.ncols == 1:
+                plot_index = 1
+            else:
+                plot_index = self.ncols*M.chassis_id[index]+M.board_id[index]+1
             ax = pl.subplot(self.nrows,self.ncols,plot_index)
             pl.plot(M.m2_position,M.data[:,index],'o')
             pl.plot(prange,model,'r')
             pl.subplots_adjust(hspace=0.001, wspace=0.001)
-            if M.chassis_id[index]<3:
+            if (self.nrows == 1 and self.ncols == 1):
+                pl.xlabel(self.xlabel)
+            elif M.chassis_id[index]<3:
                 ax.set_xticklabels([])
             else:
                 ###ax.tick_params(axis='both',which='major',labelsize=6)
                 pl.xlabel(self.xlabel)
-            if M.board_id[index] > 0:
+
+            if (self.nrows == 1 and self.ncols == 1):
+                pl.ylabel('')
+            elif M.board_id[index] > 0:
                 ax.set_yticklabels([])
             else:
                 ###ax.tick_params(axis='both',which='major',labelsize=6)
                 pl.ylabel('Chassis %d'%(M.chassis_id[index]))
-            if M.chassis_id[index] == 0:
+            if M.chassis_id[index] == 0 or (self.nrows == 1 and self.ncols == 1):
                 pl.title('%s %d'%(board_label, M.board_id[index]))
             #pl.suptitle('%20s %s %d'% (M.source[0:20], M.date, M.obsnum), size=16)
             pl.savefig('rsr_focus_fits.png', bbox_inches='tight')
@@ -904,7 +913,6 @@ class RSRM2FitViewer(RSRViewer):
             result_relative = M.result_relative
             brange = numpy.arange(-0.5*(M.n-1),0.5*(M.n-1)+1,1)
             the_model = M.relative_focus_fit+(M.focus_slope)*brange
-            print brange, result_relative
             pl.plot(brange,result_relative,'o')
             pl.plot(brange,the_model,'r')
             try:
@@ -912,9 +920,12 @@ class RSRM2FitViewer(RSRViewer):
                 xpos = 3*brange[0]+.5
                 ypos = result_relative.max()+0.2*(result_relative.max()-result_relative.min())
             except:
-                xpos = brange[0]+.5
-                ypos = result_relative.max()-0.2*(result_relative.max()-result_relative.min())
-            print xpos, ypos
+                if len(brange) == 1:
+                    xpos = brange[0]
+                    ypos = result_relative*1.01
+                else:
+                    xpos = brange[0]+.5
+                    ypos = result_relative.max()-0.2*(result_relative.max()-result_relative.min())
         if M.m2pos == 0:
             self.xlabel = 'Z Offset'
             self.ylabel = 'Z offset (mm)'
