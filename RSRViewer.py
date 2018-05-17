@@ -401,7 +401,7 @@ class RSRMapViewer(RSRScanViewer):
                     index = i
                 if len(board_list) == 1:
                     index = 0
-                print row, col, index, i, board_list[i], index_list[index]+1
+                #print row, col, index, i, board_list[i], index_list[index]+1
                 ax = pl.subplot(self.nrows, self.ncols, index_list[index]+1)
 
                 # plot
@@ -536,7 +536,7 @@ class RSRMapViewer(RSRScanViewer):
             pl.xlabel('Azimuth (arcsec)')
             pl.ylabel('Elevation (arcsec)')
             pl.title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
-        pl.text(maplimits[1],m.beamthrow*.9,('%d'%(board)),horizontalalignment='right', color='red', bbox=dict(facecolor='white', alpha=1.0))
+        pl.text(maplimits[0]+0.1*(maplimits[1]-maplimits[2]),m.beamthrow*.9,('%d'%(board)),horizontalalignment='right', color='red', bbox=dict(facecolor='white', alpha=1.0))
 
 class RSRFitViewer(RSRViewer):
     """Viewer class to handle Fit results."""
