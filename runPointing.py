@@ -43,6 +43,8 @@ try:
         obsnum = 73677
         obsnum = 102669
         obsnum = 74792
+        obsnum = 76430
+        obsnum = 76675
         try:
             obsnum = int(sys.argv[2])
         except:
