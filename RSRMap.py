@@ -103,10 +103,16 @@ class RSRMap(RSRCC):
         """Removes baseline from a map file, ignoring the places where the beam is located"""
         test_array = np.zeros(self.n)
         elev_r = (self.elev+self.beamthrow_angle)*math.pi/180.
-        y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
-        x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
-        y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
-        x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
+        if self.tracking_single_beam_position == True:
+            y0 = 0
+            x0 = 0
+            y1 = 0
+            x1 = 0
+        else:
+            y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
+            x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
+            y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
+            x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
         for i in range(self.n):
             d0 = math.sqrt((self.xpos[i]-x0)**2 + (self.ypos[i]-y0)**2)
             d1 = math.sqrt((self.xpos[i]-x1)**2 + (self.ypos[i]-y1)**2)
@@ -149,10 +155,16 @@ class RSRMap(RSRCC):
         """
         # require peak to be in right place
         elev_r = (self.elev+self.beamthrow_angle)*math.pi/180.
-        y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
-        x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
-        y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
-        x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
+        if self.tracking_single_beam_position == True:
+            y0 = 0
+            x0 = 0
+            y1 = 0
+            x1 = 0
+        else:
+            y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
+            x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
+            y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
+            x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
         #print 'beam 0 ',x0,y0, self.elev, elev_r
         #print 'beam 1 ',x1,y1, self.elev, elev_r
         # locates peak position in map

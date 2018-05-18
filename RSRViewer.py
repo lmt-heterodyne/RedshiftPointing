@@ -486,7 +486,7 @@ class RSRMapViewer(RSRScanViewer):
             else:
                 maplimits = [-100, 100, -100, 100]
         mapgrid = 10
-        if m.beamthrow == 0:
+        if True or m.beamthrow == 0:
             maplimits = [min(m.xpos), max(m.xpos), min(m.ypos), max(m.ypos)]
         nx = (maplimits[1]-maplimits[0])/mapgrid
         ny = (maplimits[3]-maplimits[2])/mapgrid
@@ -504,10 +504,16 @@ class RSRMapViewer(RSRScanViewer):
         zi = mlab.griddata(m.xpos,m.ypos,plot_array,xi,yi)
 
         elev_r = m.elev/180*math.pi
-        y0 = m.beamthrow*math.sin(elev_r) - m.el_receiver
-        x0 = -m.beamthrow*math.cos(elev_r) - m.az_receiver
-        y1 = -m.beamthrow*math.sin(elev_r) - m.el_receiver
-        x1 = m.beamthrow*math.cos(elev_r) - m.az_receiver
+        if m.tracking_single_beam_position == True:
+            y0 = 0
+            x0 = 0
+            y1 = 0
+            x1 = 0
+        else:
+            y0 = m.beamthrow*math.sin(elev_r) - m.el_receiver
+            x0 = -m.beamthrow*math.cos(elev_r) - m.az_receiver
+            y1 = -m.beamthrow*math.sin(elev_r) - m.el_receiver
+            x1 = m.beamthrow*math.cos(elev_r) - m.az_receiver
         plot_circle0 = numpy.zeros((100,2))
         plot_circle1 = numpy.zeros((100,2))
         for i in range(100):
@@ -515,6 +521,7 @@ class RSRMapViewer(RSRScanViewer):
             plot_circle0[i,1] = y0+fit_window*math.sin(i/100.*2.*math.pi)
             plot_circle1[i,0] = x1+fit_window*math.cos(i/100.*2.*math.pi)
             plot_circle1[i,1] = y1+fit_window*math.sin(i/100.*2.*math.pi)
+
         
         if m.I[board]>0:
             imagemax = m.I[board]/2.
@@ -528,10 +535,10 @@ class RSRMapViewer(RSRScanViewer):
             pass
         pl.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
         if m.tracking_single_beam_position and m.single_beam_fit:
-            if m.fit_beam == 9:
+            if m.fit_beam == 0:
                 pl.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
             else:
-                pl.plot(plot_circle1[:,0],plot_circle1[:,1],'k')
+                pl.plot(plot_circle1[:,0],plot_circle1[:,1],'w')
         else:
                 pl.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
                 pl.plot(plot_circle1[:,0],plot_circle1[:,1],'k')
@@ -549,7 +556,9 @@ class RSRMapViewer(RSRScanViewer):
             pl.xlabel('Azimuth (arcsec)')
             pl.ylabel('Elevation (arcsec)')
             pl.title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
-        pl.text(maplimits[0]+0.1*(maplimits[1]-maplimits[2]),m.beamthrow*.9,('%d'%(board)),horizontalalignment='right', color='red', bbox=dict(facecolor='white', alpha=1.0))
+        pl.text(maplimits[0]+0.1*(maplimits[1]-maplimits[0]),
+                maplimits[3]-0.1*(maplimits[3]-maplimits[2]),
+                ('%d'%(board)),horizontalalignment='right', color='red', bbox=dict(facecolor='white', alpha=1.0))
 
 class RSRFitViewer(RSRViewer):
     """Viewer class to handle Fit results."""
