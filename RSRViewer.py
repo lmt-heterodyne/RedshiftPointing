@@ -383,37 +383,48 @@ class RSRMapViewer(RSRScanViewer):
         need_y_label = True
         if m.receiver == "Sequoia":
             index_list = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
+            b_list = [i for i in range(16)]
             board_label = 'Pixel'
+            single_chassis = True
+            single_board = (len(board_list) == 1)
         elif m.receiver == "RedshiftReceiver":
             index_list = [i for i in range(24)]
+            b_list = [i for i in range(6)]
             board_label = 'Board'
+            single_chassis = False
+            single_board = False
         else:
             index_list = board_list
+            b_list = board_list
             board_label = 'Pixel'
+            single_chassis = True
 
         col = 0
-        
-        for i in range(len(board_list)):
-            if i in board_list or len(board_list) == 1:
-                #col = i
+
+        for i in range(len(b_list)):
+            if i in board_list and True:
                 # create plot
                 index = row*self.ncols+col
-                if len(chassis_list) == 1:
+                if single_chassis:
                     index = i
-                if len(board_list) == 1:
+                if single_board:
                     index = 0
-                #print row, col, index, i, board_list[i], index_list[index]+1
+                #print row, col, index, i, index_list[index]+1
                 ax = pl.subplot(self.nrows, self.ncols, index_list[index]+1)
 
                 # plot
-                self.plot_map(m,board_list[i],fit_window,label_it=False,show_samples=show_samples)
+                if i in board_list:
+                    self.plot_map(m,i,fit_window,label_it=False,show_samples=show_samples)
+                else:
+                    ax.set_xticks([])
+                    ax.set_yticks([])
+                    
 
                 #title the first row
                 if row == 0 and False:
                     ax.set_title('%s %d'%(board_label, i))
 
                 #x label the last row
-                #if row+1 == self.nrows:
                 if (index_list[index]>=(self.nrows-1)*self.ncols):
                     for tick in ax.get_xticklabels():
                         tick.set_rotation(60)
@@ -436,11 +447,12 @@ class RSRMapViewer(RSRScanViewer):
                 col = 0
                 row = row + 1
             
-            pl.subplots_adjust(hspace=0.001,wspace=0.1)
         # titles
         #pl.suptitle('%20s %s %d'% (m.source[0:20], m.date, m.obsnum), size=16)
         pl.savefig('rsr_pointing_maps.png', bbox_inches='tight')
-    
+        #pl.gcf().subplots_adjust(hspace=0.001,wspace=0.1)
+        pl.gcf().subplots_adjust(hspace=0.5,wspace=0.5)
+
     def plot_pointing_result(self,m,figno=1):
         """Plots the pointing results together in a single figure."""
         self.init_fig(figno=figno)
