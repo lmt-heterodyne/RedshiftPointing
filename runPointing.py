@@ -83,7 +83,7 @@ try:
         chassis = [0,1,2,3]
         board = 'all'
         plist = [[0],[0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
-        plist = [[],[1], [], []]
+        #plist = [[],[1], [], []]
         filelist = []
         for ch in chassis:
             inst = 'RedshiftChassis%d'%ch
