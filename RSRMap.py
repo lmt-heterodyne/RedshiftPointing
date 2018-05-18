@@ -37,14 +37,14 @@ class RSRMap(RSRCC):
             # set the beam throw parameter
             if self.beam_throw != -1:
                 self.beamthrow = self.beam_throw
-                print '    from file beamthrow', self.beamthrow
+                self.beamthrow_angle = self.beam_throw_angle
+                print '    from file beamthrow/angle', self.beamthrow, self.beamthrow_angle
             else:
                 self.beamthrow = beamthrow
-                print '    from arg beamthrow', self.beamthrow
+                self.beamthrow_angle = beamthrow_angle
+                print '    from arg beamthrow/angle', self.beamthrow, self.beamthrow_angle
             if self.beamthrow == 0:
                 self.beamthrow_angle = 0
-            else:
-                self.beamthrow_angle = beamthrow_angle
 
             # map parameters
             try:
@@ -163,13 +163,13 @@ class RSRMap(RSRCC):
             if self.flag[board,i] == 0:
                 d0 = math.sqrt((self.xpos[i]-x0)**2 + (self.ypos[i]-y0)**2)
                 d1 = math.sqrt((self.xpos[i]-x1)**2 + (self.ypos[i]-y1)**2)
-                #print "%4d %6.2f %6.2f   %6.1f   %6.2f %6.2f" % (i,self.xpos[i],self.ypos[i],self.data[i,band],d0,d1)
+                #print "%4d %6.2f %6.2f   %6.1f   %6.2f %6.2f" % (i,self.xpos[i],self.ypos[i],self.data[i,board],d0,d1)
                 if (d0<dd or d1<dd):
                     if self.peak[pid]*(self.data[i,board]-self.bias[board])>bmax:
                         imax = i
                         bmax = self.peak[pid]*(self.data[i,board]-self.bias[board])
         
-        #print bmax,imax,self.xpos[imax],self.ypos[imax]
+        #print 'found_peak',board,bmax,imax,self.xpos[imax],self.ypos[imax],self.data[imax,board]
         return bmax,self.xpos[imax],self.ypos[imax]
 
     def fit_peak(self,board=0,pid=1,w=16):
@@ -269,6 +269,7 @@ class RSRMap(RSRCC):
             else:
                 self.tracking_single_beam_position = False
                 pid = self.set_pid[self.chassis][select_beam]
+
         return pid
 
     def find_selected_beam(self, board=0, w=16, select_beam=1):
