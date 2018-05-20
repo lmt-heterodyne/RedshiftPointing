@@ -398,6 +398,7 @@ class RSRMapViewer(RSRScanViewer):
             b_list = board_list
             board_label = 'Pixel'
             single_chassis = True
+            single_board = False
 
         col = 0
 
