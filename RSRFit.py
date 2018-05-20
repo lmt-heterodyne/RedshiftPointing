@@ -154,8 +154,8 @@ class RSRMapFit():
             self.date = m.date
             self.obsnum = m.obsnum
             self.tracking_beam = m.tracking_beam
-            self.tracking_single_beam_position = m.tracking_single_beam_position
-            self.single_beam_fit = m.single_beam_fit
+            self.fit_beam_is_tracking_beam = m.fit_beam_is_tracking_beam
+            self.fit_beam_single = m.fit_beam_single
             self.fit_beam = m.fit_beam
 
         # now load things that change from one board/chassis to the next
@@ -163,8 +163,8 @@ class RSRMapFit():
         self.board_id_numbers[index] = board
         # compute pointing results based on whether we are doing a single beam or two.
         self.isGood[index] = m.isGood[board]
-        if self.single_beam_fit:
-            if self.tracking_single_beam_position == True:
+        if self.fit_beam_single:
+            if self.fit_beam_is_tracking_beam == True:
                 # if doing a single beam fit and tracking the beam, we can analyze easily
                 self.az_map_offset[index] = m.azoff[board]
                 self.el_map_offset[index] = m.eloff[board]

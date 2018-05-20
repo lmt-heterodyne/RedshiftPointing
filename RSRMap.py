@@ -73,9 +73,9 @@ class RSRMap(RSRCC):
             self.goody = np.zeros((32,2))
         
             # circumstances of beam fitting
-            self.single_beam_fit = False
-            self.tracking_single_beam_position = False
             self.fit_beam = -1
+            self.fit_beam_single = False
+            self.fit_beam_is_tracking_beam = False
 
             # define space for final fitted parameters
             self.I = np.zeros(32)
@@ -104,7 +104,7 @@ class RSRMap(RSRCC):
         """Removes baseline from a map file, ignoring the places where the beam is located"""
         test_array = np.zeros(self.n)
         elev_r = (self.elev+self.beamthrow_angle)*math.pi/180.
-        if self.tracking_single_beam_position == True:
+        if self.fit_beam_is_tracking_beam == True:
             y0 = 0
             x0 = 0
             y1 = 0
@@ -247,30 +247,27 @@ class RSRMap(RSRCC):
         also we have to see wether user wants to fit only one beam.
         returns the pid of the requested beam and sets flags used in fitting data.
         """
+        self.fit_beam = select_beam
+        self.fit_beam_single = True
         # check to see whether we are tracking beam "none"
         if self.tracking_beam == -1:
+            self.fit_beam_is_tracking_beam = False
             # if tracking "none" then we can select beam 0 or 1
             # however, we will have to correct pointing for beam offset
-            if select_beam == 0:
-                self.tracking_single_beam_position = False
-                pid = self.set_pid[self.chassis][select_beam]
-            elif select_beam == 1:
-                self.tracking_single_beam_position = False
+            if select_beam == 0 or select_beam == 1:
                 pid = self.set_pid[self.chassis][select_beam]
             # but if select_beam is not 0 or 1 we go get 1 by default
             else:
-                self.tracking_single_beam_position = False
                 pid = self.set_pid[self.chassis][1]
         # now if we are tracking a beam, check to see if we are fitting it
         else:
+            pid = self.set_pid[self.chassis][select_beam]
             if self.tracking_beam == select_beam:
-                self.tracking_single_beam_position = True
-                pid = self.set_pid[self.chassis][select_beam]
+                self.fit_beam_is_tracking_beam = True
             # if we are NOT fitting the tracked beam, so be careful
             else:
-                self.tracking_single_beam_position = False
-                pid = self.set_pid[self.chassis][select_beam]
-
+                self.fit_beam_is_tracking_beam = False
+            
         return pid
 
     def find_selected_beam(self, board=0, w=16, select_beam=1):
@@ -278,8 +275,6 @@ class RSRMap(RSRCC):
         # first define which beam
         pid = self.select_pid(select_beam)
         #print self.beam_selected,self.chassis_index,pid
-        self.single_beam_fit = True
-        self.fit_beam = select_beam
         self.fit_peak(board, pid, w)
         self.I[board] = self.peak[pid]*self.ap[board,pid]
         self.isGood[board] = self.goodx[board,pid]*self.goody[board,pid]

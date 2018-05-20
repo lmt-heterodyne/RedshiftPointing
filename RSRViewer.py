@@ -198,7 +198,7 @@ class RSRMapViewer(RSRScanViewer):
         # now plot array, model and residuals
         pl.plot(plot_array,'k',label='data')
         pl.plot(m.model[board,:],'r',label='model')
-        if m.single_beam_fit:
+        if m.fit_beam_single:
             plot_offset = (m.ap[board,m.set_pid[m.chassis][m.fit_beam]]+m.bias[board])
         else:
             plot_offset = (m.ap[board,1]+m.bias[board])
@@ -479,7 +479,7 @@ class RSRMapViewer(RSRScanViewer):
 
     def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False):
         """Plots a single pointing map."""
-        if m.single_beam_fit and m.tracking_single_beam_position:
+        if m.fit_beam_single and m.fit_beam_is_tracking_beam:
             maplimits = [-50, 50, -50, 50]
         else:
             if m.beamthrow > 100:
@@ -525,7 +525,7 @@ class RSRMapViewer(RSRScanViewer):
             print e
             pass
         pl.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
-        if m.tracking_single_beam_position and m.single_beam_fit:
+        if m.fit_beam_is_tracking_beam and m.fit_beam_single:
             if m.fit_beam == 0:
                 pl.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
             else:
@@ -578,7 +578,7 @@ class RSRFitViewer(RSRViewer):
 
     def print_result(self,F):
         """Prints the result of a pointing fit."""
-        if F.single_beam_fit:
+        if F.fit_beam_single:
             self.print_single_beam_result(F)
         else:
             self.print_dual_beam_result(F)
@@ -632,7 +632,7 @@ class RSRFitViewer(RSRViewer):
 
     def print_summary_pointing(self,F):
         """Prints summary of pointing results."""
-        if F.single_beam_fit:
+        if F.fit_beam_single:
             self.print_single_beam_summary_pointing(F)
         else:
             self.print_dual_beam_summary_pointing(F)
