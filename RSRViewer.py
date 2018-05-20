@@ -537,19 +537,19 @@ class RSRMapViewer(RSRScanViewer):
             pl.plot(m.xpos,m.ypos,'.')
         pl.axis('equal')
         ax = pl.gca()
-        #divider = make_axes_locatable(ax)
-        #cax = divider.append_axes("right", size="5%", pad=0.05)
-        #cbar=pl.colorbar(cax=cax)
         cbar=pl.colorbar()
-        ###cbar.ax.tick_params(labelsize=6)
-        #pl.text(maplimits[1],m.beamthrow*.707,('%d'%(board)),horizontalalignment='right')
         if label_it:
             pl.xlabel('Azimuth (arcsec)')
             pl.ylabel('Elevation (arcsec)')
             pl.title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
-        pl.text(maplimits[0]+0.1*(maplimits[1]-maplimits[0]),
-                maplimits[3]-0.1*(maplimits[3]-maplimits[2]),
-                ('%d'%(board)),horizontalalignment='right', color='red', bbox=dict(facecolor='white', alpha=1.0))
+        if m.isGood[board]:
+            pltext = '%d'%(board)
+        else:
+            pltext = '%d Bad Fit'%(board)
+        pl.text(maplimits[0]+0.0*(maplimits[1]-maplimits[0]),
+                maplimits[3]+0.1*(maplimits[3]-maplimits[2]),
+                pltext,horizontalalignment='left', color='red',
+                bbox=dict(facecolor='white', alpha=1.0))
 
 class RSRFitViewer(RSRViewer):
     """Viewer class to handle Fit results."""
