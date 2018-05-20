@@ -283,8 +283,13 @@ class RSRMap(RSRCC):
         self.fit_peak(board, pid, w)
         self.I[board] = self.peak[pid]*self.ap[board,pid]
         self.isGood[board] = self.goodx[board,pid]*self.goody[board,pid]
-        self.azoff[board] = self.xp[board,pid]
-        self.eloff[board] = self.yp[board,pid]
+        if self.beam_selected == -1:
+            x0,y0,x1,y1 = self.beam_offsets(board)
+            self.azoff[board] = self.xp[board,pid]# - x1
+            self.eloff[board] = self.yp[board,pid]# - y1
+        else:
+            self.azoff[board] = self.xp[board,pid]
+            self.eloff[board] = self.yp[board,pid]
         self.beamsep[board] = 0.0
         self.beamang[board] = 0.0
         self.hpbw[board] = math.sqrt(self.hpx[board,pid]*self.hpy[board,pid])
@@ -349,17 +354,17 @@ class RSRMap(RSRCC):
             cos_sin = cosTheta*di-sinTheta*dj;
             sin_cos = sinTheta*di+cosTheta*dj;
             b = j*4+i;
-            x0 = -(cosEl*cos_sin + sinEl*sin_cos)
-            y0 = -(-sinEl*cos_sin + cosEl*sin_cos)
-            x1 = -(cosEl*cos_sin + sinEl*sin_cos) - self.az_receiver
-            y1 = -(-sinEl*cos_sin + cosEl*sin_cos) - self.el_receiver
-            print 'board ',board,i,j,x0,y0,x1,y1,self.az_receiver,self.el_receiver
+            xx = -(cosEl*cos_sin + sinEl*sin_cos)
+            yy = -(-sinEl*cos_sin + cosEl*sin_cos)
+            x0 = x1 = xx - self.az_receiver
+            y0 = y1 = yy - self.el_receiver
+            #print 'board ',board,i,j,xx,yy,self.az_receiver,self.el_receiver,x1,y1
         else:
             elev_r = (self.elev+self.beamthrow_angle)*math.pi/180.
             y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
             x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
             y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
             x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
-            print 'beam 0 ',x0,y0
-            print 'beam 1 ',x1,y1
+            #print 'beam 0 ',x0,y0
+            #print 'beam 1 ',x1,y1
         return x0, y0, x1, y1
