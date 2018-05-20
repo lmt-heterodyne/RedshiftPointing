@@ -69,8 +69,9 @@ class RSRCC():
             elif self.receiver == 'Sequoia':
                 self.beam_selected = self.nc.variables['Header.Sequoia.BeamSelected'][0]
                 self.tracking_beam = 1
-                self.beam_throw = 0 #self.nc.variables['Header.Sequoia.PixelDelta'][0]*3600*180/np.pi
-                self.beam_throw2 = 0 #self.nc.variables['Header.Sequoia.PixelDelta'][0]*3600*180/np.pi
+                self.beam_throw = self.nc.variables['Header.Sequoia.PixelDelta'][0]*3600*180/np.pi
+                self.beam_throw2 = self.beam_throw
+                self.beam_throw_angle = np.abs(self.nc.variables['Header.Sequoia.CenterTheta'][:])*180/np.pi
                 self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
             else:
                 print '    receiver =', self.receiver
