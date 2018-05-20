@@ -57,6 +57,7 @@ class RSRCC():
             self.receiver = ''.join(self.nc.variables['Header.Dcs.Receiver'][:]).strip()
             if self.receiver == 'RedshiftReceiver':
                 print '    receiver =', self.receiver
+                self.beam_selected = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
                 self.tracking_beam = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
                 self.beam_throw = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][0])*3600*180/np.pi
                 self.beam_throw2 = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][:][1])*3600*180/np.pi
@@ -75,6 +76,7 @@ class RSRCC():
                 self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
             else:
                 print '    receiver =', self.receiver
+                self.beam_selected = 1
                 self.tracking_beam = 1
                 self.beam_throw = 0
                 self.beam_throw2 = 0
