@@ -38,13 +38,20 @@ try:
         board = 'all'
         board = [0]
         filelist = genericFileSearchAll ('lmttpm', obsnum, root, full = True)
-    elif sys.argv[1][0] == 'i':
+    elif sys.argv[1][0] == 'i' or sys.argv[1][0] == 's' or sys.argv[1][0] == 'm':
         print 'ifproc'
-        obsnum = 73677
-        obsnum = 102669
-        obsnum = 74792
-        obsnum = 76430
-        obsnum = 76675
+        if sys.argv[1][0] == 'm':
+            print 'msip1mm'
+            obsnum = 75765
+        elif sys.argv[1][0] == 's':
+            print 'sequoia'
+            obsnum = 75765
+            obsnum = 102669
+            obsnum = 74792
+            obsnum = 76430
+            obsnum = 76675
+            obsnum = 77059
+            obsnum = 77055
         try:
             obsnum = int(sys.argv[2])
         except:
@@ -82,7 +89,7 @@ try:
             pass
         chassis = [0,1,2,3]
         board = 'all'
-        plist = [[0],[0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
+        #plist = [[0],[0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [0, 1, 2, 3, 4]]
         #plist = [[],[1], [], []]
         filelist = []
         for ch in chassis:
