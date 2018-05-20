@@ -503,17 +503,7 @@ class RSRMapViewer(RSRScanViewer):
         m.ypos = m.ypos + numpy.random.random(m.ypos.size)*1e-6
         zi = mlab.griddata(m.xpos,m.ypos,plot_array,xi,yi)
 
-        elev_r = m.elev/180*math.pi
-        if m.tracking_single_beam_position == True:
-            y0 = 0
-            x0 = 0
-            y1 = 0
-            x1 = 0
-        else:
-            y0 = m.beamthrow*math.sin(elev_r) - m.el_receiver
-            x0 = -m.beamthrow*math.cos(elev_r) - m.az_receiver
-            y1 = -m.beamthrow*math.sin(elev_r) - m.el_receiver
-            x1 = m.beamthrow*math.cos(elev_r) - m.az_receiver
+        x0,y0,x1,y1 = m.beam_offsets(board)
         plot_circle0 = numpy.zeros((100,2))
         plot_circle1 = numpy.zeros((100,2))
         for i in range(100):
@@ -693,6 +683,7 @@ class RSRFitViewer(RSRViewer):
         pl.ylabel('El Offset (arcsec)')
         pl.title('%20s'%(F.source[0:20]))
         #pl.axis('equal')
+        axis = [x * 2 for x in axis] 
         pl.axis(axis)
         pl.grid()
         textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
@@ -705,7 +696,7 @@ class RSRFitViewer(RSRViewer):
         pl.xlabel('Az Offset (arcsec)')
         pl.title('%s %d'%(F.date,F.obsnum))
         #pl.axis('equal')
-        axis2 = [x * 2 for x in axis] 
+        axis2 = [x for x in axis] 
         pl.axis(axis2)
         #print axis2
         pl.grid()

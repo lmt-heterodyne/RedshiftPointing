@@ -153,8 +153,6 @@ class RSRMapFit():
             self.source = m.source
             self.date = m.date
             self.obsnum = m.obsnum
-            self.beamthrow = m.beamthrow
-            self.beamthrow_angle = m.beamthrow_angle
             self.tracking_beam = m.tracking_beam
             self.tracking_single_beam_position = m.tracking_single_beam_position
             self.single_beam_fit = m.single_beam_fit
@@ -176,13 +174,13 @@ class RSRMapFit():
                 self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_receiver-m.el_m2
             else:
                 # on the other hand, if we are doing single beam and tracking the other: be careful
-                elev_r = (m.elev+m.beamthrow_angle)*math.pi/180.
+                x0,y0,x1,y1 = m.beam_offsets(board)
                 if self.fit_beam == 0:
-                    yoffset =  m.beamthrow*math.sin(elev_r) - m.el_receiver
-                    xoffset = -m.beamthrow*math.cos(elev_r) - m.az_receiver
+                    yoffset = x0
+                    xoffset = y0
                 else:
-                    yoffset = -m.beamthrow*math.sin(elev_r) - m.el_receiver
-                    xoffset =  m.beamthrow*math.cos(elev_r) - m.az_receiver
+                    yoffset = x1
+                    xoffset = y1
                 self.el_map_offset[index] = m.eloff[board] - yoffset
                 self.az_map_offset[index] = m.azoff[board] - xoffset
                 self.az_model_offset[index] = m.azoff[board] - xoffset +m.az_user+m.az_paddle

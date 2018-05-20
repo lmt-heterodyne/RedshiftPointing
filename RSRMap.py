@@ -9,6 +9,7 @@ Changes: 03/15/18: changed fit_peak to use scipy.optimize.leastsq
 from RSRCC import RSRCC
 import numpy as np
 import math
+import sys
 
 from scipy.optimize import leastsq
 
@@ -154,19 +155,7 @@ class RSRMap(RSRCC):
         returns maximum value of peak and its location
         """
         # require peak to be in right place
-        elev_r = (self.elev+self.beamthrow_angle)*math.pi/180.
-        if self.tracking_single_beam_position == True:
-            y0 = 0
-            x0 = 0
-            y1 = 0
-            x1 = 0
-        else:
-            y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
-            x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
-            y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
-            x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
-        #print 'beam 0 ',x0,y0, self.elev, elev_r
-        #print 'beam 1 ',x1,y1, self.elev, elev_r
+        x0,y0,x1,y1 = self.beam_offsets(board)
         # locates peak position in map
         bmax = -20000
         imax = 0
@@ -335,7 +324,7 @@ class RSRMap(RSRCC):
             self.flag_windows(board, flag_windows)
         if(remove_baseline):
             self.remove_baseline(board,dd,ww)
-                
+
         # now ready to do the fit
         if process_dual_beam:
             self.find_dual_beam(board,w)
@@ -343,5 +332,34 @@ class RSRMap(RSRCC):
             self.find_selected_beam(board,w,select_beam)
 
 
-
-
+    def beam_offsets(self, board):
+        if self.receiver == 'Sequoia':
+            theta = self.beamthrow_angle*math.pi/180.
+            cosTheta = math.cos(theta)
+            sinTheta = math.sin(theta)
+            dr = 0
+            du = 0
+            elDes = self.elev*math.pi/180.
+            cosEl = math.cos(elDes)
+            sinEl = math.sin(elDes)
+            j = board%4
+            i = board/4
+            di = (1.5-i)*self.beamthrow
+            dj = (j-1.5)*self.beamthrow
+            cos_sin = cosTheta*di-sinTheta*dj;
+            sin_cos = sinTheta*di+cosTheta*dj;
+            b = j*4+i;
+            x0 = -(cosEl*cos_sin + sinEl*sin_cos)
+            y0 = -(-sinEl*cos_sin + cosEl*sin_cos)
+            x1 = -(cosEl*cos_sin + sinEl*sin_cos) - self.az_receiver
+            y1 = -(-sinEl*cos_sin + cosEl*sin_cos) - self.el_receiver
+            print 'board ',board,i,j,x0,y0,x1,y1,self.az_receiver,self.el_receiver
+        else:
+            elev_r = (self.elev+self.beamthrow_angle)*math.pi/180.
+            y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
+            x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
+            y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
+            x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
+            print 'beam 0 ',x0,y0
+            print 'beam 1 ',x1,y1
+        return x0, y0, x1, y1
