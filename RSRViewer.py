@@ -15,6 +15,7 @@ import matplotlib.mlab as mlab
 from mpl_toolkits.axes_grid import make_axes_locatable
 import math
 import sys
+import time
 
 class RSRViewer():
     """Base Class of Viewer"""
@@ -40,21 +41,26 @@ class RSRViewer():
         self.nrows = max(chassis_list)+1
         self.ncols = 0
         flat_list = [item for sublist in process_list for item in sublist]
-        if len(flat_list) == 1:
-            self.ncols = 1
-        else:
-            for proc_l in process_list:
-                if proc_l:
-                    self.ncols = max(self.ncols,max(proc_l)+1)
-                    if self.nrows == 1 and self.ncols > 4:
-                        self.nrows = int(math.ceil(float(self.ncols)/4.))
-                        self.ncols = 4
+        for proc_l in process_list:
+            if proc_l:
+                self.ncols = max(self.ncols,max(proc_l)+1)
+                if self.nrows == 1 and self.ncols > 4:
+                    self.nrows = int(math.ceil(float(self.ncols)/4.))
+                    self.ncols = 4
         if filelist is not None:
             for f in filelist:
                 if 'Redshift' in f:
                     self.ncols = 6
                     self.nrows = 4
                     break
+                elif 'spec' in f:
+                    self.ncols = 4
+                    self.nrows = 4
+                    break
+
+        if len(flat_list) == 1:
+            self.nrows = 1
+            self.ncols = 1
 
         if True:
             print 'chassis_list', chassis_list
@@ -385,7 +391,7 @@ class RSRMapViewer(RSRScanViewer):
             index_list = [0, 4, 8, 12, 1, 5, 9, 13, 2, 6, 10, 14, 3, 7, 11, 15]
             b_list = [i for i in range(16)]
             board_label = 'Pixel'
-            single_chassis = True
+            single_chassis = (m.num_pixels == 16)
             single_board = (len(board_list) == 1)
         elif m.receiver == "RedshiftReceiver":
             index_list = [i for i in range(24)]
@@ -410,7 +416,7 @@ class RSRMapViewer(RSRScanViewer):
                     index = i
                 if single_board:
                     index = 0
-                #print row, col, index, i, index_list[index]+1
+                #print 'coord', row, col, index, i, index_list[index]+1
                 ax = pl.subplot(self.nrows, self.ncols, index_list[index]+1)
 
                 # plot
@@ -486,11 +492,18 @@ class RSRMapViewer(RSRScanViewer):
                 maplimits = [-200, 200, -200, 200]
             else:
                 maplimits = [-100, 100, -100, 100]
-        mapgrid = 10
+        mapgrid = 4
+        if m.xpos.ndim == 2:
+            xpos = m.xpos[:,board]
+            ypos = m.ypos[:,board]
+        else:
+            xpos = m.xpos
+            ypos = m.ypos
+
         if True or m.beamthrow == 0:
-            maplimits = [min(m.xpos), max(m.xpos), min(m.ypos), max(m.ypos)]
-        nx = (maplimits[1]-maplimits[0])/mapgrid
-        ny = (maplimits[3]-maplimits[2])/mapgrid
+            maplimits = [min(xpos), max(xpos), min(ypos), max(ypos)]
+        nx = (maplimits[1]-maplimits[0])/mapgrid+1
+        ny = (maplimits[3]-maplimits[2])/mapgrid+1
         xi = numpy.linspace(maplimits[0],maplimits[1],nx)
         yi = numpy.linspace(maplimits[2],maplimits[3],ny)
         plot_array = numpy.zeros(m.n)
@@ -500,9 +513,12 @@ class RSRMapViewer(RSRScanViewer):
             else:
                 plot_array[i] = m.flip[board]*(m.data[i,board]-m.bias[board]) # sign flip to match dreampy??
 
-        m.xpos = m.xpos + numpy.random.random(m.xpos.size)*1e-6
-        m.ypos = m.ypos + numpy.random.random(m.ypos.size)*1e-6
-        zi = mlab.griddata(m.xpos,m.ypos,plot_array,xi,yi)
+        xpos = xpos + numpy.random.random(xpos.size)*1e-6
+        ypos = ypos + numpy.random.random(ypos.size)*1e-6
+        print 'griddata', len(xpos), len(xi), mapgrid, maplimits
+        t0 = time.time()
+        zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
+        print time.time()-t0
 
         x0,y0,x1,y1 = m.beam_offsets(board)
         plot_circle0 = numpy.zeros((100,2))
@@ -519,11 +535,13 @@ class RSRMapViewer(RSRScanViewer):
         else:
             imagemax = numpy.max(plot_array)
         levels = [-0.95*imagemax,-0.75*imagemax,-0.5*imagemax,-0.25*imagemax,-0.1*imagemax,-0.05*imagemax,0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax]
+        print 'contour'
         try:
             pl.contour(xi,yi,zi,levels)
         except Exception as e:
             print e
             pass
+        print 'image'
         pl.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
         if m.fit_beam_is_tracking_beam and m.fit_beam_single:
             if m.fit_beam == 0:
@@ -534,7 +552,7 @@ class RSRMapViewer(RSRScanViewer):
                 pl.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
                 pl.plot(plot_circle1[:,0],plot_circle1[:,1],'k')
         if show_samples:
-            pl.plot(m.xpos,m.ypos,'.')
+            pl.plot(xpos,ypos,'.')
         pl.axis('equal')
         ax = pl.gca()
         cbar=pl.colorbar()
@@ -543,11 +561,11 @@ class RSRMapViewer(RSRScanViewer):
             pl.ylabel('Elevation (arcsec)')
             pl.title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
         if m.isGood[board]:
-            pltext = '%d'%(board)
+            pltext = '%d'%(m.board_id(board))
         else:
             pltext = '%d Bad Fit'%(board)
         pl.text(maplimits[0]+0.0*(maplimits[1]-maplimits[0]),
-                maplimits[3]+0.1*(maplimits[3]-maplimits[2]),
+                maplimits[3]+0.0*(maplimits[3]-maplimits[2]),
                 pltext,horizontalalignment='left', color='red',
                 bbox=dict(facecolor='white', alpha=1.0))
 
