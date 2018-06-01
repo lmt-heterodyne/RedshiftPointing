@@ -50,9 +50,9 @@ class RSRMapController():
             blist = []
             # 
             if m.receiver == "Sequoia":
-                if m.beam_selected >= 0:
-                    blist = [m.beam_selected]
-                else:
+                if m.pixel_selected >= 0:
+                    blist = [m.pixel_selected]
+                elif m.pixel_selected == -1:
                     blist = [i for i in range(m.num_pixels)]
             else:
                 for board_id,board in enumerate(a.process_list[chassis_id]):
