@@ -7,6 +7,7 @@ Date:    May 5, 2014
 Changes: 05/13/2014: caught use of "band" instead of "board" in line 159.
 """
 import netCDF4
+import sys
 import os
 import numpy as np
 import math
@@ -69,10 +70,17 @@ class RSRCC():
                     print '    TRACKING BEAM ',self.tracking_beam
             elif self.receiver == 'Sequoia':
                 self.beam_selected = self.nc.variables['Header.Sequoia.BeamSelected'][0]
+                #self.beam_selected = -1
+                self.pixel_selected = self.beam_selected
                 self.tracking_beam = 1
-                self.beam_throw = self.nc.variables['Header.Sequoia.PixelDelta'][0]*3600*180/np.pi
-                self.beam_throw2 = self.beam_throw
-                self.beam_throw_angle = np.abs(self.nc.variables['Header.Sequoia.CenterTheta'][:])*180/np.pi
+                try:
+                    self.beam_throw = self.nc.variables['Header.Sequoia.PixelDelta'][0]*3600*180/np.pi
+                    self.beam_throw2 = self.beam_throw
+                    self.beam_throw_angle = np.abs(self.nc.variables['Header.Sequoia.CenterTheta'][:])*180/np.pi
+                except:
+                    self.beam_throw = 27.9
+                    self.beam_throw2 = self.beam_throw
+                    self.beam_throw_angle = 46.*np.pi/180.
                 self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
             else:
                 print '    receiver =', self.receiver
@@ -196,9 +204,44 @@ class RSRCC():
                     for board in range(self.nchan):
                         self.flip[board] = 1
                         self.bias[board] = np.median(self.data[:,board])
+                elif 'spec' in self.filename:
+                    self.pixel_list = self.nc.variables['Header.Spec.PixelList'][:]
+                    if self.beam_selected == -1:
+                        self.pixel_selected = self.beam_selected
+                    elif self.beam_selected in self.pixel_list:
+                        self.pixel_selected = int(np.where(self.pixel_list == self.beam_selected)[0])
+                    else:
+                        self.pixel_selected = -2
+                    self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
+                    self.xpos = self.nc.variables['Data.Spec.MapX'][:]
+                    self.ypos = self.nc.variables['Data.Spec.MapY'][:]
+                    self.time = self.nc.variables['Data.Spec.MapT'][:]
+                    self.duration = self.time[len(self.time)-1]-self.time[0]
+                    #self.bufpos = self.nc.variables['Data.Spec.BufPos'][:]
+                    self.signals = self.nc.variables['Data.Spec.MapData']
+                    self.samples_exist = True
+                    self.data = [[]]
+                    self.samples = [[]]
+                    na = len(self.signals)
+                    sigs = np.transpose(self.signals)
+                    self.nchan = len(sigs)
+                    self.data = np.zeros((na,self.nchan))
+                    self.samples = np.zeros((na,self.nchan))
+                    for b,sig in enumerate(sigs):
+                      for j in range(na):
+                          self.data[j][b] = sig[j]
+                          self.samples[j][b] = 3936
+                    self.n = np.shape(self.data)[0]
+                    self.bias = np.zeros(self.nchan)
+                    self.flip = np.zeros(self.nchan)
+                    self.flag = np.zeros((self.nchan,self.n))
+                    for board in range(self.nchan):
+                        self.flip[board] = 1
+                        self.bias[board] = np.median(self.data[:,board])
             except Exception as e:
               print 'Trouble with data block for file '+self.filename
               print e
+              sys.exit(0)
         
             # define special elimination flag
             self.ELIM = -999999.
@@ -223,6 +266,11 @@ class RSRCC():
                 """Builds an LMT filename filelist and chassis."""
                 if 'RedshiftChassis' in filel:
                     chassis_str = ('RedshiftChassis%d' % self.chassis)
+                    if chassis_str in filel and str(self.scan) in filel:
+                        filename = filel
+                        break
+                elif 'spec' in filel:
+                    chassis_str = ('spec%d' % self.chassis)
                     if chassis_str in filel and str(self.scan) in filel:
                         filename = filel
                         break
@@ -366,8 +414,12 @@ class RSRCC():
             self.flag_windows(board, flag_windows)
         if(remove_baseline):
             self.remove_baseline(board,dd,ww)
-                
 
+    def board_id(self, board=0):
+        if 'spec' in self.filename:
+            return self.pixel_list[board]
+        return board
+                
 def main():
     filelist = ['/data_lmt/ifproc/ifproc_2018-04-16_074753_00_0001.nc']
     r = RSRCC(filelist, '', 74753, 0)
