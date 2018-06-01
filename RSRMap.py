@@ -114,9 +114,15 @@ class RSRMap(RSRCC):
             x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
             y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
             x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
+        if self.xpos.ndim == 2:
+            xpos = self.xpos[:,board]
+            ypos = self.ypos[:,board]
+        else:
+            xpos = self.xpos
+            ypos = self.ypos
         for i in range(self.n):
-            d0 = math.sqrt((self.xpos[i]-x0)**2 + (self.ypos[i]-y0)**2)
-            d1 = math.sqrt((self.xpos[i]-x1)**2 + (self.ypos[i]-y1)**2)
+            d0 = math.sqrt((xpos[i]-x0)**2 + (ypos[i]-y0)**2)
+            d1 = math.sqrt((xpos[i]-x1)**2 + (ypos[i]-y1)**2)
             if self.flag[board,i] == 1:
                 test_array[i] = self.ELIM
             elif d0 < dd:
@@ -148,7 +154,7 @@ class RSRMap(RSRCC):
     
     
 
-    def find_peak(self, board=0, pid=1, dd=30):
+    def find_peak(self, board=0, pid=1, dd=60):
         """Locates the beam peak in a map for a given board.
 
         pid specifies peak (positive of negative) we are looking for
@@ -160,18 +166,24 @@ class RSRMap(RSRCC):
         bmax = -20000
         imax = 0
         w = 10 # to handle case where spike is outside of area filtered
+        if self.xpos.ndim == 2:
+            xpos = self.xpos[:,board]
+            ypos = self.ypos[:,board]
+        else:
+            xpos = self.xpos
+            ypos = self.ypos
         for i in range(w,self.n-w):
             if self.flag[board,i] == 0:
-                d0 = math.sqrt((self.xpos[i]-x0)**2 + (self.ypos[i]-y0)**2)
-                d1 = math.sqrt((self.xpos[i]-x1)**2 + (self.ypos[i]-y1)**2)
-                #print "%4d %6.2f %6.2f   %6.1f   %6.2f %6.2f" % (i,self.xpos[i],self.ypos[i],self.data[i,board],d0,d1)
+                d0 = math.sqrt((xpos[i]-x0)**2 + (ypos[i]-y0)**2)
+                d1 = math.sqrt((xpos[i]-x1)**2 + (ypos[i]-y1)**2)
+                #print "%4d %6.2f %6.2f   %6.1f   %6.2f %6.2f" % (i,xpos[i],ypos[i],self.data[i,board],d0,d1)
                 if (d0<dd or d1<dd):
                     if self.peak[pid]*(self.data[i,board]-self.bias[board])>bmax:
                         imax = i
                         bmax = self.peak[pid]*(self.data[i,board]-self.bias[board])
         
-        #print 'found_peak',board,bmax,imax,self.xpos[imax],self.ypos[imax],self.data[imax,board]
-        return bmax,self.xpos[imax],self.ypos[imax]
+        print 'found_peak',board,bmax,imax,xpos[imax],ypos[imax],self.data[imax,board]
+        return bmax,xpos[imax],ypos[imax]
 
     def fit_peak(self,board=0,pid=1,w=16):
         """Fits a simple gaussian to a peak for a given board.
@@ -180,18 +192,25 @@ class RSRMap(RSRCC):
         w specifies the window (arcsec) within which we will fit data.
         """
         bmax,xmax,ymax = self.find_peak(board,pid)
+        if self.xpos.ndim == 2:
+            xpos = self.xpos[:,board]
+            ypos = self.ypos[:,board]
+        else:
+            xpos = self.xpos
+            ypos = self.ypos
+
         # looks at all points in map and finds those within "w" for fit
         XPOS_LIST = []
         YPOS_LIST = []
         DATA_LIST = []
         COUNT_LIST = 0
         for i in range(self.n):
-            delta = math.sqrt((self.xpos[i]-xmax)*(self.xpos[i]-xmax)+(self.ypos[i]-ymax)*(self.ypos[i]-ymax))
+            delta = math.sqrt((xpos[i]-xmax)*(xpos[i]-xmax)+(ypos[i]-ymax)*(ypos[i]-ymax))
             if self.flag[board,i] == 0:
                 if delta < w:
                     COUNT_LIST = COUNT_LIST + 1
-                    XPOS_LIST.append(self.xpos[i])
-                    YPOS_LIST.append(self.ypos[i])
+                    XPOS_LIST.append(xpos[i])
+                    YPOS_LIST.append(ypos[i])
                     DATA_LIST.append(self.peak[pid]*(self.data[i,board]-self.bias[board]))
 
         xdata = np.array(XPOS_LIST)
@@ -226,6 +245,13 @@ class RSRMap(RSRCC):
         # fit each beam in the map
         self.fit_peak(board, 1, w)
         self.fit_peak(board, 0, w)
+        if self.xpos.ndim == 2:
+            xpos = self.xpos[:,board]
+            ypos = self.ypos[:,board]
+        else:
+            xpos = self.xpos
+            ypos = self.ypos
+
         # then calculate the results
         self.I[board] = self.ap[board,1]-self.ap[board,0]
         self.isGood[board] = (self.goodx[board,1]*self.goodx[board,0])*(self.goody[board,1]*self.goody[board,0])
@@ -237,7 +263,7 @@ class RSRMap(RSRCC):
         self.beamang[board] = math.atan2((self.yp[board,1]-self.yp[board,0]),(self.xp[board,1]-self.xp[board,0]))/math.pi*180.0
         # now calculate the model for this board and save it for later display.
         for i in range(self.n):
-            self.model[board,i] = self.ap[board,1]*math.exp(-4.*math.log(2.)*(((self.xpos[i]-self.xp[board,1])/self.hpx[board,1])**2+((self.ypos[i]-self.yp[board,1])/self.hpy[board,1])**2)) + self.ap[board,0]*math.exp(-4.*math.log(2.)*(((self.xpos[i]-self.xp[board,0])/self.hpx[board,0])**2+((self.ypos[i]-self.yp[board,0])/self.hpy[board,0])**2)) + self.bias[board]
+            self.model[board,i] = self.ap[board,1]*math.exp(-4.*math.log(2.)*(((xpos[i]-self.xp[board,1])/self.hpx[board,1])**2+((ypos[i]-self.yp[board,1])/self.hpy[board,1])**2)) + self.ap[board,0]*math.exp(-4.*math.log(2.)*(((xpos[i]-self.xp[board,0])/self.hpx[board,0])**2+((ypos[i]-self.yp[board,0])/self.hpy[board,0])**2)) + self.bias[board]
 
     def select_pid(self,select_beam):
         """Specifies whether we want the positive or negative beam.
@@ -276,6 +302,12 @@ class RSRMap(RSRCC):
         pid = self.select_pid(select_beam)
         #print self.beam_selected,self.chassis_index,pid
         self.fit_peak(board, pid, w)
+        if self.xpos.ndim == 2:
+            xpos = self.xpos[:,board]
+            ypos = self.ypos[:,board]
+        else:
+            xpos = self.xpos
+            ypos = self.ypos
         self.I[board] = self.peak[pid]*self.ap[board,pid]
         self.isGood[board] = self.goodx[board,pid]*self.goody[board,pid]
         if self.beam_selected == -1:
@@ -290,7 +322,7 @@ class RSRMap(RSRCC):
         self.hpbw[board] = math.sqrt(self.hpx[board,pid]*self.hpy[board,pid])
         # now calculate the model for this board
         for i in range(self.n):
-            self.model[board,i] = self.ap[board,pid]*math.exp(-4.*math.log(2.)*(((self.xpos[i]-self.xp[board,pid])/self.hpx[board,pid])**2+((self.ypos[i]-self.yp[board,pid])/self.hpy[board,pid])**2)) + self.bias[board]
+            self.model[board,i] = self.ap[board,pid]*math.exp(-4.*math.log(2.)*(((xpos[i]-self.xp[board,pid])/self.hpx[board,pid])**2+((ypos[i]-self.yp[board,pid])/self.hpy[board,pid])**2)) + self.bias[board]
     
 
     def process(self, w=16, remove_baseline=False, dd=50, ww=50, despike_scan=False, elim_bad_integrations = False, checksum=3936, flag_data=False, flag_windows=(),process_dual_beam=True,select_beam=1):
@@ -334,6 +366,11 @@ class RSRMap(RSRCC):
 
     def beam_offsets(self, board):
         if self.receiver == 'Sequoia':
+            if self.beam_selected >=0:
+                board = self.beam_selected
+            else:
+                board = self.board_id(board)
+            #print '              find beam offsets for pixel', board
             theta = self.beamthrow_angle*math.pi/180.
             cosTheta = math.cos(theta)
             sinTheta = math.sin(theta)
