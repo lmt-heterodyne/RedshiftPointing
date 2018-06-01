@@ -38,12 +38,29 @@ try:
         board = 'all'
         board = [0]
         filelist = genericFileSearchAll ('lmttpm', obsnum, root, full = True)
-    elif sys.argv[1][0] == 'i' or sys.argv[1][0] == 's' or sys.argv[1][0] == 'm':
+    elif sys.argv[1][0] == 's':
+        print 'spec'
+        obsnum = 76406
+        try:
+            obsnum = int(sys.argv[2])
+        except:
+            pass
+        chassis = 'all'
+        board = 'all'
+        chassis = [2]
+        board = [i for i in range(4)]
+        filelist = []
+        for ch in chassis:
+            inst = 'spec%d'%ch
+            flist = genericFileSearchAll(inst, obsnum, root, full = True)
+            for f in flist:
+                filelist.append(f)
+    elif sys.argv[1][0] == 'i' or sys.argv[1][0] == 'm':
         print 'ifproc'
         if sys.argv[1][0] == 'm':
             print 'msip1mm'
             obsnum = 75765
-        elif sys.argv[1][0] == 's':
+        elif sys.argv[1][0] == 'i':
             print 'sequoia'
             obsnum = 75765
             obsnum = 102669
@@ -52,6 +69,7 @@ try:
             obsnum = 76675
             obsnum = 77059
             obsnum = 77055
+            obsnum = 76406
         try:
             obsnum = int(sys.argv[2])
         except:
