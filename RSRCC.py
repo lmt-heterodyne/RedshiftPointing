@@ -39,8 +39,10 @@ class RSRCC():
             self.obsnum = self.nc.variables['Header.Dcs.ObsNum'][0]
             self.utdate = self.nc.variables['Header.TimePlace.UTDate'][0]
             self.ut1_h = self.nc.variables['Header.TimePlace.UT1'][0]/2./math.pi*24.
-            self.azim = self.nc.variables['Header.Sky.AzReq'][0]*180./math.pi
-            self.elev = self.nc.variables['Header.Sky.ElReq'][0]*180./math.pi
+            #self.azim = self.nc.variables['Header.Sky.AzReq'][0]*180./math.pi
+            #self.elev = self.nc.variables['Header.Sky.ElReq'][0]*180./math.pi
+            self.azim = self.nc.variables['Header.Telescope.AzDesPos'][0]*180./math.pi
+            self.elev = self.nc.variables['Header.Telescope.ElDesPos'][0]*180./math.pi
             self.m1ZernikeC0 = self.nc.variables['Header.M1.ZernikeC'][0]
             self.m2x = self.nc.variables['Header.M2.XReq'][0]
             self.m2y = self.nc.variables['Header.M2.YReq'][0]
@@ -80,7 +82,7 @@ class RSRCC():
                 except:
                     self.beam_throw = 27.9
                     self.beam_throw2 = self.beam_throw
-                    self.beam_throw_angle = 46.*np.pi/180.
+                    self.beam_throw_angle = 46.0
                 self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
             else:
                 print '    receiver =', self.receiver
@@ -213,8 +215,8 @@ class RSRCC():
                     else:
                         self.pixel_selected = -2
                     self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
-                    self.xpos = self.nc.variables['Data.Spec.MapX'][:]
-                    self.ypos = self.nc.variables['Data.Spec.MapY'][:]
+                    self.xpos = self.nc.variables['Data.Spec.MapX'][:]*206264.8
+                    self.ypos = self.nc.variables['Data.Spec.MapY'][:]*206264.8
                     self.time = self.nc.variables['Data.Spec.MapT'][:]
                     self.duration = self.time[len(self.time)-1]-self.time[0]
                     #self.bufpos = self.nc.variables['Data.Spec.BufPos'][:]
