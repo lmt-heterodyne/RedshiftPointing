@@ -9,6 +9,7 @@ Changes:
 import sys
 import getopt
 
+from RSRCC import RSRCC
 from RSRMap import RSRMap
 from RSRFit import RSRMapFit
 from RSRViewer import RSRMapViewer
@@ -39,7 +40,7 @@ class RSRMapController():
         flist = filelist
         ## read each file to see if it exists and has good data
         for chassis_id, chassis in enumerate(a.chassis_list):
-            m = RSRMap(flist,a.date,scan,chassis_id,chassis,a.beam_throw)
+            m = RSRCC(flist,a.date,scan,chassis_id,chassis,quick_open=True)
             try:
                 fnc = m.nc
             except AttributeError:
