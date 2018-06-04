@@ -1,3 +1,4 @@
+import os
 import sys
 from PIL import Image
 from RSRFit import RSRMapFit
@@ -39,7 +40,11 @@ class RSRRunPointing():
             ###v.print_hpbw_result(F)
 
             try:
-                images = map(Image.open, ['rsr_summary.png', 'rsr_pointing_maps.png'])
+                image_files = ['rsr_summary.png', 'rsr_pointing_maps.png']
+                if os.path.isfile('lp_spec.png'):
+                    image_files = image_files + ['lp_spec.png']
+                print image_files
+                images = map(Image.open, image_files)
                 widths, heights = zip(*(i.size for i in images))
 
                 max_width = max(widths)
@@ -56,6 +61,8 @@ class RSRRunPointing():
                     y_offset += im.size[1]*max_width/im.size[0]
 
                 new_im.save('rsr_summary.png')
+                os.system('rm -f rsr_pointing_maps.png lp_spec.png')
+
             except Exception as e:
                 print e
                 pass
