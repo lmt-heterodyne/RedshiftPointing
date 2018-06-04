@@ -15,7 +15,7 @@ from RSRUtilities import TempSens
 
 class RSRCC():
     """RSRCC is the base class for compressed continuum data scans"""
-    def __init__(self,filelist,date,scan,chassis_id,chassis,groupscan=0,subscan=1,path='/data_lmt'):
+    def __init__(self,filelist,date,scan,chassis_id,chassis,quick_open=False,groupscan=0,subscan=1,path='/data_lmt'):
         """__init__ reads the netcdf file and fills in parameters and arrays"""
         self.path = path
         self.date = date
@@ -114,6 +114,27 @@ class RSRCC():
             self.tilt1_x = self.nc.variables['Header.Tiltmeter_1_.TiltX'][0]*206264.8
             self.tilt1_y = self.nc.variables['Header.Tiltmeter_1_.TiltY'][0]*206264.8
 
+            if 'spec' in self.filename:
+                self.pixel_list = self.nc.variables['Header.Spec.PixelList'][:]
+                if self.beam_selected == -1:
+                    self.pixel_selected = self.beam_selected
+                elif self.beam_selected in self.pixel_list:
+                    self.pixel_selected = int(np.where(self.pixel_list == self.beam_selected)[0])
+                else:
+                    self.pixel_selected = -2
+                self.nchan = self.nc.dimensions['Data.IfProc.BasebandLevel_xlen'].size
+            elif 'ifproc' in self.filename:
+                self.nchan = self.nc.dimensions['Data.IfProc.BasebandLevel_xlen'].size
+            elif 'RedshiftChassis' in self.filename:
+                this_chassis = 'Data.RedshiftChassis_'+str(self.chassis)
+                self.nchan = self.nc.dimensions[this_chassis+'_.AccAverage_xlen'].size
+            elif 'vlbi1mm' in self.filename:
+                    self.nchan = 2
+
+            print '      found nchan', self.nchan
+            if quick_open:
+                return
+
             # TEMPERATURE SENSOR Information
             self.T = TempSens(self.nc.variables['Header.TempSens.TempSens'][:]/100.)
 
@@ -133,7 +154,6 @@ class RSRCC():
                     else:
                         self.samples_exist = False
                     self.n =  np.shape(self.data)[0]
-                    self.nchan = 6
                     self.bias = np.zeros(self.nchan)
                     self.flip = np.zeros(self.nchan)
                     self.flag = np.zeros((self.nchan,self.n))
@@ -158,7 +178,6 @@ class RSRCC():
                     nb = len(self.bpower)
                     self.data = [[]]
                     self.samples = [[]]
-                    self.nchan = 2
                     self.data = np.zeros((na,self.nchan))
                     self.samples = np.zeros((na,self.nchan))
                     for b in range(0,self.nchan,2):
@@ -192,7 +211,6 @@ class RSRCC():
                     self.samples = [[]]
                     na = len(self.signals)
                     sigs = np.transpose(self.signals)
-                    self.nchan = len(sigs)
                     self.data = np.zeros((na,self.nchan))
                     self.samples = np.zeros((na,self.nchan))
                     for b,sig in enumerate(sigs):
@@ -207,14 +225,6 @@ class RSRCC():
                         self.flip[board] = 1
                         self.bias[board] = np.median(self.data[:,board])
                 elif 'spec' in self.filename:
-                    self.pixel_list = self.nc.variables['Header.Spec.PixelList'][:]
-                    if self.beam_selected == -1:
-                        self.pixel_selected = self.beam_selected
-                    elif self.beam_selected in self.pixel_list:
-                        self.pixel_selected = int(np.where(self.pixel_list == self.beam_selected)[0])
-                    else:
-                        self.pixel_selected = -2
-                    self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
                     self.xpos = self.nc.variables['Data.Spec.MapX'][:]*206264.8
                     self.ypos = self.nc.variables['Data.Spec.MapY'][:]*206264.8
                     self.time = self.nc.variables['Data.Spec.MapT'][:]
@@ -226,7 +236,6 @@ class RSRCC():
                     self.samples = [[]]
                     na = len(self.signals)
                     sigs = np.transpose(self.signals)
-                    self.nchan = len(sigs)
                     self.data = np.zeros((na,self.nchan))
                     self.samples = np.zeros((na,self.nchan))
                     for b,sig in enumerate(sigs):
