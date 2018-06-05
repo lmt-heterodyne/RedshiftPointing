@@ -322,7 +322,7 @@ class RSRM2Fit():
         if (dx == dy and dx == dz and dx == 0 and dzer == 0):
             #nothing's changing, an error should be thrown
             self.msg = "M2 or Zernike offsets are not changing in these files."
-            m2Pos = -1
+            m2pos = -1
         elif (dx != 0):
             if (dy != 0 or dz != 0 or dzer != 0):
                 #more than one offset changing, throw an error
