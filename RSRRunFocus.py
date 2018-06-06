@@ -21,6 +21,9 @@ class RSRRunFocus():
 
             m = RSRM2Fit(f)
 
+            if m.m2pos == -1:
+                return m
+
             m.find_focus()
             v.print_results(m)
 
