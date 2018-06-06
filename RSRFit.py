@@ -361,34 +361,33 @@ class RSRM2Fit():
                 self.M2zfocus = max(M2z)
                 m2pos = 3
 
-        if (m2pos == -1):
-            print(self.msg)
-            return -2
-        
         self.m2_position = numpy.zeros(self.nscans)
         self.m2_pcor = numpy.zeros(self.nscans)
         self.elev = numpy.zeros(self.nscans)
         self.m2pos = m2pos
         m2posLabel = {-1: 'Error', 0: 'Z', 1: 'Y', 2: 'X', 3: 'A'}
         print "m2pos = ", m2pos, m2posLabel[m2pos]
-        for scan_id in range(self.nscans):
-            self.elev[scan_id],sig = F[scan_id].get_elev()
-            if self.m2pos == 0:
-                ave,sig = F[scan_id].get_m2z()
-                pcor,pcorsig = F[scan_id].get_m2zPcor()
-            elif self.m2pos == 1:
-                ave,sig = F[scan_id].get_m2y()
-                pcor,pcorsig = F[scan_id].get_m2yPcor()
-            elif self.m2pos == 2:
-                ave,sig = F[scan_id].get_m2x()
-                pcor,pcorsig = F[scan_id].get_m2xPcor()
-            else:
-                ave,sig = F[scan_id].get_m1zer()
-                pcor,pcorsig = [0,0]
+        if (m2pos == -1):
+            print(self.msg)
+        else:
+            for scan_id in range(self.nscans):
+                self.elev[scan_id],sig = F[scan_id].get_elev()
+                if self.m2pos == 0:
+                    ave,sig = F[scan_id].get_m2z()
+                    pcor,pcorsig = F[scan_id].get_m2zPcor()
+                elif self.m2pos == 1:
+                    ave,sig = F[scan_id].get_m2y()
+                    pcor,pcorsig = F[scan_id].get_m2yPcor()
+                elif self.m2pos == 2:
+                    ave,sig = F[scan_id].get_m2x()
+                    pcor,pcorsig = F[scan_id].get_m2xPcor()
+                else:
+                    ave,sig = F[scan_id].get_m1zer()
+                    pcor,pcorsig = [0,0]
 
-            self.m2_position[scan_id] = ave
-            self.m2_pcor[scan_id] = pcor
-        self.parameters = numpy.zeros((self.n,3))
+                self.m2_position[scan_id] = ave
+                self.m2_pcor[scan_id] = pcor
+            self.parameters = numpy.zeros((self.n,3))
     
     def find_focus(self):
         """Uses data loaded in during creation of this instance to fit focus."""
