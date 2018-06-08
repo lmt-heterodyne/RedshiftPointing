@@ -122,12 +122,12 @@ class RSRCC():
                     self.pixel_selected = int(np.where(self.pixel_list == self.beam_selected)[0])
                 else:
                     self.pixel_selected = -2
-                self.nchan = self.nc.dimensions['Data.IfProc.BasebandLevel_xlen'].size
+                self.nchan = len(self.nc.dimensions['Data.IfProc.BasebandLevel_xlen'])
             elif 'ifproc' in self.filename:
-                self.nchan = self.nc.dimensions['Data.IfProc.BasebandLevel_xlen'].size
+                self.nchan = len(self.nc.dimensions['Data.IfProc.BasebandLevel_xlen'])
             elif 'RedshiftChassis' in self.filename:
                 this_chassis = 'Data.RedshiftChassis_'+str(self.chassis)
-                self.nchan = self.nc.dimensions[this_chassis+'_.AccSamples_xlen'].size
+                self.nchan = len(self.nc.dimensions[this_chassis+'_.AccSamples_xlen'])
             elif 'vlbi1mm' in self.filename:
                     self.nchan = 2
 
