@@ -61,7 +61,8 @@ class RSRMapController():
                         blist.append(board)
             if not blist:
                 self.chassis_list.remove(chassis)
-            self.process_list.append(blist)
+            else:
+                self.process_list.append(blist)
             m.close()
         F.update_process_list(self.process_list)
 
