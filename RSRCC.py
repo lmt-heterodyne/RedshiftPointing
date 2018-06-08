@@ -127,7 +127,7 @@ class RSRCC():
                 self.nchan = self.nc.dimensions['Data.IfProc.BasebandLevel_xlen'].size
             elif 'RedshiftChassis' in self.filename:
                 this_chassis = 'Data.RedshiftChassis_'+str(self.chassis)
-                self.nchan = self.nc.dimensions[this_chassis+'_.AccAverage_xlen'].size
+                self.nchan = self.nc.dimensions[this_chassis+'_.AccSamples_xlen'].size
             elif 'vlbi1mm' in self.filename:
                     self.nchan = 2
 
