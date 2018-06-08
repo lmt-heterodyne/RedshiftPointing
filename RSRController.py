@@ -59,6 +59,8 @@ class RSRMapController():
                 for board_id,board in enumerate(a.process_list[chassis_id]):
                     if board_id < m.nchan:
                         blist.append(board)
+            if not blist:
+                self.chassis_list.remove(chassis)
             self.process_list.append(blist)
             m.close()
         F.update_process_list(self.process_list)
