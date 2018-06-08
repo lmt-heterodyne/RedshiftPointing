@@ -252,7 +252,6 @@ class RSRCC():
             except Exception as e:
               print 'Trouble with data block for file '+self.filename
               print e
-              sys.exit(0)
         
             # define special elimination flag
             self.ELIM = -999999.
