@@ -165,7 +165,10 @@ class RSRMap(RSRCC):
         # locates peak position in map
         bmax = -20000
         imax = 0
-        w = 10 # to handle case where spike is outside of area filtered
+        if self.n > 10:
+            w = 10 # to handle case where spike is outside of area filtered
+        else:
+            w = 0
         if self.xpos.ndim == 2:
             xpos = self.xpos[:,board]
             ypos = self.ypos[:,board]
@@ -217,28 +220,39 @@ class RSRMap(RSRCC):
         ydata = np.array(YPOS_LIST)
         fit_data = np.array(DATA_LIST)
         v0 = np.array([bmax, xmax, 15., ymax, 15.])
-        lsq_fit = leastsq(compute_the_residuals,v0,args=(xdata,ydata,fit_data))
+        lsq_fit,lsq_cov,lsq_inf,lsq_msg,lsq_success = leastsq(compute_the_residuals,v0,args=(xdata,ydata,fit_data),full_output=1)
+        #print 'lsq_fit',lsq_fit
+        #print 'lsq_cov',lsq_cov
+        #print 'lsq_msg',lsq_msg
+        #print 'lsq_success',lsq_success
 
-        self.ap[board,pid] = self.peak[pid]*lsq_fit[0][0]
-        self.xp[board,pid] = lsq_fit[0][1]
-        self.yp[board,pid] = lsq_fit[0][3]
+        self.ap[board,pid] = self.peak[pid]*lsq_fit[0]
+        self.xp[board,pid] = lsq_fit[1]
+        self.yp[board,pid] = lsq_fit[3]
 
-        if lsq_fit[0][2] < 0:
+        if lsq_fit[2] < 0:
             print 'warning: bad gaussian fit in azimuth: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
-            self.hpx[board,pid] = np.abs(lsq_fit[0][2])
+            self.hpx[board,pid] = np.abs(lsq_fit[2])
             self.goodx[board,pid] = 0
         else:
-            self.hpx[board,pid] = lsq_fit[0][2]
+            self.hpx[board,pid] = lsq_fit[2]
             self.goodx[board,pid] = 1
         
-        if lsq_fit[0][4] < 0:
+        if lsq_fit[4] < 0:
             print 'warning: bad gaussian fit in elevation: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
-            self.hpy[board,pid] = np.abs(lsq_fit[0][4])
+            self.hpy[board,pid] = np.abs(lsq_fit[4])
             self.goody[board,pid] = 0
         else:
-            self.hpy[board,pid] = lsq_fit[0][4]
+            self.hpy[board,pid] = lsq_fit[4]
             self.goody[board,pid] = 1
     
+        if lsq_success > 4:
+            print 'warning: bad fit: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
+            self.hpx[board,pid] = np.abs(lsq_fit[2])
+            self.hpy[board,pid] = np.abs(lsq_fit[4])
+            self.goodx[board,pid] = 0
+            self.goody[board,pid] = 0
+
 
     def find_dual_beam(self, board=0, w=16):
         """Fits each beam and then derives final results for a particular board."""
