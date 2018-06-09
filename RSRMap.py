@@ -165,7 +165,7 @@ class RSRMap(RSRCC):
         # locates peak position in map
         bmax = -20000
         imax = 0
-        if self.n > 10:
+        if self.n > 100:
             w = 10 # to handle case where spike is outside of area filtered
         else:
             w = 0
