@@ -217,26 +217,49 @@ class RSRMapFit():
         print 'el_map_offset[isGood]',self.el_map_offset[numpy.nonzero(self.isGood)]
 
         self.pointing_result = self.isGood.any()
-        self.mean_az_map_offset = numpy.mean(self.az_map_offset[numpy.nonzero(self.isGood)])
-        self.std_az_map_offset = numpy.std(self.az_map_offset[numpy.nonzero(self.isGood)])
-        self.mean_el_map_offset = numpy.mean(self.el_map_offset[numpy.nonzero(self.isGood)])
-        self.std_el_map_offset = numpy.std(self.el_map_offset[numpy.nonzero(self.isGood)])
+        if self.pointing_result:
+            self.mean_az_map_offset = numpy.mean(self.az_map_offset[numpy.nonzero(self.isGood)])
+            self.std_az_map_offset = numpy.std(self.az_map_offset[numpy.nonzero(self.isGood)])
+            self.mean_el_map_offset = numpy.mean(self.el_map_offset[numpy.nonzero(self.isGood)])
+            self.std_el_map_offset = numpy.std(self.el_map_offset[numpy.nonzero(self.isGood)])
 
-        self.mean_az_model_offset = numpy.mean(self.az_model_offset[numpy.nonzero(self.isGood)])
-        self.std_az_model_offset = numpy.std(self.az_model_offset[numpy.nonzero(self.isGood)])
-        self.mean_el_model_offset = numpy.mean(self.el_model_offset[numpy.nonzero(self.isGood)])
-        self.std_el_model_offset = numpy.std(self.el_model_offset[numpy.nonzero(self.isGood)])
+            self.mean_az_model_offset = numpy.mean(self.az_model_offset[numpy.nonzero(self.isGood)])
+            self.std_az_model_offset = numpy.std(self.az_model_offset[numpy.nonzero(self.isGood)])
+            self.mean_el_model_offset = numpy.mean(self.el_model_offset[numpy.nonzero(self.isGood)])
+            self.std_el_model_offset = numpy.std(self.el_model_offset[numpy.nonzero(self.isGood)])
 
-        self.mean_az_total_offset = numpy.mean(self.az_total_offset[numpy.nonzero(self.isGood)])
-        self.std_az_total_offset = numpy.std(self.az_total_offset[numpy.nonzero(self.isGood)])
-        self.mean_el_total_offset = numpy.mean(self.el_total_offset[numpy.nonzero(self.isGood)])
-        self.std_el_total_offset = numpy.std(self.el_total_offset[numpy.nonzero(self.isGood)])
+            self.mean_az_total_offset = numpy.mean(self.az_total_offset[numpy.nonzero(self.isGood)])
+            self.std_az_total_offset = numpy.std(self.az_total_offset[numpy.nonzero(self.isGood)])
+            self.mean_el_total_offset = numpy.mean(self.el_total_offset[numpy.nonzero(self.isGood)])
+            self.std_el_total_offset = numpy.std(self.el_total_offset[numpy.nonzero(self.isGood)])
 
-        self.mean_sep = numpy.mean(self.sep)
-        self.std_sep = numpy.std(self.sep)
+            self.mean_sep = numpy.mean(self.sep)
+            self.std_sep = numpy.std(self.sep)
 
-        self.mean_ang = numpy.mean(self.ang)
-        self.std_ang = numpy.std(self.ang)
+            self.mean_ang = numpy.mean(self.ang)
+            self.std_ang = numpy.std(self.ang)
+        else:
+            self.mean_az_map_offset = 0
+            self.std_az_map_offset = 0
+            self.mean_el_map_offset = 0
+            self.std_el_map_offset = 0
+
+            self.mean_az_model_offset = 0
+            self.std_az_model_offset = 0
+            self.mean_el_model_offset = 0
+            self.std_el_model_offset = 0
+
+            self.mean_az_total_offset = 0
+            self.std_az_total_offset = 0
+            self.mean_el_total_offset = 0
+            self.std_el_total_offset = 0
+
+            self.mean_sep = 0
+            self.std_sep = 0
+
+            self.mean_ang = 0
+            self.std_ang = 0
+            
 
     def find_hpbw_result(self):
         """Derives the Half Power Beam Widths of fits."""
