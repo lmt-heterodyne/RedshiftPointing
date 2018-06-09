@@ -51,8 +51,6 @@ class RSRMapController():
             blist = []
             # 
             if m.receiver == "Sequoia":
-                if a.fit_window < 30:
-                    a.fit_window = 30
                 if m.pixel_selected >= 0:
                     blist = [m.pixel_selected]
                 elif m.pixel_selected == -1:
