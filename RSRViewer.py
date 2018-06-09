@@ -564,7 +564,7 @@ class RSRMapViewer(RSRScanViewer):
         if m.isGood[board]:
             pltext = '%d'%(m.board_id(board))
         else:
-            pltext = '%d Bad Fit'%(board)
+            pltext = '%d Bad Fit'%(m.board_id(board))
         pl.text(maplimits[0]+0.0*(maplimits[1]-maplimits[0]),
                 maplimits[3]+0.0*(maplimits[3]-maplimits[2]),
                 pltext,horizontalalignment='left', color='red',
