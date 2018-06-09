@@ -194,7 +194,7 @@ class RSRCC():
                     self.flag = np.zeros((self.nchan,self.n))
                     for board in range(self.nchan):
                         self.flip[board] = 1
-                        self.bias[board] = np.median(self.data[:,board])
+                        self.bias[board] = 0#np.median(self.data[:,board])
                 elif 'lmttpm' in self.filename or 'ifproc' in self.filename:
 
                     self.xpos = self.nc.variables['Data.TelescopeBackend.TelAzMap'][:]*206264.8
@@ -223,7 +223,7 @@ class RSRCC():
                     self.flag = np.zeros((self.nchan,self.n))
                     for board in range(self.nchan):
                         self.flip[board] = 1
-                        self.bias[board] = np.median(self.data[:,board])
+                        self.bias[board] = 0#np.median(self.data[:,board])
                 elif 'spec' in self.filename:
                     self.xpos = self.nc.variables['Data.Spec.MapX'][:]*206264.8
                     self.ypos = self.nc.variables['Data.Spec.MapY'][:]*206264.8
@@ -248,7 +248,7 @@ class RSRCC():
                     self.flag = np.zeros((self.nchan,self.n))
                     for board in range(self.nchan):
                         self.flip[board] = 1
-                        self.bias[board] = np.median(self.data[:,board])
+                        self.bias[board] = 0#np.median(self.data[:,board])
             except Exception as e:
               print 'Trouble with data block for file '+self.filename
               print e
