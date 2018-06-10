@@ -534,13 +534,20 @@ class RSRMapViewer(RSRScanViewer):
         if m.I[board]>0:
             if m.receiver == 'RedshiftReceiver':
                 imagemax = m.I[board]/2.
+                levels = [-0.95*imagemax,-0.75*imagemax,-0.5*imagemax,-0.25*imagemax,-0.1*imagemax,-0.05*imagemax,0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax]
             else:
                 imagemax = m.I[board]
+                levels = [0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax, 0.99*imagemax]
         else:
-            imagemax = numpy.max(plot_array)
-        levels = [-0.95*imagemax,-0.75*imagemax,-0.5*imagemax,-0.25*imagemax,-0.1*imagemax,-0.05*imagemax,0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax]
+            if m.receiver == 'RedshiftReceiver':
+                imagemax = numpy.max(plot_array)
+                levels = [-0.95*imagemax,-0.75*imagemax,-0.5*imagemax,-0.25*imagemax,-0.1*imagemax,-0.05*imagemax,0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax, 0.99*imagemax]
+            else:
+                imagemax = numpy.max(plot_array)
+                levels = [0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax, 0.99*imagemax]
         print 'contour'
         try:
+            print imagemax, numpy.max(plot_array), levels
             pl.contour(xi,yi,zi,levels)
         except Exception as e:
             print e
