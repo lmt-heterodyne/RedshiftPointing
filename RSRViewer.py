@@ -532,7 +532,10 @@ class RSRMapViewer(RSRScanViewer):
 
         
         if m.I[board]>0:
-            imagemax = m.I[board]/2.
+            if m.receiver == 'RedshiftReceiver':
+                imagemax = m.I[board]/2.
+            else:
+                imagemax = m.I[board]
         else:
             imagemax = numpy.max(plot_array)
         levels = [-0.95*imagemax,-0.75*imagemax,-0.5*imagemax,-0.25*imagemax,-0.1*imagemax,-0.05*imagemax,0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax]
