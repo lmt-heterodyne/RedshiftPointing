@@ -948,9 +948,15 @@ class RSRM2FitViewer(RSRViewer):
             pl.plot(brange,result_relative,'o')
             pl.plot(brange,the_model,'r')
             try:
-                pl.margins(1,1)
-                xpos = 3*brange[0]+.5
-                ypos = result_relative.max()+0.2*(result_relative.max()-result_relative.min())
+                #pl.margins(1,1)
+                #xpos = 3*brange[0]+.5
+                #ypos = result_relative.max()+0.2*(result_relative.max()-result_relative.min())
+                if len(brange) == 1:
+                    xpos = brange[0]
+                    ypos = result_relative*1.01
+                else:
+                    xpos = brange[0]+.5
+                    ypos = result_relative.max()-0.2*(result_relative.max()-result_relative.min())
             except:
                 if len(brange) == 1:
                     xpos = brange[0]
