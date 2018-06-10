@@ -230,7 +230,7 @@ class RSRMap(RSRCC):
         self.xp[board,pid] = lsq_fit[1]
         self.yp[board,pid] = lsq_fit[3]
 
-        if lsq_fit[2] < 0:
+        if lsq_fit[2] < 0 and False:
             print 'warning: bad gaussian fit in azimuth: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
             self.hpx[board,pid] = np.abs(lsq_fit[2])
             self.goodx[board,pid] = 0
@@ -238,7 +238,7 @@ class RSRMap(RSRCC):
             self.hpx[board,pid] = lsq_fit[2]
             self.goodx[board,pid] = 1
         
-        if lsq_fit[4] < 0:
+        if lsq_fit[4] < 0 and False:
             print 'warning: bad gaussian fit in elevation: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
             self.hpy[board,pid] = np.abs(lsq_fit[4])
             self.goody[board,pid] = 0
