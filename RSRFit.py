@@ -286,13 +286,6 @@ class RSRMapFit():
         self.std_hpbw_ratio = numpy.std(self.ratio_hpbw)
         self.hpbw_result = True
     
-    def update_process_list(self, process_list):
-        self.nchassis = len(process_list)
-        nresults = 0
-        for i in range(self.nchassis):
-            nresults = nresults + len(process_list[i])
-        self.nresults = nresults
-
 class RSRM2Fit():
     """RSRM2Fit holds and analyzes variables for fitting pointing maps to derive M2 parameters.
 
