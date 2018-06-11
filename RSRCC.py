@@ -197,15 +197,17 @@ class RSRCC():
                         self.bias[board] = np.median(self.data[:,board])
                 elif 'lmttpm' in self.filename or 'ifproc' in self.filename:
 
-                    self.xpos = self.nc.variables['Data.TelescopeBackend.TelAzMap'][:]*206264.8
-                    self.ypos = self.nc.variables['Data.TelescopeBackend.TelElMap'][:]*206264.8
-                    self.time = self.nc.variables['Data.TelescopeBackend.TelTime'][:]
-                    self.duration = self.time[len(self.time)-1]-self.time[0]
                     self.bufpos = self.nc.variables['Data.TelescopeBackend.BufPos'][:]
+                    idx = np.where((self.bufpos == 0) | (self.bufpos >= 100))[0]
+
+                    self.xpos = self.nc.variables['Data.TelescopeBackend.TelAzMap'][idx]*206264.8
+                    self.ypos = self.nc.variables['Data.TelescopeBackend.TelElMap'][idx]*206264.8
+                    self.time = self.nc.variables['Data.TelescopeBackend.TelTime'][idx]
+                    self.duration = self.time[len(self.time)-1]-self.time[0]
                     if 'lmttpm' in self.filename:
-                        self.signals = self.nc.variables['Data.LmtTpm.Signal']
+                        self.signals = self.nc.variables['Data.LmtTpm.Signal'][idx][idx]
                     elif 'ifproc' in self.filename:
-                        self.signals = self.nc.variables['Data.IfProc.BasebandLevel']
+                        self.signals = self.nc.variables['Data.IfProc.BasebandLevel'][idx]
                     self.samples_exist = True
                     self.data = [[]]
                     self.samples = [[]]
@@ -229,7 +231,7 @@ class RSRCC():
                     self.ypos = self.nc.variables['Data.Spec.MapY'][:]*206264.8
                     self.time = self.nc.variables['Data.Spec.MapT'][:]
                     self.duration = self.time[len(self.time)-1]-self.time[0]
-                    #self.bufpos = self.nc.variables['Data.Spec.BufPos'][:]
+                    self.bufpos = self.nc.variables['Data.Spec.BufPos'][:]
                     self.signals = self.nc.variables['Data.Spec.MapData']
                     self.samples_exist = True
                     self.data = [[]]
