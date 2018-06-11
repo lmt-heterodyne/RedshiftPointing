@@ -26,7 +26,6 @@ class RSRMapController():
         show_it specifies whether to show an image of the maps and results.
         Function returns an RSRMapFit object with the fit results.
         """
-        F = RSRMapFit(a.process_list)
         V = RSRMapViewer()
         if show_it:
             V.init(a)
@@ -66,7 +65,9 @@ class RSRMapController():
             else:
                 self.process_list.append(blist)
             m.close()
-        F.update_process_list(self.process_list)
+
+	# create a map fit now that the process_list has been updated
+	F = RSRMapFit(self.process_list)
 
         print '********'
         print 'new chassis list', self.chassis_list
