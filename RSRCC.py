@@ -130,6 +130,8 @@ class RSRCC():
                 self.nchan = len(self.nc.dimensions[this_chassis+'_.AccSamples_xlen'])
             elif 'vlbi1mm' in self.filename:
                     self.nchan = 2
+            elif 'lmttpm' in self.filename:
+                self.nchan = len(self.nc.dimensions['Data.LmtTpm.Signal_xlen'])
 
             print '      found nchan', self.nchan
             if quick_open:
