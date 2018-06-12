@@ -84,6 +84,11 @@ class RSRCC():
                     self.beam_throw2 = self.beam_throw
                     self.beam_throw_angle = 46.0
                 self.num_pixels = self.nc.variables['Header.Sequoia.NumPixels'][0]
+            elif self.receiver == 'B4r':
+                self.beam_selected = self.nc.variables['Header.B4r.BeamSelected'][0]
+                #self.beam_selected = 0
+                self.pixel_selected = self.beam_selected
+                self.tracking_beam = 1
             else:
                 print '    receiver =', self.receiver
                 self.beam_selected = 1
