@@ -49,7 +49,7 @@ class RSRMapController():
                 continue
             blist = []
             # 
-            if m.receiver == "Sequoia":
+            if m.receiver == "Sequoia" or m.receiver == "B4r":
                 if a.fit_window < 60:
                     a.fit_window = 60
                 if m.pixel_selected >= 0:
