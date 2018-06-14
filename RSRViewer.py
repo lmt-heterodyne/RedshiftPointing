@@ -517,8 +517,12 @@ class RSRMapViewer(RSRScanViewer):
         ypos = ypos + numpy.random.random(ypos.size)*1e-6
         print 'griddata', len(xpos), len(xi), mapgrid, maplimits
         t0 = time.time()
-        #zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
-        zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
+        try:
+            zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
+            print 'griddata not linear'
+        except Exception as e:
+            zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
+            print 'griddata linear'
         print time.time()-t0
 
         x0,y0,x1,y1 = m.beam_offsets(board)
