@@ -711,7 +711,7 @@ class RSRFitViewer(RSRViewer):
         pl.plot(F.az_map_offset[numpy.nonzero(F.isGood)],F.el_map_offset[numpy.nonzero(F.isGood)],'o')
         pl.xlabel('Az Offset (arcsec)')
         pl.ylabel('El Offset (arcsec)')
-        pl.title('%20s'%(F.source[0:20]))
+        #pl.title('%s %s'%(F.receiver.strip(), F.source.strip()))
         #pl.axis('equal')
         axis = [x * 2 for x in axis] 
         pl.axis(axis)
@@ -724,7 +724,7 @@ class RSRFitViewer(RSRViewer):
         pl.subplot(1,2,2)
         pl.plot(F.az_model_offset[numpy.nonzero(F.isGood)],F.el_model_offset[numpy.nonzero(F.isGood)],'o')
         pl.xlabel('Az Offset (arcsec)')
-        pl.title('%s %d'%(F.date,F.obsnum))
+        #pl.title('%s %d'%(F.date,F.obsnum))
         #pl.axis('equal')
         axis2 = [x for x in axis] 
         pl.axis(axis2)
@@ -734,6 +734,7 @@ class RSRFitViewer(RSRViewer):
         textstr = textstr + 'El Model %d Offset:   %6.4f'%(F.modrev, F.mean_el_model_offset)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(0, axis2[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
+        pl.suptitle('%s %s %s %d'%(F.receiver.strip(), F.source.strip(), F.date,F.obsnum))
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
     def write_temperature_log_entry(self,F,tfile):
@@ -995,8 +996,9 @@ class RSRM2FitViewer(RSRViewer):
             titleObsNum = M.obsnum
         else:
             titleObsNum = obsNumArg
-        pl.title('%20s %s %s' %
-                 (M.source[0:20],
+        pl.suptitle('%s %s %s %s' %
+                 (M.receiver.strip(),
+                  M.source.strip(),
                   M.date,
                   titleObsNum)
                  )
