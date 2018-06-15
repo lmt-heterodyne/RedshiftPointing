@@ -11,6 +11,7 @@ import sys
 import os
 import numpy as np
 import math
+from scipy.signal import detrend
 from RSRUtilities import TempSens
 
 class RSRCC():
@@ -213,6 +214,7 @@ class RSRCC():
                     self.duration = self.time[len(self.time)-1]-self.time[0]
                     if 'lmttpm' in self.filename:
                         self.signals = self.nc.variables['Data.LmtTpm.Signal'][idx][idx]
+                        self.signals = detrend(self.signals, axis=0)
                     elif 'ifproc' in self.filename:
                         self.signals = self.nc.variables['Data.IfProc.BasebandLevel'][idx]
                     self.samples_exist = True
