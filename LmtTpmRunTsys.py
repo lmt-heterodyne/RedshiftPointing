@@ -3,7 +3,7 @@ import os
 import glob
 import numpy
 from dreampy.lmtnetcdf import LMTNetCDFFile
-import matplotlib.pyplot as plt
+import matplotlib.pyplot as pl
 
 def most_recent_file(glob_pattern):
     return max(glob.iglob(glob_pattern), key=os.path.getctime)
@@ -35,56 +35,34 @@ def get_Tsys(obsnum, msip1mm=True):
         print "Not an LmtTpm Scan"
         return []
     rx = telnc.hdu.header.get('Dcs.Receiver')
-    if rx != 'Msip1mm':
-        msip1mm = False
     time = telnc.hdu.data.TelTime
     idxh = numpy.where(telnc.hdu.data.BufPos == 3)
     idxc = numpy.where(telnc.hdu.data.BufPos == 2)
     numpixels = 1 #telnc.hdu.data.Signal.shape[1]
-    Tsys = []
+    tsys = numpy.zeros(numpixels)
     for pixel in range(numpixels):
-        dic = {}
         Ph = telnc.hdu.data.Signal[idxh, pixel].mean()
         Pc = telnc.hdu.data.Signal[idxc, pixel].mean()
-        dic['Tsys'] = 280 * Pc/(Ph - Pc)
-        if msip1mm:
-            dic['desc'] = msip1mm_pixel_description.get(pixel)
-        else:
-            dic['desc'] = "Pixel %d" % (pixel)
-        Tsys.append(dic)
-    return time[-1],Tsys,rx
+        if rx == 'B4r': Pb = -8.9
+        else: Pb = 0
+        tsys[pixel] = 280 * (Pc - Pb) /(Ph - Pc)
+    return time,telnc.hdu.data.Signal,tsys,rx
 
     
 class LmtTpmRunTsys():
     def run(self, argv, obsNum):
 
-        plotlabel = ""
-        time,tsys,rx = get_Tsys(obsNum)
-        if rx == 'Msip1mm':
-            with open('/var/www/vlbi1mm/vlbi1mm_tsys.html', 'w') as fp:
-                for d in tsys:
-                    desc = d['desc']
-                    val = d['Tsys']
-                    #print desc, val
-                    fp.write("%s %3.1f\n" %(desc, val))
-                    plotlabel = plotlabel + "%s %3.1f\n" %(desc, val)
-                fp.write("ObsNum %d\n" %(obsNum))
-                fp.write("Time %3.1f\n" %(time))
-                print plotlabel
-        for d in tsys:
-            desc = d['desc']
-            val = d['Tsys']
-            #print desc, val
-            plotlabel = plotlabel + "%s %3.1f\n" %(desc, val)
-        print plotlabel
-
-        fig = plt.figure()
-        ax = fig.add_subplot(111)
-        ax.text(0.1, 0.2, plotlabel, clip_on=True)
-	ax.set_title("ObsNum: %d"% obsNum)  
-        ax.set_yticklabels([])
-        ax.set_xticklabels([])
-        plt.savefig('rsr_summary.png', bbox_inches='tight')
+        fig = pl.figure()
+        x,y,tsys,rx = get_Tsys(obsNum)
+        xp = x-x[-1]
+        legend = []
+        for i,d in enumerate(tsys):
+            legend.append('Pixel %2d %6.1f'%(i,tsys[i]))
+            yp = y[:,i]
+            pl.plot(xp,yp,'.')
+        pl.legend(legend,prop={'size': 10})
+        pl.title("TSys %s ObsNum: %d"%(rx,obsNum))
+        pl.savefig('rsr_summary.png', bbox_inches='tight')
 
 def main():
     obsNum = 77926
