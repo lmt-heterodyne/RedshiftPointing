@@ -515,15 +515,15 @@ class RSRMapViewer(RSRScanViewer):
 
         xpos = xpos + numpy.random.random(xpos.size)*1e-6
         ypos = ypos + numpy.random.random(ypos.size)*1e-6
-        print 'griddata', len(xpos), len(xi), mapgrid, maplimits
+        #print 'griddata', len(xpos), len(xi), mapgrid, maplimits
         t0 = time.time()
         try:
             zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
-            print 'griddata not linear'
+            #print 'griddata not linear'
         except Exception as e:
             zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
-            print 'griddata linear'
-        print time.time()-t0
+            #print 'griddata linear'
+        #print 'griddata time',time.time()-t0
 
         x0,y0,x1,y1 = m.beam_offsets(board)
         plot_circle0 = numpy.zeros((100,2))
@@ -549,14 +549,13 @@ class RSRMapViewer(RSRScanViewer):
             else:
                 imagemax = numpy.max(plot_array)
                 levels = [0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax, 0.99*imagemax]
-        print 'contour'
+        #print 'contour'
         try:
-            print imagemax, numpy.max(plot_array), levels
             pl.contour(xi,yi,zi,levels)
         except Exception as e:
             print e
             pass
-        print 'image'
+        #print 'image'
         pl.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
         if m.fit_beam_is_tracking_beam and m.fit_beam_single:
             if m.fit_beam == 0:
