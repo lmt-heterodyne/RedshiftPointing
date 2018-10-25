@@ -301,8 +301,8 @@ class RSRMapViewer(RSRScanViewer):
         for idx,i in enumerate(board_list):
             az_map_offset[idx] = m.azoff[i]+m.az_receiver
             el_map_offset[idx] = m.eloff[i]+m.el_receiver
-            az_model_offset[idx] = m.azoff[i]+m.az_user+m.az_paddle+m.az_receiver
-            el_model_offset[idx] = m.eloff[i]+m.el_user+m.el_paddle+m.el_receiver
+            az_model_offset[idx] = m.azoff[i]+m.az_user+m.az_paddle+m.az_autopoint+m.az_receiver
+            el_model_offset[idx] = m.eloff[i]+m.el_user+m.el_paddle+m.el_autopoint+m.el_receiver
             hpbws[idx] = (math.sqrt(m.hpx[i][0]*m.hpy[i][0])+math.sqrt(m.hpx[i][1]*m.hpy[i][1]))/2.
             print ('  %d   %8.1f %5.1f %5.1f    %5.1f %5.1f    %5.1f    %5.1f %5.1f' %
                    (i,
@@ -337,8 +337,8 @@ class RSRMapViewer(RSRScanViewer):
         """Prints results from a model fit to a single board."""
         az_map_offset = m.azoff[board]+m.az_receiver
         el_map_offset = m.eloff[board]+m.el_receiver
-        az_model_offset = m.azoff[board]+m.az_user+m.az_paddle+m.az_receiver
-        el_model_offset = m.eloff[board]+m.el_user+m.el_paddle+m.el_receiver
+        az_model_offset = m.azoff[board]+m.az_user+m.az_paddle+m.az_autopoint+m.az_receiver
+        el_model_offset = m.eloff[board]+m.el_user+m.el_paddle+m.el_autopoint+m.el_receiver
         hpbws = (math.sqrt(m.hpx[board][0]*m.hpy[board][0])+math.sqrt(m.hpx[board][1]*m.hpy[board][1]))/2.
         print '----- --------  ----- -----    ----- -----   -----    ----- -----'
         print '                                 Offset'
@@ -473,8 +473,8 @@ class RSRMapViewer(RSRScanViewer):
         pl.ylabel('El Map Offset (arcsec)')
         pl.title('Map Offset')
         pl.subplot(1,2,2)
-        pl.plot(m.azoff[:]+m.az_user+m.az_paddle+m.az_receiver,m.eloff[:]+m.el_user+m.el_paddle+m.el_receiver,'o')
-        pl.plot(numpy.mean(m.azoff[:])+m.az_user+m.az_paddle+m.az_receiver,numpy.mean(m.eloff[:])+m.el_user+m.el_paddle+m.el_receiver,'r+',markersize=20)
+        pl.plot(m.azoff[:]+m.az_user+m.az_paddle+m.az_autopoint+m.az_receiver,m.eloff[:]+m.el_user+m.el_paddle+m.el_autopoint+m.el_receiver,'o')
+        pl.plot(numpy.mean(m.azoff[:])+m.az_user+m.az_paddle+m.az_autopoint+m.az_receiver,numpy.mean(m.eloff[:])+m.el_user+m.el_paddle+m.el_autopoint+m.el_receiver,'r+',markersize=20)
         pl.axis('equal')
         pl.axis([-36,36,-36,36])
         pl.grid()
