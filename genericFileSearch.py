@@ -41,3 +41,17 @@ def genericFileSearchRecursive (obsnum, baseDir='/data_lmt', full = True):
 				        ifile = os.path.join(root, ifile)
 			        all.append(ifile)
 	return all 
+
+def genericFileSearchInstList (obsnum, baseDir='/data_lmt', insts=[], full = True):
+        all = []
+
+        for inst in insts:
+                files = genericFileSearchAll (inst, obsnum, baseDir, full)
+                if files:
+                        all += files
+                        
+	return all 
+
+
+if __name__ == '__main__':
+        print genericFileSearchInstList(103393, '/data_lmt', ['lmttpm', 'tel', 'ifproc'])
