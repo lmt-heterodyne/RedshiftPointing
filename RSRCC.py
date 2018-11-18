@@ -99,13 +99,6 @@ class RSRCC():
 
             # Pointing Variables
             self.modrev = self.nc.variables['Header.PointModel.ModRev'][0]
-            # added autopoint
-            try:
-                self.az_autopoint = self.nc.variables['Header.PointModel.AzAutoPointOff'][0]*206264.8 
-                self.el_autopoint = self.nc.variables['Header.PointModel.ElAutoPointOff'][0]*206264.8 
-            except:
-                self.az_autopoint = 0
-                self.el_autopoint = 0
             self.az_user = self.nc.variables['Header.PointModel.AzUserOff'][0]*206264.8 
             self.el_user = self.nc.variables['Header.PointModel.ElUserOff'][0]*206264.8 
             self.az_paddle = self.nc.variables['Header.PointModel.AzPaddleOff'][0]*206264.8 

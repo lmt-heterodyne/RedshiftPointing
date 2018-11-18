@@ -168,9 +168,8 @@ class RSRMapFit():
                 # if doing a single beam fit and tracking the beam, we can analyze easily
                 self.az_map_offset[index] = m.azoff[board]
                 self.el_map_offset[index] = m.eloff[board]
-                # added autopoint
-                self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle+m.az_autopoint
-                self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle+m.el_autopoint
+                self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle
+                self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle
                 self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_receiver-m.az_m2
                 self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_receiver-m.el_m2
             else:
@@ -184,18 +183,16 @@ class RSRMapFit():
                     xoffset = y1
                 self.el_map_offset[index] = m.eloff[board] - yoffset
                 self.az_map_offset[index] = m.azoff[board] - xoffset
-                # added autopoint
-                self.az_model_offset[index] = m.azoff[board] - xoffset +m.az_user+m.az_paddle+m.az_autopoint
-                self.el_model_offset[index] = m.eloff[board] - yoffset +m.el_user+m.el_paddle+m.el_autopoint
+                self.az_model_offset[index] = m.azoff[board] - xoffset +m.az_user+m.az_paddle
+                self.el_model_offset[index] = m.eloff[board] - yoffset +m.el_user+m.el_paddle
                 self.az_total_offset[index] = m.azoff[board] - xoffset +m.az_total-m.az_receiver-m.az_m2
                 self.el_total_offset[index] = m.eloff[board] - yoffset +m.el_total-m.el_receiver-m.el_m2
         else:
             # this is analysis of traditional two-beam map
             self.az_map_offset[index] = m.azoff[board]+m.az_receiver
             self.el_map_offset[index] = m.eloff[board]+m.el_receiver
-            # added autopoint
-            self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle+m.az_autopoint+m.az_receiver
-            self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle+m.el_autopoint+m.el_receiver
+            self.az_model_offset[index] = m.azoff[board]+m.az_user+m.az_paddle+m.az_receiver
+            self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle+m.el_receiver
             self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_m2
             self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_m2
         

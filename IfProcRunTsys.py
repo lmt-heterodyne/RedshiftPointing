@@ -59,7 +59,7 @@ class IfProcRunTsys():
                     val = tsys[i]
                     fp.write("%s %3.1f\n" %(desc, val))
                 fp.write("ObsNum %d\n" %(obsNum))
-                fp.write("Time %3.1f\n" %(time))
+                fp.write("Time %3.1f\n" %(x))
                 print plotlabel
 
         fig = pl.figure()
