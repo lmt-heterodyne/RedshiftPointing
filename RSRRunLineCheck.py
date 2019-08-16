@@ -1,9 +1,15 @@
 from dreampy.redshift.netcdf import RedshiftNetCDFFile
-from dreampy.redshift.plots import RedshiftPlotChart
-from dreampy.redshift.utils.correlate_lines import CrossCorrelation
+try:
+    from dreampy.redshift.plots import RedshiftPlotChart
+    from dreampy.redshift.utils.correlate_lines import CrossCorrelation
+    dreampy_plot = True
+except:
+    dreampy_plot = False
+import sys
 import numpy
 import os.path
 from genericFileSearch import genericFileSearch
+
 
 
 class RSRRunLineCheck():
@@ -41,15 +47,29 @@ class RSRRunLineCheck():
 
 
         hdu.make_composite_scan()
-        pl = RedshiftPlotChart()
 
-        pl.clear()
-        pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
-        pl.set_xlim(72.5, 111.5)
-        pl.set_xlabel('Frequency (GHz)')
-        pl.set_ylabel('TA* (mK)')
-        pl.set_subplot_title("[%d:%d] -- %s Tint=%f hrs" %(min(obsList),max(obsList),hdu.header.SourceName, real_tint/4.0/3600.0))
+        if dreampy_plot:
+            print 'using dreampy_plot'
+            pl = RedshiftPlotChart()
+            pl.clear()
+            pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
+            pl.set_xlim(72.5, 111.5)
+            pl.set_xlabel('Frequency (GHz)')
+            pl.set_ylabel('TA* (mK)')
+            pl.set_subplot_title("[%d:%d] -- %s Tint=%f hrs" %(min(obsList),max(obsList),hdu.header.SourceName, real_tint/4.0/3600.0))
+        else:
+            print 'using matplotlib_plot'
+            import matplotlib.pyplot as pl
+            pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
+            pl.xlim(72.5, 111.5)
+            pl.xlabel('Frequency (GHz)')
+            pl.ylabel('TA* (mK)')
+            pl.title("[%d:%d] -- %s Tint=%f hrs" %(min(obsList),max(obsList),hdu.header.SourceName, real_tint/4.0/3600.0))
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
 
 
+if __name__ == '__main__':
+    obsNumList = [65971,65972]
+    rsr = RSRRunLineCheck()
+    M = rsr.run(sys.argv,obsNumList)
