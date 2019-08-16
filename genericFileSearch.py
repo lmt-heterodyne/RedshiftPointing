@@ -31,15 +31,18 @@ def genericFileSearchAll (inst, obsnum, root='/data_lmt', full = True):
 
 	return all 
 
-def genericFileSearchRecursive (obsnum, baseDir='/data_lmt', full = True):
+def genericFileSearchRecursive (obsnum, baseDirs='/data_lmt', full = True):
         all = []
-
-        for root, dirnames, filenames in os.walk(baseDir):
-                for ifile in filenames:
-		        if fnmatch(ifile,'*_%06d_*.nc' %(obsnum)):
-			        if full:
-				        ifile = os.path.join(root, ifile)
-			        all.append(ifile)
+        if isinstance(baseDirs, basestring):
+                baseDirs = [baseDirs]
+        print 'genericFileSearchRecursive in', baseDirs
+        for baseDir in baseDirs:
+            for root, dirnames, filenames in os.walk(baseDir):
+                    for ifile in filenames:
+                            if fnmatch(ifile,'*_%06d_*.nc' %(obsnum)):
+                                    if full:
+                                            ifile = os.path.join(root, ifile)
+                                    all.append(ifile)
 	return all 
 
 def genericFileSearchInstList (obsnum, baseDir='/data_lmt', insts=[], full = True):
