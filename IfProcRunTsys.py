@@ -53,7 +53,11 @@ class IfProcRunTsys():
 
         x,y,tsys,rx = get_Tsys(obsNum)
         if rx == 'Msip1mm':
-            with open('/var/www/vlbi1mm/vlbi1mm_tsys.html', 'w') as fp:
+            dirname = '/var/www/vlbi1mm/'
+            filename = 'vlbi1mm_tsys.html'
+            if os.path.exists(dirname):
+                filename = dirname + filename
+            with open(filename, 'w') as fp:
                 for i,d in enumerate(tsys):
                     desc =  msip1mm_pixel_description.get(i)
                     val = tsys[i]
@@ -77,7 +81,8 @@ class IfProcRunTsys():
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
 def main():
-    obsNum = 76391
+    obsNum = 76391 #sequoia
+    obsNum = 79667 #msip1mm
     try:
         obsNum = int(sys.argv[1])
     except Exception as e:
