@@ -16,6 +16,7 @@ from mpl_toolkits.axes_grid import make_axes_locatable
 import math
 import sys
 import time
+import traceback
 
 class RSRViewer():
     """Base Class of Viewer"""
@@ -518,11 +519,13 @@ class RSRMapViewer(RSRScanViewer):
         #print 'griddata', len(xpos), len(xi), mapgrid, maplimits
         t0 = time.time()
         try:
-            zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
-            #print 'griddata not linear'
-        except Exception as e:
+            print 'try griddata linear'
             zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
-            #print 'griddata linear'
+            print 'griddata linear ok'
+        except Exception as e:
+            print 'use griddata default'
+            zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
+            print 'griddata default ok'
         #print 'griddata time',time.time()-t0
 
         x0,y0,x1,y1 = m.beam_offsets(board)
