@@ -52,6 +52,7 @@ class RSRRunTsys():
 
     def run(self, argv, obsNum):
 
+        self.chassis_list = [0, 1, 2, 3]
         for i,arg in enumerate(argv):
             if arg in ("-c","--chassis"):
                 self.decode_chassis_string(argv[i+1])
