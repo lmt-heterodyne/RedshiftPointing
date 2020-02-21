@@ -62,6 +62,8 @@ class RSRRunTsys():
             print(use_chassis)
             ax = pl.subplot(len(self.chassis_list), 1, i+1)
             filename = genericFileSearch ('RedshiftChassis%d'%use_chassis, obsNum)
+            if i == 0:
+                pl.title('ObsNum %s' % (obsNum))
             try:
                 nc = RedshiftNetCDFFile(filename)
             except:
@@ -77,14 +79,6 @@ class RSRRunTsys():
             #pl.ylim(0.0,3*tsys)
             ax.hlines(tsys,70,115)
             ax.annotate("Average Tsys =%6.2fK on  Chassis %d"%(tsys,use_chassis), [71,tsys-1], fontsize=13, fontweight='bold', stretch='250', horizontalalignment='left', verticalalignment='top')
-            if i == 0:
-                if isinstance(nc, RedshiftNetCDFFile):
-                    hdu = nc.hdu
-                elif isinstance(nc, RedshiftScan):
-                    hdu = nc
-                else:
-                    raise LMTRedshiftError("plot tsys", "Argument nc should be of type RedshiftNetCDFFile or RedshiftScan")
-                pl.title('%s: Source %s' % (hdu.header.obs_string(), hdu.header.SourceName))        
 
         pl.xlabel("Frequency (GHz)")
         pl.savefig('rsr_summary.png', bbox_inches='tight')
