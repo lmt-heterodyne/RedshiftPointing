@@ -21,7 +21,7 @@ import traceback
 class RSRViewer():
     """Base Class of Viewer"""
     def __init__(self):
-	self.bigfig=None
+        self.bigfig=None
    
     def init(self,a):
         """Initializes Interactive pyplot; closes all open windows"""
@@ -64,10 +64,10 @@ class RSRViewer():
             self.ncols = 1
 
         if True:
-            print 'chassis_list', chassis_list
-            print 'process_list', process_list
-            print 'nrows', self.nrows
-            print 'ncols', self.ncols
+            print(('chassis_list', chassis_list))
+            print(('process_list', process_list))
+            print(('nrows', self.nrows))
+            print(('ncols', self.ncols))
 
         #self.grid = pl.GridSpec(self.nrows, self.ncols)
         figw = 12
@@ -294,18 +294,18 @@ class RSRMapViewer(RSRScanViewer):
         az_model_offset = numpy.zeros(len(board_list))
         el_model_offset = numpy.zeros(len(board_list))
         hpbws = numpy.zeros(len(board_list))
-        print '----- --------  ----- -----    ----- -----   -----    ----- -----'
-        print '                                 Offset'
-        print 'Board    I      Map Offset     wrt Model %d    HPBW     SEP   ANG'%(m.modrev)
-        print '                 dAz   dEl      dAz   dEl '           
-        print '----- --------  ----- -----    ----- -----   -----    ----- -----'
+        print('----- --------  ----- -----    ----- -----   -----    ----- -----')
+        print('                                 Offset')
+        print(('Board    I      Map Offset     wrt Model %d    HPBW     SEP   ANG'%(m.modrev)))
+        print('                 dAz   dEl      dAz   dEl ')           
+        print('----- --------  ----- -----    ----- -----   -----    ----- -----')
         for idx,i in enumerate(board_list):
             az_map_offset[idx] = m.azoff[i]+m.az_receiver
             el_map_offset[idx] = m.eloff[i]+m.el_receiver
             az_model_offset[idx] = m.azoff[i]+m.az_user+m.az_paddle+m.az_receiver
             el_model_offset[idx] = m.eloff[i]+m.el_user+m.el_paddle+m.el_receiver
             hpbws[idx] = (math.sqrt(m.hpx[i][0]*m.hpy[i][0])+math.sqrt(m.hpx[i][1]*m.hpy[i][1]))/2.
-            print ('  %d   %8.1f %5.1f %5.1f    %5.1f %5.1f    %5.1f    %5.1f %5.1f' %
+            print(('  %d   %8.1f %5.1f %5.1f    %5.1f %5.1f    %5.1f    %5.1f %5.1f' %
                    (i,
                     m.I[i],
                     az_map_offset[idx],
@@ -315,24 +315,24 @@ class RSRMapViewer(RSRScanViewer):
                     hpbws[idx],
                     m.beamsep[i],
                     m.beamang[i])
-                   )
-        print '----- --------  ----- -----    ----- -----   -----    ----- -----'
-        print ('Averages       %5.1f %5.1f    %5.1f %5.1f             %5.1f %5.1f' %
+                   ))
+        print('----- --------  ----- -----    ----- -----   -----    ----- -----')
+        print(('Averages       %5.1f %5.1f    %5.1f %5.1f             %5.1f %5.1f' %
                (numpy.mean(az_map_offset),
                 numpy.mean(el_map_offset),
                 numpy.mean(az_model_offset),
                 numpy.mean(el_model_offset),
                 numpy.mean(m.beamsep[:]),
                 numpy.mean(m.beamang[:]))
-               )
-        print ('Errors         %5.1f %5.1f    %5.1f %5.1f             %5.1f %5.1f' %
+               ))
+        print(('Errors         %5.1f %5.1f    %5.1f %5.1f             %5.1f %5.1f' %
                (numpy.std(az_map_offset),
                 numpy.std(el_map_offset),
                 numpy.std(az_model_offset),
                 numpy.std(el_model_offset),
                 numpy.std(m.beamsep[:]),
                 numpy.std(m.beamang[:]))
-               )
+               ))
     
     def print_result(self,m,board=0):
         """Prints results from a model fit to a single board."""
@@ -341,12 +341,12 @@ class RSRMapViewer(RSRScanViewer):
         az_model_offset = m.azoff[board]+m.az_user+m.az_paddle+m.az_receiver
         el_model_offset = m.eloff[board]+m.el_user+m.el_paddle+m.el_receiver
         hpbws = (math.sqrt(m.hpx[board][0]*m.hpy[board][0])+math.sqrt(m.hpx[board][1]*m.hpy[board][1]))/2.
-        print '----- --------  ----- -----    ----- -----   -----    ----- -----'
-        print '                                 Offset'
-        print 'Board    I      Map Offset     wrt Model %d    HPBW     SEP   ANG'%(m.modrev)
-        print '                 dAz   dEl      dAz   dEl '           
-        print '----- --------  ----- -----    ----- -----   -----    ----- -----'
-        print ('  %d   %8.1f %5.1f %5.1f    %5.1f %5.1f    %5.1f    %5.1f %5.1f' %
+        print('----- --------  ----- -----    ----- -----   -----    ----- -----')
+        print('                                 Offset')
+        print(('Board    I      Map Offset     wrt Model %d    HPBW     SEP   ANG'%(m.modrev)))
+        print('                 dAz   dEl      dAz   dEl ')           
+        print('----- --------  ----- -----    ----- -----   -----    ----- -----')
+        print(('  %d   %8.1f %5.1f %5.1f    %5.1f %5.1f    %5.1f    %5.1f %5.1f' %
                (board,
                 m.I[board],
                 az_map_offset,
@@ -356,8 +356,8 @@ class RSRMapViewer(RSRScanViewer):
                 hpbws,
                 m.beamsep[board],
                 m.beamang[board])
-               )
-        print '----- --------  ----- -----    ----- -----   -----    ----- -----'
+               ))
+        print('----- --------  ----- -----    ----- -----   -----    ----- -----')
     
     def plot_all(self,m,board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
         """Plots all maps together in a single figure."""
@@ -519,13 +519,13 @@ class RSRMapViewer(RSRScanViewer):
         #print 'griddata', len(xpos), len(xi), mapgrid, maplimits
         t0 = time.time()
         try:
-            print 'try griddata linear'
+            print('try griddata linear')
             zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
-            print 'griddata linear ok'
+            print('griddata linear ok')
         except Exception as e:
-            print 'use griddata default'
+            print('use griddata default')
             zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
-            print 'griddata default ok'
+            print('griddata default ok')
         #print 'griddata time',time.time()-t0
 
         x0,y0,x1,y1 = m.beam_offsets(board)
@@ -556,7 +556,7 @@ class RSRMapViewer(RSRScanViewer):
         try:
             pl.contour(xi,yi,zi,levels)
         except Exception as e:
-            print e
+            print(e)
             pass
         #print 'image'
         pl.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
@@ -592,24 +592,24 @@ class RSRFitViewer(RSRViewer):
         """Printed summary table with HPBW fit results."""
         if F.hpbw_result == False:
             F.find_hpbw_result()
-        print '---- ------ ----- -----  ------'
-        print 'Band  Freq   HPBW Error    L/D'
-        print '---- ------ ----- -----  ------'
+        print('---- ------ ----- -----  ------')
+        print('Band  Freq   HPBW Error    L/D')
+        print('---- ------ ----- -----  ------')
         for band in range(6):
             if F.mean_hpbw[band] == 0:
-                print ('  %d  %6.2f No Data' %
+                print(('  %d  %6.2f No Data' %
                        (band,
                         F.band_freq[band])
-                   )
+                   ))
             else:
-                print ('  %d  %6.2f %5.1f %5.1f  %6.3f' %
+                print(('  %d  %6.2f %5.1f %5.1f  %6.3f' %
                        (band,
                         F.band_freq[band],
                         F.mean_hpbw[band],
                         F.std_hpbw[band],
                         F.band_freq[band]*1.0e9/3.0e8*32.5*F.mean_hpbw[band]/206265.)
-                       )
-        print '---- ------ ----- -----  ------'
+                       ))
+        print('---- ------ ----- -----  ------')
 
     def print_result(self,F):
         """Prints the result of a pointing fit."""
@@ -620,13 +620,13 @@ class RSRFitViewer(RSRViewer):
 
     def print_dual_beam_result(self,F):
         """Prints result of dual beam pointing fit."""
-        print '------- ----- --------  ----- -----    ----- -----   -----    ----- -----'
-        print '                                         Offset'
-        print 'Chassis Board    I       Map Offset    wrt Model %d    HPBW     SEP   ANG'%(F.modrev)
-        print '                         dAz   dEl      dAz   dEl '           
-        print '------- ----- --------  ----- -----    ----- -----   -----    ----- -----'
+        print('------- ----- --------  ----- -----    ----- -----   -----    ----- -----')
+        print('                                         Offset')
+        print(('Chassis Board    I       Map Offset    wrt Model %d    HPBW     SEP   ANG'%(F.modrev)))
+        print('                         dAz   dEl      dAz   dEl ')           
+        print('------- ----- --------  ----- -----    ----- -----   -----    ----- -----')
         for i in range(F.nresults):
-            print ('  %d       %d   %8.1f  %5.1f %5.1f    %5.1f %5.1f   %5.1f    %5.1f %5.1f' %
+            print(('  %d       %d   %8.1f  %5.1f %5.1f    %5.1f %5.1f   %5.1f    %5.1f %5.1f' %
                    (F.chassis_id_numbers[i],
                     F.board_id_numbers[i],
                     F.Intensity[i],
@@ -637,19 +637,19 @@ class RSRFitViewer(RSRViewer):
                     F.hpbw[i],
                     F.sep[i],
                     F.ang[i])
-                       )
-        print '------- ----- --------  ----- -----    ----- -----   -----    ----- -----'
+                       ))
+        print('------- ----- --------  ----- -----    ----- -----   -----    ----- -----')
     
     def print_single_beam_result(self,F):
         """Prints result of single beam pointing fit."""
-        print 'Single Beam Fit to Beam %d'%(F.fit_beam) 
-        print '------- ----- --------  ----- -----    ----- -----   -----'
-        print '                                         Offset'
-        print 'Chassis Board    I       Map Offset    wrt Model %d    HPBW'%(F.modrev)
-        print '                         dAz   dEl      dAz   dEl '           
-        print '------- ----- --------  ----- -----    ----- -----   -----'
+        print(('Single Beam Fit to Beam %d'%(F.fit_beam))) 
+        print('------- ----- --------  ----- -----    ----- -----   -----')
+        print('                                         Offset')
+        print(('Chassis Board    I       Map Offset    wrt Model %d    HPBW'%(F.modrev)))
+        print('                         dAz   dEl      dAz   dEl ')           
+        print('------- ----- --------  ----- -----    ----- -----   -----')
         for i in range(F.nresults):
-            print ('  %d       %d   %8.1f  %5.1f %5.1f    %5.1f %5.1f   %5.1f' %
+            print(('  %d       %d   %8.1f  %5.1f %5.1f    %5.1f %5.1f   %5.1f' %
                    (F.chassis_id_numbers[i],
                     F.board_id_numbers[i],
                     F.Intensity[i],
@@ -658,12 +658,12 @@ class RSRFitViewer(RSRViewer):
                     F.az_model_offset[i],
                     F.el_model_offset[i],
                     F.hpbw[i])
-                       )
-        print '------- ----- --------  ----- -----    ----- -----   -----'
+                       ))
+        print('------- ----- --------  ----- -----    ----- -----   -----')
     
     def print_header(self,F):
         """Prints header information pertaining to this fit."""
-        print '%20s utd=%s uth=%4.1f obs=%d az=%6.1f el=%5.1f  maptime=%5.1f  m2z=%5.1f'%(F.source[0:20],F.date,numpy.mean(F.ut1_h),F.obsnum,numpy.mean(F.azim),numpy.mean(F.elev),numpy.mean(F.duration),numpy.mean(F.m2z))
+        print(('%20s utd=%s uth=%4.1f obs=%d az=%6.1f el=%5.1f  maptime=%5.1f  m2z=%5.1f'%(F.source[0:20],F.date,numpy.mean(F.ut1_h),F.obsnum,numpy.mean(F.azim),numpy.mean(F.elev),numpy.mean(F.duration),numpy.mean(F.m2z))))
 
     def print_summary_pointing(self,F):
         """Prints summary of pointing results."""
@@ -676,39 +676,39 @@ class RSRFitViewer(RSRViewer):
         """Prints summary of pointing results for dual beam fits."""
         if F.pointing_result == False:
             F.find_pointing_result()
-        print ('Avergage Pointing:      %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
+        print(('Avergage Pointing:      %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
                (F.mean_az_map_offset,
                 F.mean_el_map_offset,
                 F.mean_az_model_offset,
                 F.mean_el_model_offset,
                 F.mean_sep,
                 F.mean_ang)
-               )
-        print ('Pointing RMS     :      %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' %
+               ))
+        print(('Pointing RMS     :      %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' %
                (F.std_az_map_offset,
                 F.std_el_map_offset,
                 F.std_az_model_offset,
                 F.std_el_model_offset,
                 F.std_sep,
                 F.std_ang)
-               )
+               ))
 
     def print_single_beam_summary_pointing(self,F):
         """Prints summary of pointing results for single beam fits."""
         if F.pointing_result == False:
             F.find_pointing_result()
-        print ('Avergage Pointing:      %5.1f %5.1f    %5.1f %5.1f' % 
+        print(('Avergage Pointing:      %5.1f %5.1f    %5.1f %5.1f' % 
                (F.mean_az_map_offset,
                 F.mean_el_map_offset,
                 F.mean_az_model_offset,
                 F.mean_el_model_offset)
-               )
-        print ('Pointing RMS     :      %5.1f %5.1f    %5.1f %5.1f' %
+               ))
+        print(('Pointing RMS     :      %5.1f %5.1f    %5.1f %5.1f' %
                (F.std_az_map_offset,
                 F.std_el_map_offset,
                 F.std_az_model_offset,
                 F.std_el_model_offset)
-               )
+               ))
 
     def plot_pointing_summary(self,F,figno=1,axis=[-36,36,-36,36]):
         """Plots the pointing offsets determined by the fit."""
@@ -835,7 +835,7 @@ class RSRM2FitViewer(RSRViewer):
                           + M.parameters[index,1]*M.result_relative[index]
                           + M.parameters[index,2]*M.result_relative[index]*M.result_relative[index]
                           )
-            print ('%d %d %5.1f   %6.2f %6.2f  %8.3f, %8.3f' %
+            print(('%d %d %5.1f   %6.2f %6.2f  %8.3f, %8.3f' %
                    (M.chassis_id[index],
                     M.board_id[index],
                     numpy.mean(M.elev),
@@ -843,12 +843,12 @@ class RSRM2FitViewer(RSRViewer):
                     M.result_absolute[index],
                     result_max,
                     M.parameters[index,2]/result_max)
-                   )
+                   ))
     
     def print_summary_fit(self,M):
-        print '--------------------------------------------------'
-        print ('Summary: Rel %6.2f (%6.2f)   Abs %6.2f (%6.2f)' % (numpy.mean(M.result_relative),numpy.std(M.result_relative),numpy.mean(M.result_absolute),numpy.std(M.result_absolute)))
-        print ' '
+        print('--------------------------------------------------')
+        print(('Summary: Rel %6.2f (%6.2f)   Abs %6.2f (%6.2f)' % (numpy.mean(M.result_relative),numpy.std(M.result_relative),numpy.mean(M.result_absolute),numpy.std(M.result_absolute))))
+        print(' ')
     
     def plot_fits(self,M,figno=1):
         """Plots graphs of all data and fits.
@@ -918,7 +918,7 @@ class RSRM2FitViewer(RSRViewer):
         
     def print_focus_model_fit(self,M):
         """Prints result of focus model fit."""
-        print ('%s %d %6.2f %6.2f %6.3f %6.2f %5.2f %6.2f %6.2f %6.2f' %
+        print(('%s %d %6.2f %6.2f %6.3f %6.2f %5.2f %6.2f %6.2f %6.2f' %
                (M.date,
                 M.obsnum,
                 M.relative_focus_fit,
@@ -929,7 +929,7 @@ class RSRM2FitViewer(RSRViewer):
                 M.M2zfocus,
                 M.M2yfocus,
                 M.M2xfocus)
-              )
+              ))
 
     def plot_focus_model_fit(self,M,figno,obsNumArg):
         """Plots data and focus model fit."""

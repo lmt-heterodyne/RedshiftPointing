@@ -26,13 +26,13 @@ def get_Tsys(obsnum, msip1mm=True):
     try:
         telnc = LMTNetCDFFile(get_telnc_file(obsnum))
     except:
-        print "Cannot find filename with obsnum %d" % obsnum
+        print("Cannot find filename with obsnum %d" % obsnum)
         return []
     if telnc.hdu.header.get('Dcs.ObsPgm') != 'Cal':
-        print "Not a CAL Scan"
+        print("Not a CAL Scan")
         return []
-    if not telnc.hdu.header.has_key('LmtTpm'):
-        print "Not an LmtTpm Scan"
+    if 'LmtTpm' not in telnc.hdu.header:
+        print("Not an LmtTpm Scan")
         return []
     rx = telnc.hdu.header.get('Dcs.Receiver')
     time = telnc.hdu.data.TelTime

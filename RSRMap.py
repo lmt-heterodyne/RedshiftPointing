@@ -39,11 +39,11 @@ class RSRMap(RSRCC):
             if self.beam_throw != -1:
                 self.beamthrow = self.beam_throw
                 self.beamthrow_angle = self.beam_throw_angle
-                print '    from file beamthrow/angle', self.beamthrow, self.beamthrow_angle
+                print(('    from file beamthrow/angle', self.beamthrow, self.beamthrow_angle))
             else:
                 self.beamthrow = beamthrow
                 self.beamthrow_angle = beamthrow_angle
-                print '    from arg beamthrow/angle', self.beamthrow, self.beamthrow_angle
+                print(('    from arg beamthrow/angle', self.beamthrow, self.beamthrow_angle))
             if self.beamthrow == 0:
                 self.beamthrow_angle = 0
 
@@ -56,7 +56,7 @@ class RSRMap(RSRCC):
                 self.ystep = self.nc.variables['Header.Map.YStep'][0]
                 self.rows = self.nc.variables['Header.Map.RowsPerScan'][0]
             except:
-                print '    ',self.filename+' does not have map parameters'
+                print(('    ',self.filename+' does not have map parameters'))
     
             # define space for results of indivual beams in chassis
             self.peak = [-1.0,+1.0]
@@ -88,8 +88,8 @@ class RSRMap(RSRCC):
             # define space for model
             self.model = np.zeros((32,self.n))
         except AttributeError as e:
-            print '    ',e
-            print '    ',self.filename+' is not valid MAP file'
+            print(('    ',e))
+            print(('    ',self.filename+' is not valid MAP file'))
 
     def check(self):
         """Provides a way to check for a valid instance of an RSRMap"""
@@ -179,13 +179,13 @@ class RSRMap(RSRCC):
             if self.flag[board,i] == 0:
                 d0 = math.sqrt((xpos[i]-x0)**2 + (ypos[i]-y0)**2)
                 d1 = math.sqrt((xpos[i]-x1)**2 + (ypos[i]-y1)**2)
-                #print "%4d %6.2f %6.2f   %6.1f   %6.2f %6.2f" % (i,xpos[i],ypos[i],self.data[i,board],d0,d1)
+                #print("%4d %6.2f %6.2f   %6.1f   %6.2f %6.2f" % (i,xpos[i],ypos[i],self.data[i,board],d0,d1))
                 if (d0<dd or d1<dd):
                     if self.peak[pid]*(self.data[i,board]-self.bias[board])>bmax:
                         imax = i
                         bmax = self.peak[pid]*(self.data[i,board]-self.bias[board])
         
-        print 'found_peak',board,bmax,imax,xpos[imax],ypos[imax],self.data[imax,board]
+        print(('found_peak',board,bmax,imax,xpos[imax],ypos[imax],self.data[imax,board]))
         return bmax,xpos[imax],ypos[imax]
 
     def fit_peak(self,board=0,pid=1,w=16):
@@ -221,17 +221,17 @@ class RSRMap(RSRCC):
         fit_data = np.array(DATA_LIST)
         v0 = np.array([bmax, xmax, 15., ymax, 15.])
         lsq_fit,lsq_cov,lsq_inf,lsq_msg,lsq_success = leastsq(compute_the_residuals,v0,args=(xdata,ydata,fit_data),full_output=1)
-        #print 'lsq_fit',lsq_fit
-        #print 'lsq_cov',lsq_cov
-        #print 'lsq_msg',lsq_msg
-        #print 'lsq_success',lsq_success
+        #print('lsq_fit',lsq_fit)
+        #print('lsq_cov',lsq_cov)
+        #print('lsq_msg',lsq_msg)
+        #print('lsq_success',lsq_success)
 
         self.ap[board,pid] = self.peak[pid]*lsq_fit[0]
         self.xp[board,pid] = lsq_fit[1]
         self.yp[board,pid] = lsq_fit[3]
 
         if lsq_fit[2] < 0:
-            print 'warning: bad gaussian fit in azimuth: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
+            print(('warning: bad gaussian fit in azimuth: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis))
             self.hpx[board,pid] = np.abs(lsq_fit[2])
             self.goodx[board,pid] = 0
         else:
@@ -239,7 +239,7 @@ class RSRMap(RSRCC):
             self.goodx[board,pid] = 1
         
         if lsq_fit[4] < 0:
-            print 'warning: bad gaussian fit in elevation: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
+            print(('warning: bad gaussian fit in elevation: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis))
             self.hpy[board,pid] = np.abs(lsq_fit[4])
             self.goody[board,pid] = 0
         else:
@@ -247,7 +247,7 @@ class RSRMap(RSRCC):
             self.goody[board,pid] = 1
     
         if lsq_success > 4:
-            print 'warning: bad fit: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis
+            print(('warning: bad fit: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis))
             self.hpx[board,pid] = np.abs(lsq_fit[2])
             self.hpy[board,pid] = np.abs(lsq_fit[4])
             self.goodx[board,pid] = 0
@@ -314,7 +314,7 @@ class RSRMap(RSRCC):
         """Performs fit for individual beam and sets final results."""
         # first define which beam
         pid = self.select_pid(select_beam)
-        #print self.beam_selected,self.chassis_index,pid
+        #print(self.beam_selected,self.chassis_index,pid)
         self.fit_peak(board, pid, w)
         if self.xpos.ndim == 2:
             xpos = self.xpos[:,board]
@@ -384,7 +384,7 @@ class RSRMap(RSRCC):
                 board = self.beam_selected
             else:
                 board = self.board_id(board)
-            #print '              find beam offsets for pixel', board
+            #print('              find beam offsets for pixel', board)
             theta = self.beamthrow_angle*math.pi/180.
             cosTheta = math.cos(theta)
             sinTheta = math.sin(theta)
@@ -404,13 +404,13 @@ class RSRMap(RSRCC):
             yy = -(-sinEl*cos_sin + cosEl*sin_cos)
             x0 = x1 = xx - self.az_receiver
             y0 = y1 = yy - self.el_receiver
-            #print 'board ',board,i,j,xx,yy,self.az_receiver,self.el_receiver,x1,y1
+            #print('board ',board,i,j,xx,yy,self.az_receiver,self.el_receiver,x1,y1)
         else:
             elev_r = (self.elev+self.beamthrow_angle)*math.pi/180.
             y0 = self.beamthrow*math.sin(elev_r) - self.el_receiver
             x0 = -self.beamthrow*math.cos(elev_r) - self.az_receiver
             y1 = -self.beamthrow*math.sin(elev_r) - self.el_receiver
             x1 = self.beamthrow*math.cos(elev_r) - self.az_receiver
-            #print 'beam 0 ',x0,y0
-            #print 'beam 1 ',x1,y1
+            #print('beam 0 ',x0,y0)
+            #print('beam 1 ',x1,y1)
         return x0, y0, x1, y1

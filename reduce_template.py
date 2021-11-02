@@ -24,50 +24,50 @@ real_tint = 0.0
 ### CHANGE THESE ObsNum for every science spectrum ###
 
 #Obslist = [55240,55241,55242,55244,55245,55246,55248,55249,55250,55253,55254,55255]
-Obslist = range (54708, 54710+1)
-Obslist.extend (range (54712, 54714+1))
-Obslist.extend (range (54717, 54719+1))
-Obslist.extend (range (54721, 54723+1))
+Obslist = list(range(54708, 54710+1))
+Obslist.extend (list(range(54712, 54714+1)))
+Obslist.extend (list(range(54717, 54719+1)))
+Obslist.extend (list(range(54721, 54723+1)))
 
-Obslist.extend (range (55164, 55166+1))
-Obslist.extend (range (55168, 55170+1))
-Obslist.extend (range (55172, 55174+1))
-Obslist.extend (range (55178, 55180+1))
-Obslist.extend (range (55182, 55184+1))
-Obslist.extend (range (55186, 55188+1))
+Obslist.extend (list(range(55164, 55166+1)))
+Obslist.extend (list(range(55168, 55170+1)))
+Obslist.extend (list(range(55172, 55174+1)))
+Obslist.extend (list(range(55178, 55180+1)))
+Obslist.extend (list(range(55182, 55184+1)))
+Obslist.extend (list(range(55186, 55188+1)))
 
 
-Obslist.extend (range (55309, 55311+1))
-Obslist.extend (range (55313, 55315+1))
-Obslist.extend (range (55317, 55319+1))
-Obslist.extend (range (55323, 55325+1))
-Obslist.extend (range (55331, 55333+1))
+Obslist.extend (list(range(55309, 55311+1)))
+Obslist.extend (list(range(55313, 55315+1)))
+Obslist.extend (list(range(55317, 55319+1)))
+Obslist.extend (list(range(55323, 55325+1)))
+Obslist.extend (list(range(55331, 55333+1)))
 
-Obslist.extend (range (55473, 55475+1))
-Obslist.extend (range (55477, 55479+1))
-Obslist.extend (range (55481, 55483+1))
-Obslist.extend (range (55487, 55489+1))
+Obslist.extend (list(range(55473, 55475+1)))
+Obslist.extend (list(range(55477, 55479+1)))
+Obslist.extend (list(range(55481, 55483+1)))
+Obslist.extend (list(range(55487, 55489+1)))
 #Obslist.extend (range (55491, 55493+1))
 
 #7 feb
-Obslist.extend (range (55808, 55810+1))
-Obslist.extend (range (55812, 55814+1))
-Obslist.extend (range (55816, 55818+1))
-Obslist.extend (range (55820, 55822+1))
-Obslist.extend (range (55826, 55828+1))
+Obslist.extend (list(range(55808, 55810+1)))
+Obslist.extend (list(range(55812, 55814+1)))
+Obslist.extend (list(range(55816, 55818+1)))
+Obslist.extend (list(range(55820, 55822+1)))
+Obslist.extend (list(range(55826, 55828+1)))
 #Obslist.extend (range (55830, 55832+1))
 #Obslist.extend (range (55834, 55836+1))
 
 
 #8 feb
-Obslist.extend (range (55932, 55934+1))
-Obslist.extend (range (55936, 55938+1))
-Obslist.extend (range (55940, 55942+1))
-Obslist.extend (range (55955, 55957+1))
-Obslist.extend (range (55959, 55961+1))
-Obslist.extend (range (55963, 55965+1))
-Obslist.extend (range (55967, 55969+1))
-Obslist.extend (range (55971, 55973+1))
+Obslist.extend (list(range(55932, 55934+1)))
+Obslist.extend (list(range(55936, 55938+1)))
+Obslist.extend (list(range(55940, 55942+1)))
+Obslist.extend (list(range(55955, 55957+1)))
+Obslist.extend (list(range(55959, 55961+1)))
+Obslist.extend (list(range(55963, 55965+1)))
+Obslist.extend (list(range(55967, 55969+1)))
+Obslist.extend (list(range(55971, 55973+1)))
 
 for ObsNum in Obslist:
     for chassis in (0,1,2,3):

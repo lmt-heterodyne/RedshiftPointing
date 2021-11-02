@@ -7,7 +7,7 @@ from RSRController import RSRMapController,RSRHandleArgs
 class RSRRunFocus():
     def run(self, argv, filelist=False, obsNumArg=False):
 
-        print "filelist = ", filelist
+        print(("filelist = ", filelist))
         c = RSRMapController()
         v = RSRM2FitViewer()
         a = RSRHandleArgs(show_type=1)
@@ -36,8 +36,8 @@ class RSRRunFocus():
                 v.plot_fits(m,figno=1)
                 v.plot_focus_model_fit(m,figno=2,obsNumArg=obsNumArg)
 
-            images = map(Image.open, ['rsr_summary.png', 'rsr_focus_fits.png'])
-            widths, heights = zip(*(i.size for i in images))
+            images = list(map(Image.open, ['rsr_summary.png', 'rsr_focus_fits.png']))
+            widths, heights = list(zip(*(i.size for i in images)))
 
             total_width = sum(widths)
             total_height = sum(heights)

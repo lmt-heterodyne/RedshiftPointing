@@ -27,7 +27,7 @@ try:
         #board = [0,1,2,3]
         filelist = genericFileSearchAll ('vlbi1mm', obsnum, root, full = True)
     elif sys.argv[1][0] == 'l':
-        print 'lmttpm'
+        print('lmttpm')
         obsnum = 102669
         obsnum = 75342
         try:
@@ -39,7 +39,7 @@ try:
         board = [0]
         filelist = genericFileSearchAll ('lmttpm', obsnum, root, full = True)
     elif sys.argv[1][0] == 's':
-        print 'spec'
+        print('spec')
         obsnum = 76406
         try:
             obsnum = int(sys.argv[2])
@@ -56,12 +56,12 @@ try:
             for f in flist:
                 filelist.append(f)
     elif sys.argv[1][0] == 'i' or sys.argv[1][0] == 'm':
-        print 'ifproc'
+        print('ifproc')
         if sys.argv[1][0] == 'm':
-            print 'msip1mm'
+            print('msip1mm')
             obsnum = 75765
         elif sys.argv[1][0] == 'i':
-            print 'sequoia'
+            print('sequoia')
             obsnum = 75765
             obsnum = 102669
             obsnum = 74792
@@ -80,7 +80,7 @@ try:
         board = [i for i in range(16)]
         filelist = genericFileSearchAll ('ifproc', obsnum, root, full = True)
     elif sys.argv[1][0] == 'a':
-        print 'all'
+        print('all')
         obsnum = 73677
         obsnum = 102669
         obsnum = 75342
@@ -97,7 +97,7 @@ try:
         board = 'all'
         filelist = genericFileSearchRecursive (obsnum, root, full = True)
     elif sys.argv[1][0] == 'r':
-        print 'rsr'
+        print('rsr')
         obsnum = 75182
         obsnum = 76805
         obsnum = 76565
@@ -116,7 +116,7 @@ try:
             for f in flist:
                 filelist.append(f)
 except Exception as e:
-    print '---------', e
+    print('---------', e)
     obsnum = 73014
     chassis = [1,2,3]
     board = [0,1,2,3,4,5]
@@ -139,7 +139,7 @@ if plist is not None:
 rsr = RSRRunPointing()
 F = rsr.run(argv, filelist)
 #F = rsr.run(argv)
-print ('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
+print(('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
        (F.mean_az_map_offset,
         F.mean_el_map_offset,
         F.mean_az_model_offset,
@@ -148,7 +148,7 @@ print ('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f    %5.1f %5.1f        
         F.mean_el_total_offset,
         F.mean_sep,
         F.mean_ang)
-       )
+       ))
 
 
-raw_input("press any key to exit: ")
+input("press any key to exit: ")

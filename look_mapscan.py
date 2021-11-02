@@ -17,15 +17,15 @@ def main(argv):
     try:
         opts, arg = getopt.getopt(argv,"hc:d:s:b:",["chassis=","date=","scan=","band="])
     except getopt.GetoptError:
-        print 'bad argument: usage: look_map.py'
+        print('bad argument: usage: look_map.py')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'usage: look_map.py'
-            print '-c chassis'
-            print '-d date in yyyy-mm-dd format'
-            print '-s OBSNUM'
-            print '-b band (or board) to view'
+            print('usage: look_map.py')
+            print('-c chassis')
+            print('-d date in yyyy-mm-dd format')
+            print('-s OBSNUM')
+            print('-b band (or board) to view')
             sys.exit()
         elif opt in ("-c","--chassis"):
             chassis = arg
@@ -43,7 +43,7 @@ def main(argv):
     pl.clf()
     pl.figure(1)
     pl.plot(nc.hdu.data.AccAverage[:,band])
-    print 'Gains= ',nc.hdu.header.Gain
+    print('Gains= ',nc.hdu.header.Gain)
     pl.show()
 
 

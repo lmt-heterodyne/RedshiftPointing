@@ -19,8 +19,8 @@ elif which == 'i':
     obsNumArg = "74898:74902"
 
 obsNumList = [int(x) for x in obsNumArg.split(':')]
-obsNums = range(obsNumList[0], obsNumList[1]+1)
-print obsNums
+obsNums = list(range(obsNumList[0], obsNumList[1]+1))
+print(obsNums)
 for obsNum in obsNums:
     flist = genericFileSearchRecursive(obsNum, '/data_lmt', full = True)
     for f in flist:
@@ -32,4 +32,4 @@ rsr = RSRRunFocus()
 #F = rsr.run(argv)
 F = rsr.run(argv, filelist, obsNumArg)
 
-raw_input("press any key to exit: ")
+input("press any key to exit: ")

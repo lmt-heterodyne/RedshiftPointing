@@ -9,7 +9,7 @@ class RSRRunPointing():
     def run(self, argv, filelist=False):
 
         filelist = sorted(filelist)
-        print "filelist = ", filelist
+        print(("filelist = ", filelist))
         c = RSRMapController()
         v = RSRFitViewer()
         a = RSRHandleArgs(show_type=1)
@@ -43,9 +43,9 @@ class RSRRunPointing():
                 image_files = ['rsr_summary.png', 'rsr_pointing_maps.png']
                 if os.path.isfile('lp_spec.png'):
                     image_files = image_files + ['lp_spec.png']
-                print image_files
-                images = map(Image.open, image_files)
-                widths, heights = zip(*(i.size for i in images))
+                print(image_files)
+                images = list(map(Image.open, image_files))
+                widths, heights = list(zip(*(i.size for i in images)))
 
                 max_width = max(widths)
                 total_height = 0
@@ -64,7 +64,7 @@ class RSRRunPointing():
                 os.system('rm -f rsr_pointing_maps.png lp_spec.png')
 
             except Exception as e:
-                print e
+                print(e)
                 pass
 
             return F

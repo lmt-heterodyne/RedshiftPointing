@@ -210,11 +210,11 @@ class RSRMapFit():
 
     def find_pointing_result(self):
         """Finds the final results and standard deviation after all results are loaded."""
-        print 'az_map_offset',self.az_map_offset
-        print 'el_map_offset',self.el_map_offset
-        print 'isGood',self.isGood, self.isGood.any()
-        print 'az_map_offset[isGood]',self.az_map_offset[numpy.nonzero(self.isGood)]
-        print 'el_map_offset[isGood]',self.el_map_offset[numpy.nonzero(self.isGood)]
+        print(('az_map_offset',self.az_map_offset))
+        print(('el_map_offset',self.el_map_offset))
+        print(('isGood',self.isGood, self.isGood.any()))
+        print(('az_map_offset[isGood]',self.az_map_offset[numpy.nonzero(self.isGood)]))
+        print(('el_map_offset[isGood]',self.el_map_offset[numpy.nonzero(self.isGood)]))
 
         self.pointing_result = self.isGood.any()
         if self.pointing_result:
@@ -382,9 +382,9 @@ class RSRM2Fit():
         self.elev = numpy.zeros(self.nscans)
         self.m2pos = m2pos
         m2posLabel = {-1: 'Error', 0: 'Z', 1: 'Y', 2: 'X', 3: 'A'}
-        print "m2pos = ", m2pos, m2posLabel[m2pos]
+        print(("m2pos = ", m2pos, m2posLabel[m2pos]))
         if (m2pos == -1):
-            print(self.msg)
+            print((self.msg))
         else:
             for scan_id in range(self.nscans):
                 self.elev[scan_id],sig = F[scan_id].get_elev()
@@ -443,7 +443,7 @@ class RSRM2Fit():
                 xband = [-1,-.2,-.6,.2,1.,.6]
             else:
                 xband = [index-0.5*(self.n-1) for index in range(self.n)]
-            print xband
+            print(xband)
             ptp = numpy.zeros((2,2))
             ptr = numpy.zeros(2)
             pta = numpy.zeros(2)

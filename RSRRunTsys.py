@@ -45,9 +45,9 @@ class RSRRunTsys():
         else:
             p = chassis_arg.partition(':')
             if p[1] == ':':
-                self.chassis_list = range(int(p[0]),int(p[2])+1)
+                self.chassis_list = list(range(int(p[0]),int(p[2])+1))
             else:
-                self.chassis_list = range(int(p[0]),int(p[0])+1)
+                self.chassis_list = list(range(int(p[0]),int(p[0])+1))
     
 
     def run(self, argv, obsNum):
@@ -74,7 +74,7 @@ class RSRRunTsys():
             tsys_data = nc.hdu.cal.Tsys.flatten()
             tsys_data = tsys_data[numpy.where(numpy.isfinite(tsys_data))]
             tsys = numpy.median (tsys_data)
-            print 'Average Tsys = %6.2f K' % tsys
+            print('Average Tsys = %6.2f K' % tsys)
             self.plot_tsys(ax, FontProperties, nc)
             #pl.ylim(0.0,3*tsys)
             ax.hlines(tsys,70,115)

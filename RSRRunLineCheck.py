@@ -22,9 +22,9 @@ class RSRRunLineCheck():
         else:
             p = chassis_arg.partition(':')
             if p[1] == ':':
-                self.chassis_list = range(int(p[0]),int(p[2])+1)
+                self.chassis_list = list(range(int(p[0]),int(p[2])+1))
             else:
-                self.chassis_list = range(int(p[0]),int(p[0])+1)
+                self.chassis_list = list(range(int(p[0]),int(p[0])+1))
     
 
     def run(self, argv, obsList):
@@ -70,7 +70,7 @@ class RSRRunLineCheck():
         hdu.make_composite_scan()
 
         if dreampy_plot:
-            print 'using dreampy_plot'
+            print('using dreampy_plot')
             pl = RedshiftPlotChart()
             pl.clear()
             pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
@@ -79,7 +79,7 @@ class RSRRunLineCheck():
             pl.set_ylabel('TA* (mK)')
             pl.set_subplot_title("%s -- %s Tint=%f hrs" %(str(actual_chassis_list),hdu.header.SourceName, real_tint/4.0/3600.0))
         else:
-            print 'using matplotlib_plot'
+            print('using matplotlib_plot')
             import matplotlib.pyplot as pl
             pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
             pl.xlim(72.5, 111.5)

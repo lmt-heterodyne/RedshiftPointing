@@ -13,14 +13,14 @@ def main(argv):
     try:
         opts, arg = getopt.getopt(argv,"hc:d:s:",["chassis=","date=","scan="])
     except getopt.GetoptError:
-        print 'bad argument: usage: look_cal.py'
+        print('bad argument: usage: look_cal.py')
         sys.exit(2)
     for opt, arg in opts:
         if opt == '-h':
-            print 'usage: look_map.py'
-            print '-d date in yyyy-mm-dd format'
-            print '-c chassis'
-            print '-s OBSNUM'
+            print('usage: look_map.py')
+            print('-d date in yyyy-mm-dd format')
+            print('-c chassis')
+            print('-s OBSNUM')
             sys.exit()
         elif opt in ("-c","--chassis"):
             chassis = arg
@@ -38,7 +38,7 @@ def main(argv):
     pl  = RedshiftPlot()
     pl.plot_tsys(nc)
     tsys = nanmean(nc.hdu.cal.Tsys.flatten())
-    print 'Average Tsys = %6.2f K' % tsys
+    print('Average Tsys = %6.2f K' % tsys)
     pl.hlines(tsys,70,115)
     # Places a label for average Tsys so that you don't have to look at the terminal
     pl.annotate("Average Tsys =%6.2fK"%tsys, [114,tsys-1], fontsize=13, fontweight='bold',\

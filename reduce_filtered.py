@@ -66,7 +66,7 @@ for ObsNum in Obslist:
         nc.hdu.average_all_repeats(weight='sigma')
         integ = 2*int(nc.hdu.header.get('Bs.NumRepeats'))*int(nc.hdu.header.get('Bs.TSamp'))
         tint += integ
-	filter (nc.hdu)
+	list(filter (nc.hdu))
         real_tint += (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()        
         hdulist.append(nc.hdu)
         nc.sync()

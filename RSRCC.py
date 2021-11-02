@@ -27,10 +27,10 @@ class RSRCC():
         self.chassis = chassis
         self.filename = self.make_filename(filelist)
         if self.filename == '':
-            print '    file not found'
+            print('    file not found')
             self.n = -1
             return
-        print '    process file', self.filename
+        print(('    process file', self.filename))
         if os.path.isfile(self.filename):
             # open file as a dataset
             self.nc = netCDF4.Dataset(self.filename)
@@ -60,7 +60,7 @@ class RSRCC():
             self.beam_throw_angle = 0
             self.receiver = ''.join(self.nc.variables['Header.Dcs.Receiver'][:]).strip()
             if self.receiver == 'RedshiftReceiver':
-                print '    receiver =', self.receiver
+                print(('    receiver =', self.receiver))
                 self.beam_selected = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
                 self.tracking_beam = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
                 self.beam_throw = np.abs(self.nc.variables['Header.RedshiftReceiver.Dx'][0])*3600*180/np.pi
@@ -68,9 +68,9 @@ class RSRCC():
                 self.beam_throw_angle = np.abs(self.nc.variables['Header.RedshiftReceiver.Beta'][:])*180/np.pi
                 if(self.beam_throw != self.beam_throw2):
                     self.beam_throw = self.beam_throw2 = -1
-                print '    beam throw and theta', self.beam_throw,self.beam_throw2,self.beam_throw_angle
+                print(('    beam throw and theta', self.beam_throw,self.beam_throw2,self.beam_throw_angle))
                 if self.tracking_beam != -1:
-                    print '    TRACKING BEAM ',self.tracking_beam
+                    print(('    TRACKING BEAM ',self.tracking_beam))
             elif self.receiver == 'Sequoia':
                 self.beam_selected = self.nc.variables['Header.Sequoia.BeamSelected'][0]
                 #self.beam_selected = -1
@@ -91,7 +91,7 @@ class RSRCC():
                 self.pixel_selected = self.beam_selected
                 self.tracking_beam = 1
             else:
-                print '    receiver =', self.receiver
+                print(('    receiver =', self.receiver))
                 self.beam_selected = 1
                 self.tracking_beam = 1
                 self.beam_throw = 0
@@ -139,7 +139,7 @@ class RSRCC():
             elif 'lmttpm' in self.filename:
                 self.nchan = len(self.nc.dimensions['Data.LmtTpm.Signal_xlen'])
 
-            print '      found nchan', self.nchan
+            print(('      found nchan', self.nchan))
             if quick_open:
                 return
 
@@ -156,7 +156,7 @@ class RSRCC():
                     self.duration = self.time[len(self.time)-1]-self.time[0]
                     self.bufpos = self.nc.variables['Data.Dcs.BufPos'][:]
                     self.data = self.nc.variables[this_chassis+'_.AccAverage'][:]
-                    if this_chassis+'_.AccSamples' in self.nc.variables.keys():
+                    if this_chassis+'_.AccSamples' in list(self.nc.variables.keys()):
                         self.samples = self.nc.variables[this_chassis+'_.AccSamples'][:]
                         self.samples_exist = True
                     else:
@@ -175,10 +175,10 @@ class RSRCC():
                     self.duration = self.time[len(self.time)-1]-self.time[0]
                     try:
                         self.bufpos = self.nc.variables['Data.Dcs.BufPos'][:]
-                        print '    got bufpos from dcs'
+                        print('    got bufpos from dcs')
                     except:
                         self.bufpos = self.nc.variables['Data.Sky.BufPos'][:]
-                        print '    got bufpos from sky'
+                        print('    got bufpos from sky')
                     self.apower = self.nc.variables['Data.Vlbi1mmTpm.APower'][:]
                     self.bpower = self.nc.variables['Data.Vlbi1mmTpm.BPower'][:]
                     self.samples_exist = True
@@ -261,14 +261,14 @@ class RSRCC():
                         self.flip[board] = 1
                         self.bias[board] = 0#np.median(self.data[:,board])
             except Exception as e:
-              print 'Trouble with data block for file '+self.filename
-              print e
+              print(('Trouble with data block for file '+self.filename))
+              print(e)
         
             # define special elimination flag
             self.ELIM = -999999.
 
         else:
-            print self.filename+' does not exist'
+            print((self.filename+' does not exist'))
     
     def sync(self):
         self.nc.sync()
@@ -277,12 +277,12 @@ class RSRCC():
         try:
             self.nc.close()
         except AttributeError:
-            print "from close(): ncfile not open"
+            print("from close(): ncfile not open")
     
     def make_filename(self,filelist):
         filename = ""
         if filelist != False:
-            print '  get filename from filelist for obsnum', self.scan, 'chassis', self.chassis
+            print(('  get filename from filelist for obsnum', self.scan, 'chassis', self.chassis))
             for i,filel in enumerate(filelist):
                 """Builds an LMT filename filelist and chassis."""
                 if 'RedshiftChassis' in filel:
@@ -302,7 +302,7 @@ class RSRCC():
                         break
         else:
             """Builds an LMT filename from date and obsnum."""
-            print '  get filename from date and obsnum'
+            print('  get filename from date and obsnum')
             filename = ('%s/RedshiftChassis%d/RedshiftChassis%d_%s_%06d_%02d_%04d.nc' % (self.path, self.chassis, self.chassis, self.date,self.scan,self.groupscan,self.subscan))
         return filename
 
@@ -322,12 +322,12 @@ class RSRCC():
             for i in range(self.n):
                 if self.samples[i,board] != checksum:
                     self.flag[board,i] = 1
-                    print 'Eliminate sample ',i,'  AccSamples =',self.samples[i,board]
+                    print(('Eliminate sample ',i,'  AccSamples =',self.samples[i,board]))
                     counter = counter+1        
             if counter > 0:
-                print 'Bad integrations: ',counter
+                print(('Bad integrations: ',counter))
         else:
-            print 'AccSamples Array does not exist in file; cannot remove bad integrations'    
+            print('AccSamples Array does not exist in file; cannot remove bad integrations'    )
 
     def despike(self,board=0,cut=1):
         """Implements a despike routine which looks for outliers in a running filter."""
@@ -350,13 +350,13 @@ class RSRCC():
             if abs(r[i])>rcut:
                 self.flag[board,i] = 1
                 counter2 = counter2+1
-        print "Bad Points: ", counter2
+        print(("Bad Points: ", counter2))
     
     def flag_windows(self, board=0, flag_windows=()):
         """Uses the flag_windows lists to flag bad data."""
         counter = 0
         if flag_windows == ():
-            print 'No windows to flag'
+            print('No windows to flag')
         else:
             if type(flag_windows[0]) == int:
                 # we are flagging one window
@@ -369,7 +369,7 @@ class RSRCC():
                     for j in range(flag_windows[i][0],flag_windows[i][1]+1):
                         counter = counter + 1
                         self.flag[board,j] = 1
-        print "Flagged ",counter," points"
+        print(("Flagged ",counter," points"))
     
     def remove_baseline(self, board=0, ww=50):
         """Performs a baseline removal using a running smooth to estimate baseline.

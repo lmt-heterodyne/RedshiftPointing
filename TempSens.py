@@ -12,7 +12,7 @@ class TempSens():
 
     def calculate(self):
         # mean temperature
-        self.mean_temp = self.process_list(range(64))
+        self.mean_temp = self.process_list(list(range(64)))
         # RTopUpper,RTopLower,LBotUpper,LBotLower,RBotUpper,RBotLower,LTopUpper,LTopLower
         self.legs = self.process_list((13,14,15,16,17,18,19,20))
         self.legs_left = self.process_list((15,16,19,20))

@@ -32,10 +32,10 @@ class RSRMapController():
         index = 0
         self.process_list=[]
         self.chassis_list = list(a.chassis_list)
-        print 'processing obsnum %d'%(scan)
-        print '           chassis=%s'%(str(a.chassis_list))
-        print '           process=%s'%(str(a.process_list))
-        print '           chassis_list', self.chassis_list
+        print(('processing obsnum %d'%(scan)))
+        print(('           chassis=%s'%(str(a.chassis_list))))
+        print(('           process=%s'%(str(a.process_list))))
+        print(('           chassis_list', self.chassis_list))
         flist = filelist
         ## read each file to see if it exists and has good data
         for chassis_id, chassis in enumerate(a.chassis_list):
@@ -43,7 +43,7 @@ class RSRMapController():
             try:
                 fnc = m.nc
             except AttributeError:
-                print "    map doesn't have a file"
+                print("    map doesn't have a file")
                 #self.process_list.append([])
                 self.chassis_list.remove(chassis)
                 continue
@@ -67,12 +67,12 @@ class RSRMapController():
             m.close()
 
 	# create a map fit now that the process_list has been updated
-	F = RSRMapFit(self.process_list)
+        F = RSRMapFit(self.process_list)
 
-        print '********'
-        print 'new chassis list', self.chassis_list
-        print 'new process list', self.process_list
-        print '********'
+        print('********')
+        print(('new chassis list', self.chassis_list))
+        print(('new process list', self.process_list))
+        print('********')
         
         for chassis_id, chassis in enumerate(self.chassis_list):
             m = RSRMap(flist,a.date,scan,chassis_id,chassis,a.beam_throw)
@@ -81,7 +81,7 @@ class RSRMapController():
             F.load_average_parameters(m)
             # process
             for board_id,board in enumerate(blist):
-                print '           board_id=%d, board=%d'%(board_id,board)
+                print(('           board_id=%d, board=%d'%(board_id,board)))
                 m.process_single_board(board, 
                                        a.fit_window, 
                                        a.remove_baseline, 
@@ -214,64 +214,64 @@ class RSRHandleArgs():
                                       )
         except getopt.GetoptError:
             result = -1
-            print 'error: argument error'
+            print('error: argument error')
             return result
         for opt, arg in opts:
             # here is the "help" result
             if opt == '-h':
-                print 'usage: '+self.program
-                print '-d (date)    date in yyyy-mm-dd format'
-                print '-s (scan)    OBSNUM list to process'
-                print '             for map, only one argument needed'
-                print '             e.g. -s 16481 will just process 16481'
-                print '             for fit_m2, we specify a list of scans as follows'
-                print '             e.g. -s [16481,16492, 16493] will process the scans'
-                print '                  -s 16481:16485 will process 16481 to 16485'
-                print '-c (chassis) list of chassis to process'
-                print '             e.g. -c [0,1] will process chassis 0 and 1'
-                print '                  -c 0:2   will process 0,1, and 2'
-                print '                  -c a     will process all chassis (default)'
-                print '                  -c 1     will process only chassis 1'
-                print '-b (board)   list of boards to process; same list is used for all chassis'
-                print '             e.g. -b [0,1,2,5] will process boards 0,1,2, and 5'  
-                print '                  -b 2:5       will process boards 2 to 5'
-                print '                  -b a         will process all boards (default)'
-                print '                  -b 1         will only process board 1'
-                print '-l (list)    specify a separate list of boards for each chassis in the'
-                print '             chassis list'
-                print '             e.g. if -c [0,1,3] then -l [[0,1,2,3,4,5],[0,1,4,5],[1]] '
-                print '             will process only the requested boards for each chassis'
-                print '-o (obstype) observation type (0=ON; 1=MAP; 2=XSCAN_X; 3=XSCAN_Y) default=%d'%(self.obstype)
-                print '--show       display plot flag; default is to show no plots'
-                print '             --show True or true will cause default plot to be displayed; '
-                print '             --show Map          will cause map plot to be displayed'
-                print '             --show Scan         will cause scan plot to be displayed'
-                print '--path       the path to the data (default %s)'%(self.path)
-                print '--beam       argument selects beam 1 or beam 0 for fitting'
-                print '             -0 is shorthand to select 0; -1 is shorthand to select 1.'
+                print(('usage: '+self.program))
+                print('-d (date)    date in yyyy-mm-dd format')
+                print('-s (scan)    OBSNUM list to process')
+                print('             for map, only one argument needed')
+                print('             e.g. -s 16481 will just process 16481')
+                print('             for fit_m2, we specify a list of scans as follows')
+                print('             e.g. -s [16481,16492, 16493] will process the scans')
+                print('                  -s 16481:16485 will process 16481 to 16485')
+                print('-c (chassis) list of chassis to process')
+                print('             e.g. -c [0,1] will process chassis 0 and 1')
+                print('                  -c 0:2   will process 0,1, and 2')
+                print('                  -c a     will process all chassis (default)')
+                print('                  -c 1     will process only chassis 1')
+                print('-b (board)   list of boards to process; same list is used for all chassis')
+                print('             e.g. -b [0,1,2,5] will process boards 0,1,2, and 5')  
+                print('                  -b 2:5       will process boards 2 to 5')
+                print('                  -b a         will process all boards (default)')
+                print('                  -b 1         will only process board 1')
+                print('-l (list)    specify a separate list of boards for each chassis in the')
+                print('             chassis list')
+                print('             e.g. if -c [0,1,3] then -l [[0,1,2,3,4,5],[0,1,4,5],[1]] ')
+                print('             will process only the requested boards for each chassis')
+                print(('-o (obstype) observation type (0=ON; 1=MAP; 2=XSCAN_X; 3=XSCAN_Y) default=%d'%(self.obstype)))
+                print('--show       display plot flag; default is to show no plots')
+                print('             --show True or true will cause default plot to be displayed; ')
+                print('             --show Map          will cause map plot to be displayed')
+                print('             --show Scan         will cause scan plot to be displayed')
+                print(('--path       the path to the data (default %s)'%(self.path)))
+                print('--beam       argument selects beam 1 or beam 0 for fitting')
+                print('             -0 is shorthand to select 0; -1 is shorthand to select 1.')
                 if self.arglevel > 0:
-                    print '--beam       argument selects beam 1 or beam 0 for fitting '
-                    print '              only a single beam beam in a map'
-                    print '               -0 is shorthand to select beam 0; '
-                    print '               -1 is shorthand to select beam 1.'
-                    print '-t (throw)   beam throw (arcsec)'
-                    print '               default narrow beam = %d arcsec'%(self.beam_throw)
-                    print '               use -t 147 for the wide beam throw'
-                    print '-w           window for fitting gaussian'
-                    print '               default = %d arcsec'%(self.fit_window)
-                    print '-r           remove a baseline - no argument'
-                    print '-e           size of region around beam peak to exclude from'
-                    print '              baseline fit (%d arcsec)'%(self.baseline_elimination_window)
-                    print '-m           size of baseline smoothing window in samples (%d arcsec)'%(self.baseline_smoothing_window)
-                    print '-x           turns on the despike algorithm - no argument'
-                    print '-z           eliminates bad integrations'
-                    print '             the argument is number of interrupts per sample'
-                    print '             you may enter -z n to set for our nominal number of '
-                    print '             interrupts per sample'
-                    print '--flag       list of regions to exclude from analysis'
-                    print '             e.g. --flag [[0,10],[502,535]] will eliminate samples'
-                    print '                  0-10 and 502-535'
-                    print '                  No whitespace is allowed in the flag list!'
+                    print('--beam       argument selects beam 1 or beam 0 for fitting ')
+                    print('              only a single beam beam in a map')
+                    print('               -0 is shorthand to select beam 0; ')
+                    print('               -1 is shorthand to select beam 1.')
+                    print('-t (throw)   beam throw (arcsec)')
+                    print(('               default narrow beam = %d arcsec'%(self.beam_throw)))
+                    print('               use -t 147 for the wide beam throw')
+                    print('-w           window for fitting gaussian')
+                    print(('               default = %d arcsec'%(self.fit_window)))
+                    print('-r           remove a baseline - no argument')
+                    print('-e           size of region around beam peak to exclude from')
+                    print(('              baseline fit (%d arcsec)'%(self.baseline_elimination_window)))
+                    print(('-m           size of baseline smoothing window in samples (%d arcsec)'%(self.baseline_smoothing_window)))
+                    print('-x           turns on the despike algorithm - no argument')
+                    print('-z           eliminates bad integrations')
+                    print('             the argument is number of interrupts per sample')
+                    print('             you may enter -z n to set for our nominal number of ')
+                    print('             interrupts per sample')
+                    print('--flag       list of regions to exclude from analysis')
+                    print('             e.g. --flag [[0,10],[502,535]] will eliminate samples')
+                    print('                  0-10 and 502-535')
+                    print('                  No whitespace is allowed in the flag list!')
                 result = 1
                 return result
             elif opt in ("-c","--chassis"):
@@ -338,7 +338,7 @@ class RSRHandleArgs():
             for chassis in self.chassis_list:
                 self.process_list.append(self.board_list)
         if len(self.process_list) != len(self.chassis_list):
-            print 'warning: process list and chassis_list are not consistent'
+            print('warning: process list and chassis_list are not consistent')
     
     def decode_chassis_string(self,chassis_arg):
         """Decodes the argument provided with the -c flag."""
@@ -349,9 +349,9 @@ class RSRHandleArgs():
         else:
             p = chassis_arg.partition(':')
             if p[1] == ':':
-                self.chassis_list = range(int(p[0]),int(p[2])+1)
+                self.chassis_list = list(range(int(p[0]),int(p[2])+1))
             else:
-                self.chassis_list = range(int(p[0]),int(p[0])+1)
+                self.chassis_list = list(range(int(p[0]),int(p[0])+1))
     
     def decode_board_string(self,board_arg):
         """Decodes the argument provided with the -b flag."""
@@ -362,9 +362,9 @@ class RSRHandleArgs():
         else:
             p = board_arg.partition(':')
             if p[1] == ':':
-                self.board_list = range(int(p[0]),int(p[2])+1)
+                self.board_list = list(range(int(p[0]),int(p[2])+1))
             else:
-                self.board_list = range(int(p[0]),int(p[0])+1)
+                self.board_list = list(range(int(p[0]),int(p[0])+1))
 
     def decode_scan_string(self,scan_arg):
         """Decodes the argument provided with the -s flag."""
@@ -373,9 +373,9 @@ class RSRHandleArgs():
         else:
             p = scan_arg.partition(':')
             if p[1] == ':':
-                self.scan_list = range(int(p[0]),int(p[2])+1)
+                self.scan_list = list(range(int(p[0]),int(p[2])+1))
             else:
-                self.scan_list = range(int(p[0]),int(p[0])+1)
+                self.scan_list = list(range(int(p[0]),int(p[0])+1))
 
     def decode_show_string(self,show_arg):
         """Decodes the argument provided with the --show flag."""
@@ -395,6 +395,6 @@ class RSRHandleArgs():
             self.show_ion = 0
         else:
             self.show_it = False
-            print 'unknown argument for show keyword'
-        print 'show_it =',self.show_it
+            print('unknown argument for show keyword')
+        print(('show_it =',self.show_it))
 

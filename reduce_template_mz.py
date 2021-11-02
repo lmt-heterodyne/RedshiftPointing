@@ -131,7 +131,7 @@ lines = [(r'CO (3-2)', (345.7959899, 1.5)),
          #(r'$\ ^{\rm 13}$CO', (330.587960, 4.0))
          ]
 
-print "Used data %d of %d" % (usedChassis, totalChassis)
+print("Used data %d of %d" % (usedChassis, totalChassis))
 
 #for lname, (freq, yl) in lines:
 #    f  = freq/(z + 1)

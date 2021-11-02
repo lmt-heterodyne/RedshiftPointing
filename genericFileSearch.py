@@ -19,23 +19,23 @@ def genericFileSearch (inst, obsnum, root='/data_lmt', full = True):
 def genericFileSearchAll (inst, obsnum, root='/data_lmt', full = True):
         all = []
 	
-	baseDir = "%s/%s/"%(root,inst)
+        baseDir = "%s/%s/"%(root,inst)
 
-	listDir = os.listdir(baseDir)
+        listDir = os.listdir(baseDir)
 
-	for ifile in listDir:
-		if fnmatch(ifile,'%s*_%06d_*.nc' %(inst,obsnum)):
-			if full:
-				ifile = baseDir+ifile
-			all.append(ifile)
+        for ifile in listDir:
+                if fnmatch(ifile,'%s*_%06d_*.nc' %(inst,obsnum)):
+                        if full:
+                                ifile = baseDir+ifile
+                        all.append(ifile)
 
-	return all 
+        return all 
 
 def genericFileSearchRecursive (obsnum, baseDirs='/data_lmt', full = True):
         all = []
-        if isinstance(baseDirs, basestring):
+        if isinstance(baseDirs, str):
                 baseDirs = [baseDirs]
-        print 'genericFileSearchRecursive in', baseDirs
+        print('genericFileSearchRecursive in', baseDirs)
         for baseDir in baseDirs:
             for root, dirnames, filenames in os.walk(baseDir):
                     for ifile in filenames:
@@ -43,7 +43,7 @@ def genericFileSearchRecursive (obsnum, baseDirs='/data_lmt', full = True):
                                     if full:
                                             ifile = os.path.join(root, ifile)
                                     all.append(ifile)
-	return all 
+        return all 
 
 def genericFileSearchInstList (obsnum, baseDir='/data_lmt', insts=[], full = True):
         all = []
@@ -53,8 +53,8 @@ def genericFileSearchInstList (obsnum, baseDir='/data_lmt', insts=[], full = Tru
                 if files:
                         all += files
                         
-	return all 
+        return all 
 
 
 if __name__ == '__main__':
-        print genericFileSearchInstList(103393, '/data_lmt', ['lmttpm', 'tel', 'ifproc'])
+        print(genericFileSearchInstList(103393, '/data_lmt', ['lmttpm', 'tel', 'ifproc']))
