@@ -1,7 +1,7 @@
-from dreampy.redshift.netcdf import RedshiftNetCDFFile
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 try:
-    from dreampy.redshift.plots import RedshiftPlotChart
-    from dreampy.redshift.utils.correlate_lines import CrossCorrelation
+    from dreampy3.redshift.plots import RedshiftPlotChart
+    from dreampy3.redshift.utils.correlate_lines import CrossCorrelation    # does not exist
     dreampy_plot = True
 except:
     dreampy_plot = False
@@ -69,6 +69,9 @@ class RSRRunLineCheck():
 
         hdu.make_composite_scan()
 
+        msg = "%s -- %s Tint=%f mins" %(str(actual_chassis_list),hdu.header.SourceName, real_tint/4.0/60.0)
+        print(msg)
+        
         if dreampy_plot:
             print('using dreampy_plot')
             pl = RedshiftPlotChart()
@@ -77,16 +80,19 @@ class RSRRunLineCheck():
             pl.set_xlim(72.5, 111.5)
             pl.set_xlabel('Frequency (GHz)')
             pl.set_ylabel('TA* (mK)')
-            pl.set_subplot_title("%s -- %s Tint=%f hrs" %(str(actual_chassis_list),hdu.header.SourceName, real_tint/4.0/3600.0))
+            pl.set_subplot_title(msg)
         else:
             print('using matplotlib_plot')
             import matplotlib.pyplot as pl
-            pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
+            #pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
+            pl.step(hdu.compfreq, 1000*hdu.compspectrum[0,:], where='mid')
             pl.xlim(72.5, 111.5)
             pl.xlabel('Frequency (GHz)')
             pl.ylabel('TA* (mK)')
-            pl.title("%s -- %s Tint=%f hrs" %(str(actual_chassis_list),hdu.header.SourceName, real_tint/4.0/3600.0))
+            pl.title(msg)
         pl.savefig('rsr_summary.png', bbox_inches='tight')
+        # make it interactive
+        # pl.show()
 
 
 
