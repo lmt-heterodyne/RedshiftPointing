@@ -1,6 +1,27 @@
 # RedshiftPointing
 
-This code helps with reducing pointing observations for RSR.
+This package helps with with reducing pointing observations for RSR.
+
+## Python packages we need:
+
+    dreampy3
+    PIL
+    netCDF4
+	
+should go into **requirements.txt**	
+
+## test1: runLineCheck.py
+
+You need obsnums 27869 27870 27871 for this. 
+
+    make test1
+
+# data_lmt
+
+Apart from the usual data in RedshiftChassisN (N=0,1,2,3), there are special calibration data trees needed as well:
+
+1. $DATA_LMT/rsr       34MB   (for calibration of any data)
+1. $DATA_LMT/rsrtpm     3GB   (for pointing?)
 
 # Examples
 
@@ -74,3 +95,9 @@ NUEVA INSTRUCCION
 ## Special calibration observation
 
       run look_mapscan -d 2014-01-28 -s 15029
+	  
+
+# History
+
+* original code by Souccar, Wallace, Shloerb
+* Imported from CVS to git, and converted to use python3/dreampy3 (November 2021)
