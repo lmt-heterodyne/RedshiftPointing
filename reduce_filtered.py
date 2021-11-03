@@ -1,6 +1,6 @@
-from dreampy.redshift.netcdf import RedshiftNetCDFFile
-from dreampy.redshift.plots import RedshiftPlot
-from dreampy.redshift.utils.correlate_lines import CrossCorrelation
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
+from dreampy3.redshift.plots import RedshiftPlot
+from dreampy3.redshift.utils.correlate_lines import CrossCorrelation
 import numpy
 import os.path
 from genericFileSearch import genericFileSearch

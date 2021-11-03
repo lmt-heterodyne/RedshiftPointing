@@ -2,7 +2,7 @@ import sys
 import os
 import glob
 import numpy
-from dreampy.lmtnetcdf import LMTNetCDFFile
+from dreampy3.lmtnetcdf import LMTNetCDFFile
 import matplotlib.pyplot as pl
 from data_lmt import data_lmt
 

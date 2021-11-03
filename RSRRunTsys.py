@@ -1,4 +1,4 @@
-from dreampy.redshift.netcdf import RedshiftNetCDFFile
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 import numpy
 import matplotlib.pyplot as pl
 from matplotlib.font_manager import FontProperties

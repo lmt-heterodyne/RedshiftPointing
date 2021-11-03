@@ -1,6 +1,6 @@
 import sys, getopt
-from dreampy.redshift.netcdf import RedshiftNetCDFFile
-from dreampy.redshift.plots import RedshiftPlot
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
+from dreampy3.redshift.plots import RedshiftPlot
 from scipy.stats import nanmean
 from data_lmt import data_lmt
 

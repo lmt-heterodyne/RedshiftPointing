@@ -1,5 +1,5 @@
 try:
-    from dreampy.onemm.netcdf import OnemmNetCDFFile
+    from dreampy3.onemm.netcdf import OnemmNetCDFFile
     from genericFileSearch import genericFileSearch
 except:
     pass

@@ -3,7 +3,7 @@
 
 
 import sys, getopt
-from dreampy.redshift.netcdf import RedshiftNetCDFFile
+from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 import matplotlib.pyplot as pl
 from data_lmt import data_lmt
 

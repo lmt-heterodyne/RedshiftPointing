@@ -1,4 +1,4 @@
-from dreampy.onemm.plots import OnemmTotPowerPlot
+from dreampy3.onemm.plots import OnemmTotPowerPlot
 import numpy as np
 
 def gaussian2d ((x,y), c0, c1, x0,y0, sx, sy, theta):
