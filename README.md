@@ -27,7 +27,7 @@ Apart from the usual data in RedshiftChassisN (N=0,1,2,3), there are special cal
 
 ## Plotting EL vs. hour 
 
-      dreampy> from dreampy.redshift.plots import RedshiftPlot
+      dreampy> from dreampy3.redshift.plots import RedshiftPlot
       dreampy> pl = RedshiftPlot()
       dreampy> pl.plot_horizon('<catalogo>',delimiter='\t')
 
@@ -67,12 +67,12 @@ PARA EL WIDE BEAM
 
 ## Para medir la posicion de M2 (http://wiki.lmtgtm.org/lmtwiki/PeakUpMaps)
 
-      run fit_m2_all -d 2014-01-28 -f 15030 -l 15032
-      run fit_m2 -d 2014-01-28 -f 15030 -l 15032 -b 2 -p 0
+      dreampy> run fit_m2_all -d 2014-01-28 -f 15030 -l 15032
+      dreampy> run fit_m2 -d 2014-01-28 -f 15030 -l 15032 -b 2 -p 0
 
 NUEVA INSTRUCCION
 
-      run fit_m2 -d 2014-05-19 -s 20651:20654 -c[0,3] --show=True -1
+      dreampy> run fit_m2 -d 2014-05-19 -s 20651:20654 -c[0,3] --show=True -1
 
 
 
@@ -94,7 +94,7 @@ NUEVA INSTRUCCION
 
 ## Special calibration observation
 
-      run look_mapscan -d 2014-01-28 -s 15029
+      dreampy> run look_mapscan -d 2014-01-28 -s 15029
 	  
 
 # History
