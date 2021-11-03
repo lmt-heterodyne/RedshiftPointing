@@ -5,6 +5,7 @@
 import sys, getopt
 from dreampy.redshift.netcdf import RedshiftNetCDFFile
 import matplotlib.pyplot as pl
+from data_lmt import data_lmt
 
 def main(argv):
     # defaults
@@ -49,7 +50,7 @@ def main(argv):
 
 def make_filename(date,scan,chassis):
     # makes a filename from date and obnum
-    filename = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_%s_%06d_01_0001.nc' % (chassis, chassis, date, eval(scan))
+    filename = data_lmt() + '/RedshiftChassis%s/RedshiftChassis%s_%s_%06d_01_0001.nc' % (chassis, chassis, date, eval(scan))
     return filename
 
 

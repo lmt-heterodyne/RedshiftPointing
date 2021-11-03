@@ -13,6 +13,7 @@ from RSRCC import RSRCC
 from RSRMap import RSRMap
 from RSRFit import RSRMapFit
 from RSRViewer import RSRMapViewer
+from data_lmt import data_lmt
 
 SHOW_MAP_SAMPLING = True
 
@@ -137,7 +138,7 @@ class RSRMapController():
 class RSRHandleArgs():
     """Maintains important parameters that control reductions and provides command line argument handling""" 
     def __init__(self,
-                 path='/data_lmt',
+                 path=None,
                  date='2013-12-22',
                  scan_arg='[13631]',
                  chassis_arg='[0,1,2,3]',
@@ -162,7 +163,7 @@ class RSRHandleArgs():
         # basic file parameters
         self.ion = True
         self.show_ion = 1
-        self.path = path
+        self.path = data_lmt(path)
         self.date = date
         self.decode_scan_string(scan_arg)
         self.process_list = eval(process_arg)

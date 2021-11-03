@@ -4,12 +4,14 @@ import glob
 import numpy
 from dreampy.lmtnetcdf import LMTNetCDFFile
 import matplotlib.pyplot as pl
+from data_lmt import data_lmt
 
 def most_recent_file(glob_pattern):
     return max(glob.iglob(glob_pattern), key=os.path.getctime)
 
-def get_telnc_file(obsnum, basepath='/data_lmt/lmttpm',
+def get_telnc_file(obsnum, basepath=None,
                    most_recent=True):
+    basepath = data_lmt() + '/lmttpm'
     glob_pattern = os.path.join(basepath, "lmttpm_*_%06d_*.nc" % obsnum)
     if most_recent:
         return most_recent_file(glob_pattern)

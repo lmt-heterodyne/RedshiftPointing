@@ -22,7 +22,7 @@ obsNumList = [int(x) for x in obsNumArg.split(':')]
 obsNums = list(range(obsNumList[0], obsNumList[1]+1))
 print(obsNums)
 for obsNum in obsNums:
-    flist = genericFileSearchRecursive(obsNum, '/data_lmt', full = True)
+    flist = genericFileSearchRecursive(obsNum, None, full = True)
     for f in flist:
         filelist.append(f)
 

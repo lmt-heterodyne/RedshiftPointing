@@ -2,6 +2,7 @@ import sys, getopt
 from dreampy.redshift.netcdf import RedshiftNetCDFFile
 from dreampy.redshift.plots import RedshiftPlot
 from scipy.stats import nanmean
+from data_lmt import data_lmt
 
 def main(argv):
     # defaults
@@ -45,11 +46,9 @@ def main(argv):
         stretch='250', horizontalalignment='right', verticalalignment='top') # Extra kwargs to make it pretty
 
 
-
-
 def make_filename(date,scan,chassis):
     # makes a filename from date and obnum
-    filename = '/data_lmt/RedshiftChassis%s/RedshiftChassis%s_%s_%06d_00_0001.nc' % (chassis, chassis, date, scan)
+    filename = data_lmt() + '/RedshiftChassis%s/RedshiftChassis%s_%s_%06d_00_0001.nc' % (chassis, chassis, date, scan)
     return filename
 
 

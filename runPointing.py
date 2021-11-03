@@ -5,6 +5,7 @@ import sys
 from RSRRunPointing import RSRRunPointing
 from genericFileSearch import genericFileSearchAll
 from genericFileSearch import genericFileSearchRecursive
+from data_lmt import data_lmt
 
 argv = ["-d", "2014-08-20", "-s", "101000003", "--show", "True"]
 argv = ["-d", "2014-03-03", "-s", "16887", "--show", "True"]
@@ -15,7 +16,7 @@ argv = ["-d", "2015-03-18", "-s", "38496", "--show", "True"]
 argv = ["-d", "2016-02-16", "-s", "10056830", "--show", "True"]
 argv = ["-d", "2018-02-27", "-s", "73014", "--chassis", "[1,2,3]", "--show", "True"]
 
-root = "/data_lmt"
+root = data_lmt()
 filelist = []
 plist = None
 

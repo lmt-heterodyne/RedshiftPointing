@@ -1,7 +1,9 @@
 from fnmatch import fnmatch
+from data_lmt import data_lmt
 from os  import listdir
 
-def rsrFileSearch (obsnum, chassis, root='/data_lmt/', full = True):
+def rsrFileSearch (obsnum, chassis, root=None, full = True):
+        root = data_lmt(root)
 	if chassis < 0 or chassis >3:
 		print("Error no chassis %d" % chassis)
 		return ""
@@ -19,7 +21,8 @@ def rsrFileSearch (obsnum, chassis, root='/data_lmt/', full = True):
 
 	return "" 
 
-def rsrFileSearchAll (obsnum, root='/data_lmt/', full = True):
+def rsrFileSearchAll (obsnum, root=None, full = True):
+        root = data_lmt(root)
         all = []
         for chassis in range(4):
 	        chassisDir = "%s/RedshiftChassis%d/"%(root,chassis)

@@ -13,12 +13,13 @@ import numpy as np
 import math
 from scipy.signal import detrend
 from RSRUtilities import TempSens
+from data_lmt import data_lmt
 
 class RSRCC():
     """RSRCC is the base class for compressed continuum data scans"""
-    def __init__(self,filelist,date,scan,chassis_id,chassis,quick_open=False,groupscan=0,subscan=1,path='/data_lmt'):
+    def __init__(self,filelist,date,scan,chassis_id,chassis,quick_open=False,groupscan=0,subscan=1,path=None):
         """__init__ reads the netcdf file and fills in parameters and arrays"""
-        self.path = path
+        self.path = data_lmt(path)
         self.date = date
         self.scan = scan
         self.groupscan = groupscan
@@ -442,9 +443,10 @@ class RSRCC():
         return board
                 
 def main():
-    filelist = ['/data_lmt/ifproc/ifproc_2018-04-16_074753_00_0001.nc']
+    root = data_lmt()
+    filelist = [root + '/ifproc/ifproc_2018-04-16_074753_00_0001.nc']
     r = RSRCC(filelist, '', 74753, 0)
-    filelist = ['/data_lmt/lmttpm/lmttpm_2018-03-16_073677_01_0000.nc']
+    filelist = [root + '/lmttpm/lmttpm_2018-03-16_073677_01_0000.nc']
     r = RSRCC(filelist, '', 73677, 0)
 
 if __name__ == '__main__':
