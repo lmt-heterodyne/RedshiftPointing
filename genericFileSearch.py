@@ -1,24 +1,28 @@
 from fnmatch import fnmatch
+from data_lmt import data_lmt
 import os
 
-def genericFileSearch (inst, obsnum, root='/data_lmt', full = True):
-	
-	baseDir = "%s/%s/"%(root,inst)
+def genericFileSearch (inst, obsnum, root=None, full = True):
+        
+    root = data_lmt(root)
+      
+    baseDir = "%s/%s/"%(root,inst)
 
-	listDir = os.listdir(baseDir)
+    listDir = os.listdir(baseDir)
 
+      
+    for ifile in listDir:
+        if fnmatch(ifile,'%s*_%06d_*.nc' %(inst,obsnum)):
+            if full:
+                ifile = baseDir+ifile
+            return ifile
 
-	for ifile in listDir:
-		if fnmatch(ifile,'%s*_%06d_*.nc' %(inst,obsnum)):
-			if full:
-				ifile = baseDir+ifile
-			return ifile
+    return "" 
 
-	return "" 
-
-def genericFileSearchAll (inst, obsnum, root='/data_lmt', full = True):
+def genericFileSearchAll (inst, obsnum, root=None, full = True):
+        root = data_lmt(root)        
         all = []
-	
+      
         baseDir = "%s/%s/"%(root,inst)
 
         listDir = os.listdir(baseDir)
@@ -31,7 +35,8 @@ def genericFileSearchAll (inst, obsnum, root='/data_lmt', full = True):
 
         return all 
 
-def genericFileSearchRecursive (obsnum, baseDirs='/data_lmt', full = True):
+def genericFileSearchRecursive (obsnum, baseDirs=None, full = True):
+        root = data_lmt(root)        
         all = []
         if isinstance(baseDirs, str):
                 baseDirs = [baseDirs]
@@ -45,7 +50,8 @@ def genericFileSearchRecursive (obsnum, baseDirs='/data_lmt', full = True):
                                     all.append(ifile)
         return all 
 
-def genericFileSearchInstList (obsnum, baseDir='/data_lmt', insts=[], full = True):
+def genericFileSearchInstList (obsnum, baseDir=None, insts=[], full = True):
+        root = data_lmt(root)        
         all = []
 
         for inst in insts:
@@ -55,6 +61,6 @@ def genericFileSearchInstList (obsnum, baseDir='/data_lmt', insts=[], full = Tru
                         
         return all 
 
-
 if __name__ == '__main__':
-        print(genericFileSearchInstList(103393, '/data_lmt', ['lmttpm', 'tel', 'ifproc']))
+        root = data_lmt(None)
+        print(genericFileSearchInstList(103393, root, ['lmttpm', 'tel', 'ifproc']))
