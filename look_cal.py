@@ -1,7 +1,8 @@
 import sys, getopt
+import numpy as np
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 from dreampy3.redshift.plots import RedshiftPlot
-from scipy.stats import nanmean
+# from scipy.stats import nanmean
 from data_lmt import data_lmt
 
 def main(argv):
@@ -38,7 +39,7 @@ def main(argv):
     nc.hdu.get_cal()    
     pl  = RedshiftPlot()
     pl.plot_tsys(nc)
-    tsys = nanmean(nc.hdu.cal.Tsys.flatten())
+    tsys = np.nanmean(nc.hdu.cal.Tsys.flatten())
     print('Average Tsys = %6.2f K' % tsys)
     pl.hlines(tsys,70,115)
     # Places a label for average Tsys so that you don't have to look at the terminal
