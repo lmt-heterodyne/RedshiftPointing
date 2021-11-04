@@ -3,7 +3,6 @@ from data_lmt import data_lmt
 import os
 
 def genericFileSearch (inst, obsnum, root=None, full = True):
-        
     root = data_lmt(root)
       
     baseDir = "%s/%s/"%(root,inst)
@@ -42,7 +41,7 @@ def genericFileSearchRecursive (obsnum, baseDirs=None, full = True):
                 baseDirs = [baseDirs]
         print('genericFileSearchRecursive in', baseDirs)
         for baseDir in baseDirs:
-            for root, dirnames, filenames in os.walk(baseDir):
+            for root, dirnames, filenames in os.walk(baseDir, followlinks=True):
                     for ifile in filenames:
                             if fnmatch(ifile,'*_%06d_*.nc' %(obsnum)):
                                     if full:
