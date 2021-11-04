@@ -18,6 +18,11 @@ if which == 'r':
 elif which == 'i':
     obsNumArg = "74898:74902"
 
+try:
+    obsNumArg = sys.argv[2]
+except:
+    pass
+
 obsNumList = [int(x) for x in obsNumArg.split(':')]
 obsNums = list(range(obsNumList[0], obsNumList[1]+1))
 print(obsNums)
