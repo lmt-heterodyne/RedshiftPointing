@@ -36,7 +36,7 @@ def genericFileSearchAll (inst, obsnum, root=None, full = True):
         return all 
 
 def genericFileSearchRecursive (obsnum, baseDirs=None, full = True):
-        root = data_lmt(root)        
+        baseDirs = data_lmt(baseDirs)
         all = []
         if isinstance(baseDirs, str):
                 baseDirs = [baseDirs]
@@ -51,7 +51,7 @@ def genericFileSearchRecursive (obsnum, baseDirs=None, full = True):
         return all 
 
 def genericFileSearchInstList (obsnum, baseDir=None, insts=[], full = True):
-        root = data_lmt(root)        
+        baseDir = data_lmt(baseDir)
         all = []
 
         for inst in insts:
