@@ -20,9 +20,14 @@ root = data_lmt()
 filelist = []
 plist = None
 
+#    parse the first argument (a single letter) followed by an optional obsnum
 try:
     if sys.argv[1][0] == 'v':
         obsnum = 70868 #70880
+        try:
+            obsnum = int(sys.argv[2])
+        except:
+            pass
         chassis = [0]
         board = [i for i in range(6)]
         #board = [0,1,2,3]
