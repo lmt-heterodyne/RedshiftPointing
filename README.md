@@ -92,6 +92,7 @@ These were taken from a **dreampy_funcs.txt** description, and will need some cl
 ## Reducir CAL
 
       dreampy> run look_cal -d 2014-05-19 -s 15100
+	  python look_cal.py -d 2014-05-19 -s 15100
 	  
 -> doesn't find the file
 
@@ -99,27 +100,23 @@ These were taken from a **dreampy_funcs.txt** description, and will need some cl
 ## Reducir MAP
 
       dreampy> run look_map -d 2014-01-28 -s 15101
-
       python look_map.py -d 2014-01-28 -s 15101
 
 
 ## Medir pointing offsets
 
       dreampy> run process_map -d 2014-05-19 -s 15100 -ba
-
       python process_map.py -d 2014-05-19 -s 15100 -ba
 
 NUEVA INSTRUCCION
 
       dreampy> run process_map -d 2014-05-19 -s 20645 -1 --show=True
-	  
       python process_map.py -d 2014-05-19 -s 20645 -1 --show=True
 
 
 PARA EL WIDE BEAM
 
       dreampy> run process_map -d 2014-05-19 -1 --show m -s 20386 -t 147
-
       python process_map.py -d 2014-05-19 -1 --show m -s 20386 -t 147
 
 
@@ -137,7 +134,7 @@ PARA EL WIDE BEAM
 NUEVA INSTRUCCION
 
       dreampy> run fit_m2 -d 2014-05-19 -s 20651:20654 -c[0,3] --show=True -1
-
+      python fit_m2.py -d 2014-05-19 -s 20651:20654 -c[0,3] --show=True -1
 
     -d date in yyyy-mm-dd format
     -f obsnum of FIRST scan in the sequence for fitting
