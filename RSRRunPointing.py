@@ -9,7 +9,7 @@ class RSRRunPointing():
     def run(self, argv, filelist=False):
 
         filelist = sorted(filelist)
-        print(("filelist = ", filelist))
+        print("RSRRunPointing: filelist = ", filelist)
         c = RSRMapController()
         v = RSRFitViewer()
         a = RSRHandleArgs(show_type=1)
