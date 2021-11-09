@@ -10,6 +10,9 @@ def data_lmt(root = None, debug=False):
       1. $DATA_LMT
       2. /data_lmt
       3  None (failure)
+
+    Note: there really is no good reason to pass an existing root to
+    this function, it should be derived from $DATA_LMT
     """
     if root == None:
         if 'DATA_LMT' in os.environ:
