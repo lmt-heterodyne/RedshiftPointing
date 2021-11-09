@@ -12,7 +12,10 @@ from RSRFit import RSRMapFit
 import numpy
 import matplotlib.pyplot as pl
 import matplotlib.mlab as mlab
-from mpl_toolkits.axes_grid import make_axes_locatable
+#from mpl_toolkits.axes_grid import make_axes_locatable
+#   The mpl_toolkits.axes_grid module was deprecated in Matplotlib 2.1 and will be removed two minor releases later.
+#   Use mpl_toolkits.axes_grid1 and mpl_toolkits.axisartist, which provide the same functionality instead.
+
 import math
 import sys
 import time
