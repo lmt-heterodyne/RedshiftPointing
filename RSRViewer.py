@@ -20,6 +20,7 @@ import math
 import sys
 import time
 import traceback
+import scipy.interpolate as interp
 
 class RSRViewer():
     """Base Class of Viewer"""
@@ -508,6 +509,7 @@ class RSRMapViewer(RSRScanViewer):
             maplimits = [min(xpos), max(xpos), min(ypos), max(ypos)]
         nx = (maplimits[1]-maplimits[0])/mapgrid+1
         ny = (maplimits[3]-maplimits[2])/mapgrid+1
+        nx = ny = min(nx, ny)
         xi = numpy.linspace(maplimits[0],maplimits[1],nx)
         yi = numpy.linspace(maplimits[2],maplimits[3],ny)
         plot_array = numpy.zeros(m.n)
@@ -522,12 +524,17 @@ class RSRMapViewer(RSRScanViewer):
         #print 'griddata', len(xpos), len(xi), mapgrid, maplimits
         t0 = time.time()
         try:
-            print('try griddata linear')
-            zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
-            print('griddata linear ok')
+            print('try scipy griddata linear')
+            grid_x, grid_y = numpy.mgrid[maplimits[0]:maplimits[1]:complex(nx), maplimits[2]:maplimits[3]:complex(ny)]
+            zi = interp.griddata((xpos,ypos),plot_array,(grid_x,grid_y),method='linear')
         except Exception as e:
-            print('use griddata default')
-            zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
+            try:
+                print('try mlab griddata linear')
+                zi = mlab.griddata(xpos,ypos,plot_array,xi,yi,interp='linear')
+                print('griddata linear ok')
+            except Exception as e:
+                print('use mlab griddata default')
+                zi = mlab.griddata(xpos,ypos,plot_array,xi,yi)
             print('griddata default ok')
         #print 'griddata time',time.time()-t0
 
@@ -725,9 +732,12 @@ class RSRFitViewer(RSRViewer):
         axis = [x * 2 for x in axis] 
         pl.axis(axis)
         pl.grid()
-        textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
-        textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
-        textstr = textstr + 'El Map Offset:   %6.4f'%(F.mean_el_map_offset)
+        if F.n == 0:
+            textstr = 'File has no data'          
+        else:
+            textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
+            textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
+            textstr = textstr + 'El Map Offset:   %6.4f'%(F.mean_el_map_offset)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(0, axis[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
         pl.subplot(1,2,2)
@@ -739,8 +749,11 @@ class RSRFitViewer(RSRViewer):
         pl.axis(axis2)
         #print axis2
         pl.grid()
-        textstr =           'Az Model %d Offset:   %6.4f'%(F.modrev, F.mean_az_model_offset) + '\n' 
-        textstr = textstr + 'El Model %d Offset:   %6.4f'%(F.modrev, F.mean_el_model_offset)
+        if F.n == 0:
+            textstr = 'File has no data'          
+        else:
+            textstr =           'Az Model %d Offset:   %6.4f'%(F.modrev, F.mean_az_model_offset) + '\n' 
+            textstr = textstr + 'El Model %d Offset:   %6.4f'%(F.modrev, F.mean_el_model_offset)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(0, axis2[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
         pl.suptitle('%s %s %s %d'%(F.receiver.strip(), F.source.strip(), F.date,F.obsnum))
