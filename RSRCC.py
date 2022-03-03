@@ -39,7 +39,10 @@ class RSRCC():
             self.nc = netCDF4.Dataset(self.filename)
 
             # load useful header variables
-            self.source = b''.join(self.nc.variables['Header.Source.SourceName'][:])
+            if sys.version_info[0] < 3:
+                self.source = ''.join(self.nc.variables['Header.Source.SourceName'][:])
+            else:
+                self.source = b''.join(self.nc.variables['Header.Source.SourceName'][:]).decode().strip()
             self.obsnum = self.nc.variables['Header.Dcs.ObsNum'][0]
             self.utdate = self.nc.variables['Header.TimePlace.UTDate'][0]
             self.ut1_h = self.nc.variables['Header.TimePlace.UT1'][0]/2./math.pi*24.
@@ -61,7 +64,10 @@ class RSRCC():
             self.beam_throw = -1
             self.beam_throw2 = -1
             self.beam_throw_angle = 0
-            self.receiver = b''.join(self.nc.variables['Header.Dcs.Receiver'][:]).strip()
+            if sys.version_info[0] < 3:
+                self.receiver = ''.join(self.nc.variables['Header.Dcs.Receiver'][:]).strip()
+            else:
+                self.receiver = b''.join(self.nc.variables['Header.Dcs.Receiver'][:]).decode().strip()
             if self.receiver == 'RedshiftReceiver':
                 print(('    receiver =', self.receiver))
                 self.beam_selected = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
