@@ -37,6 +37,7 @@ class RSRCC():
         if os.path.isfile(self.filename):
             # open file as a dataset
             self.nc = netCDF4.Dataset(self.filename)
+            self.nc.set_auto_mask(False)
 
             # load useful header variables
             if sys.version_info[0] < 3:
