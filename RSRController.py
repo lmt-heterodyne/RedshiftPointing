@@ -80,6 +80,10 @@ class RSRMapController():
             # get board list from process list
             blist = self.process_list[chassis_id]
             F.load_average_parameters(m)
+            if m.n <= 0:
+                print('           file has no data')
+                m.close()
+                continue
             # process
             for board_id,board in enumerate(blist):
                 print(('           board_id=%d, board=%d'%(board_id,board)))
