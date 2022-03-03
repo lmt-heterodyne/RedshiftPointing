@@ -90,6 +90,12 @@ class RSRMapFit():
         self.tilt_y.append(m.tilt0_y)
         # Temperatures
         self.TemperatureSensors.append(m.T.tempsens)
+        # load these too in case the fit fails
+        self.receiver = m.receiver
+        self.source = m.source
+        self.date = m.date
+        self.obsnum = m.obsnum
+        self.n = m.n
     
     def get_duration(self):
         return (numpy.mean(self.duration),numpy.std(self.duration))
