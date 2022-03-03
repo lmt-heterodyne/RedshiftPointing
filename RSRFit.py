@@ -35,6 +35,8 @@ class RSRMapFit():
         self.tracking_beam_position = True
         self.Intensity = numpy.zeros(nresults)
         self.hpbw = numpy.zeros(nresults)
+        self.hpbw_x = numpy.zeros(nresults)
+        self.hpbw_y = numpy.zeros(nresults)
         self.sep = numpy.zeros(nresults)
         self.ang = numpy.zeros(nresults)
         self.modrev = -1
@@ -204,6 +206,8 @@ class RSRMapFit():
         
         self.Intensity[index] = m.I[board]
         self.hpbw[index] = m.hpbw[board]
+        self.hpbw_x[index] = m.hpbw_x[board]
+        self.hpbw_y[index] = m.hpbw_y[board]
         self.sep[index] = m.beamsep[board]
         if self.sep[index] == 0:
             self.ang[index] = 0
@@ -229,6 +233,10 @@ class RSRMapFit():
             self.mean_el_map_offset = numpy.mean(self.el_map_offset[numpy.nonzero(self.isGood)])
             self.std_el_map_offset = numpy.std(self.el_map_offset[numpy.nonzero(self.isGood)])
 
+            self.mean_hpbw_az_map = numpy.mean(self.hpbw_x[numpy.nonzero(self.isGood)])
+            self.mean_hpbw_el_map = numpy.mean(self.hpbw_y[numpy.nonzero(self.isGood)])
+            self.mean_hpbw_map = numpy.mean(self.hpbw[numpy.nonzero(self.isGood)])
+            
             self.mean_az_model_offset = numpy.mean(self.az_model_offset[numpy.nonzero(self.isGood)])
             self.std_az_model_offset = numpy.std(self.az_model_offset[numpy.nonzero(self.isGood)])
             self.mean_el_model_offset = numpy.mean(self.el_model_offset[numpy.nonzero(self.isGood)])
@@ -244,11 +252,15 @@ class RSRMapFit():
 
             self.mean_ang = numpy.mean(self.ang)
             self.std_ang = numpy.std(self.ang)
+
+            
         else:
             self.mean_az_map_offset = 0
             self.std_az_map_offset = 0
             self.mean_el_map_offset = 0
             self.std_el_map_offset = 0
+
+            self.mean_hpbw_map = 0
 
             self.mean_az_model_offset = 0
             self.std_az_model_offset = 0

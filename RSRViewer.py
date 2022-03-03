@@ -736,8 +736,10 @@ class RSRFitViewer(RSRViewer):
             textstr = 'File has no data'          
         else:
             textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
-            textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
-            textstr = textstr + 'El Map Offset:   %6.4f'%(F.mean_el_map_offset)
+            textstr = textstr + 'El Map Offset:   %6.4f'%(F.mean_el_map_offset) + '\n' 
+            #textstr = textstr + 'HPBW:   %6.4f'%(F.mean_hpbw_map) + '\n'
+            textstr = textstr + 'Az HPBW:   %6.4f'%(F.mean_hpbw_el_map) + '\n'
+            textstr = textstr + 'El HPBW:   %6.4f'%(F.mean_hpbw_az_map)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(0, axis[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
         pl.subplot(1,2,2)

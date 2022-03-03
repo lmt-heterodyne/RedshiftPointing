@@ -86,6 +86,8 @@ class RSRMap(RSRCC):
             self.beamsep = np.zeros(32)
             self.beamang = np.zeros(32)
             self.hpbw = np.zeros(32)
+            self.hpbw_x = np.zeros(32)
+            self.hpbw_y = np.zeros(32)
             # define space for model
             self.model = np.zeros((32,self.n))
         except AttributeError as e:
@@ -273,7 +275,9 @@ class RSRMap(RSRCC):
         self.azoff[board] = (self.xp[board,1]+self.xp[board,0])/2.
         self.eloff[board] = (self.yp[board,1]+self.yp[board,0])/2.
         self.hpbw[board] = (math.sqrt(self.hpx[board,1]*self.hpy[board,1]) +
-                            math.sqrt(self.hpy[board,0]*self.hpy[board,0]))/2.
+                            math.sqrt(self.hpx[board,0]*self.hpy[board,0]))/2.
+        self.hpbw_x[board] = (self.hpx[board,1]+self.hpx[board,0])/2.
+        self.hpbw_y[board] = (self.hpy[board,1]+self.hpy[board,0])/2.
         self.beamsep[board] = math.sqrt((self.xp[board,1]-self.xp[board,0])*(self.xp[board,1]-self.xp[board,0]) + (self.yp[board,1]-self.yp[board,0])*(self.yp[board,1]-self.yp[board,0]))/2.
         self.beamang[board] = math.atan2((self.yp[board,1]-self.yp[board,0]),(self.xp[board,1]-self.xp[board,0]))/math.pi*180.0
         # now calculate the model for this board and save it for later display.
@@ -335,6 +339,8 @@ class RSRMap(RSRCC):
         self.beamsep[board] = 0.0
         self.beamang[board] = 0.0
         self.hpbw[board] = math.sqrt(self.hpx[board,pid]*self.hpy[board,pid])
+        self.hpbw_x[board] = self.hpx[board,pid]
+        self.hpbw_y[board] = self.hpy[board,pid]
         # now calculate the model for this board
         for i in range(self.n):
             self.model[board,i] = self.ap[board,pid]*math.exp(-4.*math.log(2.)*(((xpos[i]-self.xp[board,pid])/self.hpx[board,pid])**2+((ypos[i]-self.yp[board,pid])/self.hpy[board,pid])**2)) + self.bias[board]
