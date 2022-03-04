@@ -85,6 +85,7 @@ class RSRRunLineCheck():
             print('using matplotlib_plot')
             import matplotlib.pyplot as pl
             #pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
+            pl.clf()
             pl.step(hdu.compfreq, 1000*hdu.compspectrum[0,:], where='mid')
             pl.xlim(72.5, 111.5)
             pl.xlabel('Frequency (GHz)')
