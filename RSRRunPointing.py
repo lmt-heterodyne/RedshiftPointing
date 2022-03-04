@@ -4,6 +4,7 @@ from PIL import Image
 from RSRFit import RSRMapFit
 from RSRViewer import RSRFitViewer
 from RSRController import RSRMapController,RSRHandleArgs
+import traceback
 
 class RSRRunPointing():
     def run(self, argv, filelist=False):
@@ -51,20 +52,21 @@ class RSRRunPointing():
                 total_height = 0
                 for im in images:
                     total_height = total_height + im.size[1]*max_width/im.size[0]
-                
-                new_im = Image.new('RGB', (max_width, total_height))
+
+                new_im = Image.new('RGB', (int(max_width), int(total_height)))
 
                 x_offset = 0
                 y_offset = 0
                 for im in images:
-                    new_im.paste(im.resize((max_width, im.size[1]*max_width/im.size[0]), Image.ANTIALIAS), (x_offset,y_offset))
+                    new_im.paste(im.resize((int(max_width), int(im.size[1]*max_width/im.size[0])), Image.ANTIALIAS), (int(x_offset),int(y_offset)))
                     y_offset += im.size[1]*max_width/im.size[0]
 
                 new_im.save('rsr_summary.png')
-                os.system('rm -f rsr_pointing_maps.png lp_spec.png')
+                #os.system('rm -f rsr_pointing_maps.png lp_spec.png')
 
             except Exception as e:
                 print(e)
+                traceback.print_exc()
                 pass
 
             return F
