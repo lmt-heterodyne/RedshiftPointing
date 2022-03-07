@@ -774,36 +774,64 @@ class RSRFitViewer(RSRViewer):
                         )
         tfile.write('\n')
 
+    def write_pointing_log_header(self,ofile):
+        # Col 1 Flag
+        ofile.write('Flag,')
+        # Col 2 Date
+        ofile.write('Date,')
+        # Col 3 UTDate
+        ofile.write('UTDate,')
+        # Col 4 UT1 - hours
+        ofile.write('UT1,')
+        # Col 5 Obsnum
+        ofile.write('ObsNum,')
+        # Col 6 Source Name
+        ofile.write('Source,')
+        # Col 7,8 Az, El
+        ofile.write('Az,El,')
+        # Col 9,10,11 M2Z, M2Y, EL_M2
+        ofile.write('M2Z,M2Y,EL_M2,')
+        # Col 12,13,14,15 X and Y tilts and errors
+        ofile.write('TxPar,TxStd,TyPar,TyStd,')
+        # Col 16,17,18,19 Az, El Map offsets and Errors
+        ofile.write('AzMapOff,AzMapErr,ElMapOff,ElMapErr,')
+        # Col 20,21 HPBW ratio and error
+        ofile.write('HpbwRatio,HpbwRatioErr,')
+        # Col 22,23,24,25 sep, sep error, ang, ang_error
+        ofile.write('Sep,SepErr,Ang,AngErr,')
+        # Col 26 27 total azoff, eloff
+        ofile.write('AzTotalOff,ElTotalOff\n')
+
     def write_pointing_log_entry(self,F,ofile):
         """Writes a log entry with pointing data for this fit to a file."""
         # Col 1 Flag
-        ofile.write('1 ')
+        ofile.write('1,')
         # Col 2 Date
-        ofile.write('{0:s} '
-                    .format(F.date))
+        ofile.write('{:s},'
+                    .format(F.date_ymd))
         # Col 3 UTDate
-        ofile.write('{0:10.5f} '
+        ofile.write('{:.5f},'
                     .format(numpy.mean(F.utdate))
                     )
         # Col 4 UT1 - hours
-        ofile.write('{0:4.1f} '
+        ofile.write('{:.1f},'
                     .format(numpy.mean(F.ut1_h))
                     )
         # Col 5 Obsnum
-        ofile.write('{0:d} '
+        ofile.write('{:d},'
                     .format(F.obsnum)
                     )
         # Col 6 Source Name
-        ofile.write('{0:12s} '
+        ofile.write('{:s},'
                     .format(F.source[0:12])
                     )
         # Col 7,8 Az, El
-        ofile.write('{0:6.1f} {1:5.1f} '
+        ofile.write('{:.1f},{:.1f},'
                     .format(F.get_azim()[0],
                             F.get_elev()[0])
                     )
         # Col 9,10,11 M2Z, M2Y, EL_M2
-        ofile.write('{0:6.2f} {1:6.2f} {2:5.1f} '
+        ofile.write('{:.2f},{:.2f},{:.1f},'
                     .format(F.get_m2z()[0],
                             F.get_m2y()[0],
                             F.get_el_m2()[0])
@@ -811,30 +839,30 @@ class RSRFitViewer(RSRViewer):
         # Col 12,13,14,15 X and Y tilts and errors
         txpar,txstd = F.get_tilt_x()
         typar,tystd = F.get_tilt_y()
-        ofile.write('{0:5.1f} {1:5.1f} {2:5.1f} {3:5.1f} '
+        ofile.write('{:.1f},{:.1f},{:.1f},{:.1f},'
                     .format(txpar,txstd,typar,tystd)
                     )
         # Col 16,17,18,19 Az, El Map offsets and Errors
-        ofile.write('{0:5.1f} {1:5.1f} {2:5.1f} {3:5.1f} '
+        ofile.write('{:.1f},{:.1f},{:.1f},{:.1f},'
                     .format(F.mean_az_map_offset,
                             F.std_az_map_offset,
                             F.mean_el_map_offset,
                             F.std_el_map_offset)
                     )
         # Col 20,21 HPBW ratio and error
-        ofile.write('{0:6.3f} {1:6.3f}'
+        ofile.write('{:.3f},{:.3f},'
                     .format(F.mean_hpbw_ratio,
                             F.std_hpbw_ratio)
                     )
         # Col 22,23,24,25 sep, sep error, ang, ang_error
-        ofile.write('{0:5.1f} {1:5.1f} {2:6.1f} {3:5.1f} '
+        ofile.write('{:.1f},{:.1f},{:.1f},{:.1f},'
                     .format(F.mean_sep,
                             F.std_sep,
                             F.mean_ang,
                             F.std_ang)
                     )
         # Col 26 27 total azoff, eloff
-        ofile.write('{0:5.1f} {1:5.1f}\n '
+        ofile.write('{:.1f},{:.1f}\n'
                     .format(F.mean_az_total_offset,
                             F.mean_el_total_offset)
                     )
