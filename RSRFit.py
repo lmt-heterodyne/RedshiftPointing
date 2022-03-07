@@ -96,6 +96,7 @@ class RSRMapFit():
         self.receiver = m.receiver
         self.source = m.source
         self.date = m.date
+        self.date_ymd = m.date_ymd
         self.obsnum = m.obsnum
         self.n = m.n
     
