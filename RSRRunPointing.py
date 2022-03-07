@@ -12,7 +12,7 @@ class RSRRunPointing():
         filelist = sorted(filelist)
         print("RSRRunPointing: filelist = ", filelist)
         c = RSRMapController()
-        v = RSRFitViewer()
+        self.v = RSRFitViewer()
         a = RSRHandleArgs(show_type=1)
 
         check=a.parse_args(argv,'process_map',1)
@@ -20,7 +20,7 @@ class RSRRunPointing():
 # test to see whether arguments properly decoded
         if check == 0:
             if a.show_it:
-                v.init(a)
+                self.v.init(a)
             # we reduce the map for first scan in a possible scan_list 
             scan = a.scan_list[0]
             F = c.reduce_map(a,scan,a.show_it,filelist)
@@ -29,16 +29,16 @@ class RSRRunPointing():
                 F.find_pointing_result()
         
             # printed output
-            ###v.print_header(F)
-            ###v.print_result(F)
-            ###v.print_summary_pointing(F)
+            ###self.v.print_header(F)
+            ###self.v.print_result(F)
+            ###self.v.print_summary_pointing(F)
  
             # plot the pointing errors for this map
             if True or (F.nresults > 0 and F.pointing_result):
                 if a.show_it:
-                    v.plot_pointing_summary(F, figno=(F.nchassis+1))
+                    self.v.plot_pointing_summary(F, figno=(F.nchassis+1))
             # print the hpbw results too
-            ###v.print_hpbw_result(F)
+            ###self.v.print_hpbw_result(F)
 
             try:
                 image_files = ['rsr_summary.png', 'rsr_pointing_maps.png']
