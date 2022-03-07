@@ -11,6 +11,8 @@ import sys
 import os
 import numpy as np
 import math
+import time
+import datetime
 from scipy.signal import detrend
 from RSRUtilities import TempSens
 from data_lmt import data_lmt
@@ -277,6 +279,9 @@ class RSRCC():
             # define special elimination flag
             self.ELIM = -999999.
 
+            date_obs = self.time[0].tolist()
+            self.date_ymd = datetime.datetime.fromtimestamp(date_obs).strftime('%Y-%m-%d')
+                    
         else:
             print((self.filename+' does not exist'))
     
