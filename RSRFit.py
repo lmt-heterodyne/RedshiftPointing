@@ -287,12 +287,12 @@ class RSRMapFit():
         for band in range(32):
             band_list = []
             for i in range(self.nresults):
-                if self.board_id_numbers[i] == self.band_order[band]:
+                if self.board_id_numbers[i] == self.band_order[band%6]:
                     band_list.append(self.hpbw[i])
             if len(band_list)>0:
                 self.mean_hpbw[band] = numpy.mean(band_list)
                 self.std_hpbw[band] = numpy.std(band_list)
-                self.ratio_hpbw.append((self.band_freq[band] * 1.0e9
+                self.ratio_hpbw.append((self.band_freq[band%6] * 1.0e9
                                         / 3.0e8 
                                         * 32.5
                                         * self.mean_hpbw[band]
