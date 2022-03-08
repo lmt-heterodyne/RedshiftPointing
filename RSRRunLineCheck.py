@@ -1,9 +1,9 @@
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 try:
     from dreampy3.redshift.plots import RedshiftPlotChart
-    from dreampy3.redshift.utils.correlate_lines import CrossCorrelation    # does not exist
+    #from dreampy3.redshift.utils.correlate_lines import CrossCorrelation    # does not exist
     dreampy_plot = True
-except:
+except Exception as e:
     dreampy_plot = False
 import sys
 import numpy
@@ -52,6 +52,7 @@ class RSRRunLineCheck():
 
                 nc = RedshiftNetCDFFile(filename)
                 nc.hdu.process_scan(corr_linear=False) 
+                nc.hdu.baseline(order = 0, subtract=False)
                 nc.hdu.average_all_repeats(weight='sigma')
                 integ = 2*int(nc.hdu.header.get('Bs.NumRepeats'))*int(nc.hdu.header.get('Bs.TSamp'))
                 tint += integ
@@ -63,7 +64,7 @@ class RSRRunLineCheck():
 
         
         hdu = hdulist[0]  # get the first observation
-        hdu.average_scans(hdulist[1:])#, threshold_sigma=0.1)
+        hdu.average_scans(hdulist[1:], threshold_sigma=0.1)
         hdu.average_all_repeats()
 
 
