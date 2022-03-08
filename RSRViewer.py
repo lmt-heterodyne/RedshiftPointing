@@ -37,7 +37,7 @@ class RSRViewer():
         self.bigfig = None
     def init_fig(self,figno=1,figsize=(12,5)):
         """Initializes a figure"""
-        pl.figure(num=figno,figsize=figsize)
+        #pl.figure(num=figno,figsize=figsize)
         pl.clf()
     def init_big_fig(self,figno=1,figsize=(12,8),chassis_list=[0],process_list=[[0,1,2,3,4,5]],filelist=None):
         """Initializes a figure"""
@@ -505,7 +505,7 @@ class RSRMapViewer(RSRScanViewer):
             xpos = m.xpos
             ypos = m.ypos
 
-        if True or m.beamthrow == 0:
+        if False or m.beamthrow == 0:
             maplimits = [min(xpos), max(xpos), min(ypos), max(ypos)]
         nx = (maplimits[1]-maplimits[0])/mapgrid+1
         ny = (maplimits[3]-maplimits[2])/mapgrid+1
@@ -979,7 +979,7 @@ class RSRM2FitViewer(RSRViewer):
 
     def plot_focus_model_fit(self,M,figno,obsNumArg):
         """Plots data and focus model fit."""
-        pl.figure(figno)
+        ##pl.figure(figno)
         pl.clf()
         
         if M.receiver == 'RedshiftReceiver':
