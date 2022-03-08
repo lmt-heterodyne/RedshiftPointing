@@ -104,8 +104,8 @@ class RSRMapController():
                 index = index + 1
             m.close()
             # and plot
-            if show_it:
-                if len(blist) > 0:
+            if True:
+                 if len(blist) > 0:
                     if a.show_type==1:
                         if len(self.chassis_list)>0:
                             V.init_big_fig(figno=1,chassis_list=self.chassis_list, process_list=self.process_list,filelist=filelist)
@@ -119,12 +119,14 @@ class RSRMapController():
                             V.master_model_scan_plot(m,blist)
                         else:
                             V.plot_all_model_scans(m,blist,figno=chassis_id+1)
-                elif len(blist) == 1:
+                 elif len(blist) == 1:
                     V.init_fig(figno=chassis_id+1)
                     if a.show_type==1:
                         V.plot_map(m,blist[0],fit_window=a.fit_window,show_samples=SHOW_MAP_SAMPLING)
                     else:
                         V.plot_model_scan(m,blist[0])
+        if show_it:
+            V.show()
         return F
 
     def reduce_maps(self,a,filelist=False):
