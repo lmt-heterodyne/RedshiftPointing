@@ -262,6 +262,8 @@ class RSRMapFit():
             self.std_el_map_offset = 0
 
             self.mean_hpbw_map = 0
+            self.mean_hpbw_az_map = 0
+            self.mean_hpbw_el_map = 0
 
             self.mean_az_model_offset = 0
             self.std_az_model_offset = 0
