@@ -136,7 +136,9 @@ except Exception as e:
     pass
 
 
-argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--show", "True"]
+plist = [[],[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]]
+#plist = [[],[1], [], []]
+argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--list", str(plist), "--show", "True"] #, "-r"]
 
 if plist is not None:
     argv.append("--list")
@@ -157,4 +159,3 @@ print(('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f    %5.1f %5.1f        
        ))
 
 
-input("press any key to exit: ")
