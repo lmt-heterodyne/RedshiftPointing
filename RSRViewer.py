@@ -493,7 +493,7 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('Offset wrt Model %d'%(m.modrev))
     
 
-    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=True):
+    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False):
         """Plots a single pointing map."""
         if m.fit_beam_single and m.fit_beam_is_tracking_beam:
             maplimits = [-50, 50, -50, 50]
