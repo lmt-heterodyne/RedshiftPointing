@@ -29,11 +29,12 @@ class RSRViewer():
    
     def init(self,a):
         """Initializes Interactive pyplot; closes all open windows"""
-        if a.show_ion == 1:
-            pl.ion()
-            pl.close('all')
-        elif a.show_ion == 0:
-            pl.ioff()
+        if False:
+            if a.show_ion == 1:
+                pl.ion()
+                pl.close('all')
+            elif a.show_ion == 0:
+                pl.ioff()
         self.bigfig = None
     def init_fig(self,figno=1,figsize=(12,5)):
         """Initializes a figure"""
@@ -81,6 +82,8 @@ class RSRViewer():
         self.bigfig = pl.figure(num=figno,figsize=(figw,figh))
         pl.clf()
 
+    def show(self):
+        pl.show()
                 
 
 class RSRScanViewer(RSRViewer):
@@ -404,6 +407,8 @@ class RSRMapViewer(RSRScanViewer):
             board_label = 'Board'
             single_chassis = False
             single_board = False
+            single_chassis = (len(board_list) == 1)
+            single_board = (len(board_list) == 1)
         else:
             index_list = board_list
             b_list = board_list
@@ -437,7 +442,7 @@ class RSRMapViewer(RSRScanViewer):
                     ax.set_title('%s %d'%(board_label, i))
 
                 #x label the last row
-                if (index_list[index]>=(self.nrows-1)*self.ncols):
+                if single_board or (index_list[index]>=(self.nrows-1)*self.ncols):
                     for tick in ax.get_xticklabels():
                         tick.set_rotation(60)
                     ax.set_xlabel('Azimuth\n(arcsec)')
@@ -445,7 +450,7 @@ class RSRMapViewer(RSRScanViewer):
                     ax.set_xticklabels([])
 
                 #y label the first col
-                if (index_list[index]%self.ncols) == 0:
+                if single_board or (index_list[index]%self.ncols) == 0:
                     if m.receiver == 'RedshiftReceiver':
                         ax.set_ylabel('Chassis %d\nElevation\n(arcsec)'%chassis)
                     else:
@@ -488,7 +493,7 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('Offset wrt Model %d'%(m.modrev))
     
 
-    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False):
+    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=True):
         """Plots a single pointing map."""
         if m.fit_beam_single and m.fit_beam_is_tracking_beam:
             maplimits = [-50, 50, -50, 50]
@@ -526,7 +531,7 @@ class RSRMapViewer(RSRScanViewer):
         try:
             print('try scipy griddata linear')
             grid_x, grid_y = numpy.mgrid[maplimits[0]:maplimits[1]:complex(nx), maplimits[2]:maplimits[3]:complex(ny)]
-            zi = interp.griddata((xpos,ypos),plot_array,(grid_x,grid_y),method='linear')
+            zi = interp.griddata((xpos,ypos),plot_array,(grid_x,grid_y),method='linear').T
         except Exception as e:
             try:
                 print('try mlab griddata linear')
@@ -738,8 +743,8 @@ class RSRFitViewer(RSRViewer):
             textstr =           'Az Map Offset:   %6.4f'%(F.mean_az_map_offset) + '\n' 
             textstr = textstr + 'El Map Offset:   %6.4f'%(F.mean_el_map_offset) + '\n' 
             #textstr = textstr + 'HPBW:   %6.4f'%(F.mean_hpbw_map) + '\n'
-            textstr = textstr + 'Az HPBW:   %6.4f'%(F.mean_hpbw_el_map) + '\n'
-            textstr = textstr + 'El HPBW:   %6.4f'%(F.mean_hpbw_az_map)
+            textstr = textstr + 'Az HPBW:   %6.4f'%(F.mean_hpbw_az_map) + '\n'
+            textstr = textstr + 'El HPBW:   %6.4f'%(F.mean_hpbw_el_map)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(0, axis[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
         pl.subplot(1,2,2)
@@ -1070,3 +1075,4 @@ class RSRM2FitViewer(RSRViewer):
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(xpos, ypos, textstr, bbox=props, color='red')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
+
