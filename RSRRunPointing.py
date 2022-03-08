@@ -19,7 +19,7 @@ class RSRRunPointing():
 
 # test to see whether arguments properly decoded
         if check == 0:
-            if a.show_it:
+            if True or a.show_it:
                 self.v.init(a)
             # we reduce the map for first scan in a possible scan_list 
             scan = a.scan_list[0]
@@ -35,10 +35,12 @@ class RSRRunPointing():
  
             # plot the pointing errors for this map
             if True or (F.nresults > 0 and F.pointing_result):
-                if a.show_it:
+                if True or a.show_it:
                     self.v.plot_pointing_summary(F, figno=(F.nchassis+1))
             # print the hpbw results too
             ###self.v.print_hpbw_result(F)
+            if a.show_it:
+                self.v.show()
 
             try:
                 image_files = ['rsr_summary.png', 'rsr_pointing_maps.png']
