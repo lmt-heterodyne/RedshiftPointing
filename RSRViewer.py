@@ -510,7 +510,7 @@ class RSRMapViewer(RSRScanViewer):
             xpos = m.xpos
             ypos = m.ypos
 
-        if False or m.beamthrow == 0:
+        if True or m.beamthrow == 0:
             maplimits = [min(xpos), max(xpos), min(ypos), max(ypos)]
         nx = (maplimits[1]-maplimits[0])/mapgrid+1
         ny = (maplimits[3]-maplimits[2])/mapgrid+1
