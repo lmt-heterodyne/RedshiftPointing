@@ -10,6 +10,13 @@ import numpy
 import os.path
 from genericFileSearch import genericFileSearch
 
+windows = {}
+windows[0] = [(72.5,79.5)]
+windows[1] = [(86.1,92.5)]
+windows[2] = [(79., 84.9)]
+windows[3] = [(91.,99)]
+windows[4] = [(104.6, 109.7)]
+windows[5] = [(98.,106.)]
 
 
 class RSRRunLineCheck():
@@ -51,8 +58,12 @@ class RSRRunLineCheck():
                 obsnum_chassis_list += [chassis]
 
                 nc = RedshiftNetCDFFile(filename)
-                nc.hdu.process_scan(corr_linear=False) 
-                nc.hdu.baseline(order = 0, subtract=False)
+                if False:
+                    nc.hdu.process_scan(corr_linear=False) 
+                    nc.hdu.baseline(order = 0, subtract=False)
+                else:
+                    nc.hdu.process_scan()
+                    nc.hdu.baseline(order=1, windows=windows, subtract=True)
                 nc.hdu.average_all_repeats(weight='sigma')
                 integ = 2*int(nc.hdu.header.get('Bs.NumRepeats'))*int(nc.hdu.header.get('Bs.TSamp'))
                 tint += integ
@@ -64,12 +75,12 @@ class RSRRunLineCheck():
 
         
         hdu = hdulist[0]  # get the first observation
-        hdu.average_scans(hdulist[1:], threshold_sigma=0.1)
+        hdu.average_scans(hdulist[1:])#, threshold_sigma=0.1)
         hdu.average_all_repeats()
 
-
+        hdu.blank_frequencies({0:[(72, 81),]})
         hdu.make_composite_scan()
-        hdu.compspectrum[0,:] = numpy.where((hdu.compspectrum[0,:] > -1.0) & (hdu.compspectrum[0,:] < 1.0), hdu.compspectrum[0,:], 0.0)
+        hdu.compspectrum[0,:] = numpy.where((hdu.compspectrum[0,:] >= -1.0) & (hdu.compspectrum[0,:] < 1.0), hdu.compspectrum[0,:], 0.0)
         msg = "%s -- %s Tint=%f mins" %(str(actual_chassis_list),hdu.header.SourceName, real_tint/4.0/60.0)
         print(msg)
         
