@@ -79,7 +79,8 @@ class RSRViewer():
         figh = 1.5*self.nrows+1
         if self.nrows == 1:
             figh = figh + 1#4
-        self.bigfig = pl.figure(num=figno,figsize=(figw,figh))
+        #self.bigfig = pl.figure(num=figno,figsize=(figw,figh))
+        self.bigfig = True
         pl.clf()
 
     def show(self):
@@ -419,7 +420,7 @@ class RSRMapViewer(RSRScanViewer):
         col = 0
 
         for i in range(len(b_list)):
-            if i in board_list and True:
+            if i in board_list or True:
                 # create plot
                 index = row*self.ncols+col
                 if single_chassis:
@@ -427,15 +428,15 @@ class RSRMapViewer(RSRScanViewer):
                 if single_board:
                     index = 0
                 #print 'coord', row, col, index, i, index_list[index]+1
+                print('subplot',self.nrows, self.ncols, index_list[index]+1) 
                 ax = pl.subplot(self.nrows, self.ncols, index_list[index]+1)
 
                 # plot
-                if i in board_list:
-                    self.plot_map(m,i,fit_window,label_it=False,show_samples=show_samples)
+                if i not in board_list:
+                    valid = False
                 else:
-                    ax.set_xticks([])
-                    ax.set_yticks([])
-                    
+                    valid = True
+                self.plot_map(m,i,fit_window,label_it=False,show_samples=show_samples,valid=valid)
 
                 #title the first row
                 if row == 0 and False:
@@ -493,7 +494,7 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('Offset wrt Model %d'%(m.modrev))
     
 
-    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False):
+    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False,valid=True):
         """Plots a single pointing map."""
         if m.fit_beam_single and m.fit_beam_is_tracking_beam:
             maplimits = [-50, 50, -50, 50]
@@ -589,6 +590,13 @@ class RSRMapViewer(RSRScanViewer):
                 pl.plot(plot_circle1[:,0],plot_circle1[:,1],'k')
         if show_samples:
             pl.plot(xpos,ypos,'.')
+        if not valid:
+            x = [maplimits[0], maplimits[1]]
+            y = [maplimits[2], maplimits[3]]
+            pl.plot(x,y,'-r',linewidth=2)
+            x = [maplimits[0], maplimits[1]]
+            y = [maplimits[3], maplimits[2]]
+            pl.plot(x,y,'-r',linewidth=2)
         pl.axis('equal')
         ax = pl.gca()
         cbar=pl.colorbar()
@@ -596,14 +604,14 @@ class RSRMapViewer(RSRScanViewer):
             pl.xlabel('Azimuth (arcsec)')
             pl.ylabel('Elevation (arcsec)')
             pl.title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
-        if m.isGood[board]:
-            pltext = '%d'%(m.board_id(board))
+        if m.isGood[board] or not valid:
+            pltext = '%d.%d'%(m.chassis,m.board_id(board))
         else:
-            pltext = '%d Bad Fit'%(m.board_id(board))
+            pltext = '%d.%d Bad Fit'%(m.chassis,m.board_id(board))
         pl.text(maplimits[0]+0.0*(maplimits[1]-maplimits[0]),
                 maplimits[3]+0.0*(maplimits[3]-maplimits[2]),
-                pltext,horizontalalignment='left', color='red',
-                bbox=dict(facecolor='white', alpha=1.0))
+                pltext,horizontalalignment='left', color='red', fontsize=6,
+                bbox=dict(facecolor='white', alpha=0.5))
 
 class RSRFitViewer(RSRViewer):
     """Viewer class to handle Fit results."""
