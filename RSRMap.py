@@ -72,6 +72,8 @@ class RSRMap(RSRCC):
             self.hpy = np.zeros((32,2))
             self.goodx = np.zeros((32,2))
             self.goody = np.zeros((32,2))
+            self.xmax = 0
+            self.ymax = 0
         
             # circumstances of beam fitting
             self.fit_beam = -1
@@ -229,6 +231,8 @@ class RSRMap(RSRCC):
         #print('lsq_msg',lsq_msg)
         #print('lsq_success',lsq_success)
 
+        self.xmax = xmax
+        self.ymax = ymax
         self.ap[board,pid] = self.peak[pid]*lsq_fit[0]
         self.xp[board,pid] = lsq_fit[1]
         self.yp[board,pid] = lsq_fit[3]
