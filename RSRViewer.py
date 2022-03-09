@@ -544,6 +544,10 @@ class RSRMapViewer(RSRScanViewer):
         #print 'griddata time',time.time()-t0
 
         x0,y0,x1,y1 = m.beam_offsets(board)
+        x0 = m.xmax
+        y0 = m.ymax
+        x1 = m.xmax
+        y1 = m.ymax
         plot_circle0 = numpy.zeros((100,2))
         plot_circle1 = numpy.zeros((100,2))
         for i in range(100):
