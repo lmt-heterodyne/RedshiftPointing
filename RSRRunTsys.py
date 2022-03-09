@@ -86,6 +86,7 @@ class RSRRunTsys():
 if __name__ == '__main__':
     #obsNumList = [65970]
     obsNumList = [91180]
+    obsNumList = [95233]
     rsr = RSRRunTsys()
     M = rsr.run(sys.argv,obsNumList[-1])
         
