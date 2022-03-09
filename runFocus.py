@@ -15,6 +15,7 @@ obsNums = []
 
 if which == 'r':
     obsNumArg = "77687:77689"
+    obsNumArg = "95289:95294"
 elif which == 'i':
     obsNumArg = "74898:74902"
 
@@ -31,10 +32,10 @@ for obsNum in obsNums:
     for f in flist:
         filelist.append(f)
 
-argv = ["-d", "", "-s", obsNumArg, "--chassis", "all", "--board", "all", "--show", "True"]
+plist = [[],[1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]
+argv = ["-d", "", "-s", obsNumArg, "--chassis", "all", "--board", "all", "--list", str(plist), "--show", "True"]
 
 rsr = RSRRunFocus()
 #F = rsr.run(argv)
 F = rsr.run(argv, filelist, obsNumArg)
 
-input("press any key to exit: ")

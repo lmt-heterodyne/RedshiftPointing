@@ -136,9 +136,9 @@ except Exception as e:
     pass
 
 
-plist = [[],[0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5]]
-#plist = [[],[1], [], []]
-argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--list", str(plist), "--show", "True"] #, "-r"]
+plist = [[],[1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]
+#plist = [[], [1], [], []]
+argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--list", str(plist), "--show", "True"]#, "-r"]
 
 if plist is not None:
     argv.append("--list")
