@@ -28,7 +28,7 @@ class RSRMapController():
         Function returns an RSRMapFit object with the fit results.
         """
         V = RSRMapViewer()
-        if show_it:
+        if True or show_it:
             V.init(a)
         index = 0
         self.process_list=[]
