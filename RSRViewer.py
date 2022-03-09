@@ -944,22 +944,33 @@ class RSRM2FitViewer(RSRViewer):
             self.ylabel = 'Offset (mm)'
             prange = numpy.arange(-36,36.1,.1)
         prange = numpy.arange(min(M.m2_position)-.1,max(M.m2_position)+.1,.1)
+        didylabel = numpy.full(4, False)
+
         for index in range(M.n):
             if(math.isnan(M.result_relative[index])):
                 continue
+            mdata = M.data[:,index]
             model = (M.parameters[index,0]
                      + M.parameters[index,1]*prange
                      + M.parameters[index,2]*prange*prange
                      )
+            mdata_max = numpy.max(mdata)
+            if mdata_max >= 0:
+                mdata = mdata/mdata_max
+                model = model/mdata_max
             if self.nrows == 1 and self.ncols == 1:
                 plot_index = 1
             else:
                 plot_index = self.ncols*M.chassis_id[index]+M.board_id[index]+1
             ax = pl.subplot(self.nrows,self.ncols,plot_index)
-            pl.plot(M.m2_position,M.data[:,index],'o')
+            pl.plot(M.m2_position,mdata,'o')
             pl.plot(prange,model,'r')
+            pl.axhline(y=.5*numpy.max(mdata), color='b')
+            pl.ylim(0., 1.1)
+            ax.annotate("max\n%0.0f"%mdata_max, [prange[0]+0.1,0.8], fontsize=6)
             pl.subplots_adjust(hspace=0.001, wspace=0.001)
             if (self.nrows == 1 and self.ncols == 1):
+                didcol[index%6] = True
                 pl.xlabel(self.xlabel)
             elif M.chassis_id[index]<3:
                 ax.set_xticklabels([])
@@ -967,8 +978,10 @@ class RSRM2FitViewer(RSRViewer):
                 ###ax.tick_params(axis='both',which='major',labelsize=6)
                 pl.xlabel(self.xlabel)
 
-            if (self.nrows == 1 and self.ncols == 1):
+            if not didylabel[int((plot_index-1)/6)] or (self.nrows == 1 and self.ncols == 1):
+                didylabel[int((plot_index-1)/6)] = True
                 pl.ylabel('')
+                #ax.tick_params(axis="y",direction="in", pad=-30)
             elif M.board_id[index] > 0:
                 ax.set_yticklabels([])
             else:
