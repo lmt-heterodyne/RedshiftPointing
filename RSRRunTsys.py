@@ -57,7 +57,7 @@ class RSRRunTsys():
             if arg in ("-c","--chassis"):
                 self.decode_chassis_string(argv[i+1])
         pl.clf()
-        pl.figure(figsize=(6,12))
+        #pl.figure(figsize=(6,12))
         for i,use_chassis in enumerate(self.chassis_list):
             print(use_chassis)
             ax = pl.subplot(len(self.chassis_list), 1, i+1)

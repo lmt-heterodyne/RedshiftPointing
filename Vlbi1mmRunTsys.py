@@ -32,7 +32,7 @@ class Vlbi1mmRunTsys():
             pass
             
 
-        fig = plt.figure()
+        ##fig = plt.figure()
         ax = fig.add_subplot(111)
         ax.text(0.1, 0.5, plotlabel, clip_on=True)
         ax.set_title("ObsNum: %d"% obsNum)
