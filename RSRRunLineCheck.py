@@ -69,7 +69,7 @@ class RSRRunLineCheck():
 
 
         hdu.make_composite_scan()
-
+        hdu.compspectrum[0,:] = numpy.where((hdu.compspectrum[0,:] > -1.0) & (hdu.compspectrum[0,:] < 1.0), hdu.compspectrum[0,:], 0.0)
         msg = "%s -- %s Tint=%f mins" %(str(actual_chassis_list),hdu.header.SourceName, real_tint/4.0/60.0)
         print(msg)
         
