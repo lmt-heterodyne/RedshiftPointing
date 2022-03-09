@@ -34,7 +34,11 @@ class RSRRunFocus():
                 v.init(a)
                 v.init_big_fig(figno=1,chassis_list=c.chassis_list, process_list=c.process_list,filelist=filelist)
                 v.plot_fits(m,figno=1)
+                if a.show_it:
+                    v.show()
                 v.plot_focus_model_fit(m,figno=2,obsNumArg=obsNumArg)
+                if a.show_it:
+                    v.show()
 
             images = list(map(Image.open, ['rsr_summary.png', 'rsr_focus_fits.png']))
             widths, heights = list(zip(*(i.size for i in images)))
