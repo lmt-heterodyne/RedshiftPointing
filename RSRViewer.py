@@ -944,6 +944,7 @@ class RSRM2FitViewer(RSRViewer):
             self.ylabel = 'Offset (mm)'
             prange = numpy.arange(-36,36.1,.1)
         prange = numpy.arange(min(M.m2_position)-.1,max(M.m2_position)+.1,.1)
+        prange = numpy.arange(min(M.scans_xpos)-.1,max(M.scans_xpos)+.1,.1)
         didylabel = numpy.full(4, False)
 
         for index in range(M.n):
@@ -970,7 +971,6 @@ class RSRM2FitViewer(RSRViewer):
             ax.annotate("max\n%0.0f"%mdata_max, [prange[0]+0.1,0.8], fontsize=6)
             pl.subplots_adjust(hspace=0.001, wspace=0.001)
             if (self.nrows == 1 and self.ncols == 1):
-                didcol[index%6] = True
                 pl.xlabel(self.xlabel)
             elif M.chassis_id[index]<3:
                 ax.set_xticklabels([])
