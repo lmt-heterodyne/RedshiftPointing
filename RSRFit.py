@@ -425,6 +425,7 @@ class RSRM2Fit():
                 self.m2_position[scan_id] = ave
                 self.m2_pcor[scan_id] = pcor
             self.parameters = numpy.zeros((self.n,3))
+            self.scans_xpos = []
     
     def find_focus(self):
         """Uses data loaded in during creation of this instance to fit focus."""
@@ -436,17 +437,23 @@ class RSRM2Fit():
             I = []
             par = []
             pcor = []
+            mdata_max = numpy.max(self.data[:,index])
+            scan_id_good = 0
             for scan_id in range(self.nscans):
+                if True and self.data[scan_id,index] < 0.5*mdata_max:
+                    continue
                 I.append(self.data[scan_id,index])
                 par.append(self.m2_position[scan_id])
+                self.scans_xpos.append(self.m2_position[scan_id])
                 pcor.append(self.m2_pcor[scan_id])
                 f[0] = 1.
-                f[1] = par[scan_id]
-                f[2] = par[scan_id]*par[scan_id]
+                f[1] = par[scan_id_good]
+                f[2] = par[scan_id_good]*par[scan_id_good]
                 for ii in range(3):
                     for jj in range(3):
                         ptp[ii][jj] = ptp[ii][jj] + f[ii]*f[jj]
-                    ptr[ii] = ptr[ii] + f[ii]*I[scan_id]
+                    ptr[ii] = ptr[ii] + f[ii]*I[scan_id_good]
+                scan_id_good += 1
             ptpinv = numpy.linalg.inv(ptp)
             self.parameters[index,:] = numpy.dot(ptpinv,ptr)
             if self.parameters[index,2] != 0:
@@ -459,7 +466,10 @@ class RSRM2Fit():
 
     def fit_focus_model(self):
         """Uses best fit focus (Z) for each chassis/board result to fit linear focus model."""
-        if self.n > 1:
+        xbands = set([int(self.board_id[index]) for index in range(self.n)])
+        print('xbands =', xbands)
+        if self.n > 1 and len(xbands) > 1:
+            print('fit focus')
             if self.receiver == 'RedshiftReceiver':
                 xband = [-1,-.2,-.6,.2,1.,.6]
             else:
@@ -500,9 +510,10 @@ class RSRM2Fit():
             self.focus_slope = relative_focus_fit[1]
             self.fit_rms = rms
         else:
-            self.relative_focus_fit = self.result_relative[0]
+            print('average focus')
+            self.relative_focus_fit = numpy.mean(self.result_relative)
             self.focus_error = 0
-            self.absolute_focus_fit = self.result_absolute[0]
+            self.absolute_focus_fit = numpy.mean(self.result_absolute)
             self.focus_slope = 0
             self.fit_rms = 0
         if self.m2pos == 0:
