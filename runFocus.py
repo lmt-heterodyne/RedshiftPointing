@@ -32,7 +32,7 @@ for obsNum in obsNums:
     for f in flist:
         filelist.append(f)
 
-plist = [[],[1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]
+plist = [[],[1, 2, 3, 4, 5], [1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]
 argv = ["-d", "", "-s", obsNumArg, "--chassis", "all", "--board", "all", "--list", str(plist), "--show", "True"]
 
 rsr = RSRRunFocus()
