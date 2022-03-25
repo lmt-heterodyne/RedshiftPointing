@@ -125,6 +125,8 @@ class RSRCC():
             except:
                 self.az_m2 = 0.0
                 self.el_m2 = 0.0
+            self.az_point_model_cor = self.nc.variables['Header.PointModel.AzPointModelCor'][0] * 206264.8
+            self.el_point_model_cor = self.nc.variables['Header.PointModel.ElPointModelCor'][0] * 206264.8
 
             # TILTMETER Information
             self.tilt0_x = self.nc.variables['Header.Tiltmeter_0_.TiltX'][0]*206264.8

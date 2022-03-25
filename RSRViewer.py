@@ -817,7 +817,9 @@ class RSRFitViewer(RSRViewer):
         # Col 22,23,24,25 sep, sep error, ang, ang_error
         ofile.write('Sep,SepErr,Ang,AngErr,')
         # Col 26 27 total azoff, eloff
-        ofile.write('AzTotalOff,ElTotalOff\n')
+        ofile.write('AzTotalOff,ElTotalOff,')
+        # Col 28 29 model
+        ofile.write('AzPointModelCor,ElPointModelCor\n')
 
     def write_pointing_log_entry(self,F,ofile):
         """Writes a log entry with pointing data for this fit to a file."""
@@ -884,7 +886,7 @@ class RSRFitViewer(RSRViewer):
                             F.mean_el_total_offset)
                     )
         # Col 28 29 model
-        ofile.write('{:.1f},{:.1f},'
+        ofile.write('{:.1f},{:.1f}\n'
                     .format(F.mean_az_point_model_cor,
                             F.mean_el_point_model_cor)
                     )

@@ -157,5 +157,9 @@ print(('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f    %5.1f %5.1f        
         F.mean_sep,
         F.mean_ang)
        ))
+F.find_hpbw_result()
+rsr_fp = open('rsr.csv', 'w')
+rsr.v.write_pointing_log_header(rsr_fp)
+rsr.v.write_pointing_log_entry(F,rsr_fp)
 
 

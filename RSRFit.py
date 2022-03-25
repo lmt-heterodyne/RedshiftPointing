@@ -32,6 +32,8 @@ class RSRMapFit():
         self.el_model_offset = numpy.zeros(nresults)
         self.az_total_offset = numpy.zeros(nresults)
         self.el_total_offset = numpy.zeros(nresults)
+        self.az_point_model_cor = numpy.zeros(nresults)
+        self.el_point_model_cor = numpy.zeros(nresults)
         self.tracking_beam_position = True
         self.Intensity = numpy.zeros(nresults)
         self.hpbw = numpy.zeros(nresults)
@@ -181,6 +183,8 @@ class RSRMapFit():
                 self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle
                 self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_receiver-m.az_m2
                 self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_receiver-m.el_m2
+                self.az_point_model_cor[index] = m.az_point_model_cor
+                self.el_point_model_cor[index] = m.el_point_model_cor
             else:
                 # on the other hand, if we are doing single beam and tracking the other: be careful
                 x0,y0,x1,y1 = m.beam_offsets(board)
@@ -196,6 +200,8 @@ class RSRMapFit():
                 self.el_model_offset[index] = m.eloff[board] - yoffset +m.el_user+m.el_paddle
                 self.az_total_offset[index] = m.azoff[board] - xoffset +m.az_total-m.az_receiver-m.az_m2
                 self.el_total_offset[index] = m.eloff[board] - yoffset +m.el_total-m.el_receiver-m.el_m2
+                self.az_point_model_cor[index] = m.az_point_model_cor
+                self.el_point_model_cor[index] = m.el_point_model_cor
         else:
             # this is analysis of traditional two-beam map
             self.az_map_offset[index] = m.azoff[board]+m.az_receiver
@@ -204,6 +210,8 @@ class RSRMapFit():
             self.el_model_offset[index] = m.eloff[board]+m.el_user+m.el_paddle+m.el_receiver
             self.az_total_offset[index] = m.azoff[board]+m.az_total-m.az_m2
             self.el_total_offset[index] = m.eloff[board]+m.el_total-m.el_m2
+            self.az_point_model_cor[index] = m.az_point_model_cor
+            self.el_point_model_cor[index] = m.el_point_model_cor
         
         self.Intensity[index] = m.I[board]
         self.hpbw[index] = m.hpbw[board]
@@ -248,6 +256,11 @@ class RSRMapFit():
             self.mean_el_total_offset = numpy.mean(self.el_total_offset[numpy.nonzero(self.isGood)])
             self.std_el_total_offset = numpy.std(self.el_total_offset[numpy.nonzero(self.isGood)])
 
+            self.mean_az_point_model_cor = numpy.mean(self.az_point_model_cor[numpy.nonzero(self.isGood)])
+            self.std_az_point_model_cor = numpy.std(self.az_point_model_cor[numpy.nonzero(self.isGood)])
+            self.mean_el_point_model_cor = numpy.mean(self.el_point_model_cor[numpy.nonzero(self.isGood)])
+            self.std_el_point_model_cor = numpy.std(self.el_point_model_cor[numpy.nonzero(self.isGood)])
+
             self.mean_sep = numpy.mean(self.sep)
             self.std_sep = numpy.std(self.sep)
 
@@ -274,6 +287,11 @@ class RSRMapFit():
             self.std_az_total_offset = 0
             self.mean_el_total_offset = 0
             self.std_el_total_offset = 0
+
+            self.mean_az_point_model_cor = 0
+            self.std_az_point_model_cor = 0
+            self.mean_el_point_model_cor = 0
+            self.std_el_point_model_cor = 0
 
             self.mean_sep = 0
             self.std_sep = 0
