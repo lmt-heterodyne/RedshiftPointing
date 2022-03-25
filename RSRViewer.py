@@ -513,8 +513,8 @@ class RSRMapViewer(RSRScanViewer):
 
         if True or m.beamthrow == 0:
             maplimits = [min(xpos), max(xpos), min(ypos), max(ypos)]
-        nx = (maplimits[1]-maplimits[0])/mapgrid+1
-        ny = (maplimits[3]-maplimits[2])/mapgrid+1
+        nx = int((maplimits[1]-maplimits[0])/mapgrid+1)
+        ny = int((maplimits[3]-maplimits[2])/mapgrid+1)
         nx = ny = min(nx, ny)
         xi = numpy.linspace(maplimits[0],maplimits[1],nx)
         yi = numpy.linspace(maplimits[2],maplimits[3],ny)
@@ -879,9 +879,14 @@ class RSRFitViewer(RSRViewer):
                             F.std_ang)
                     )
         # Col 26 27 total azoff, eloff
-        ofile.write('{:.1f},{:.1f}\n'
+        ofile.write('{:.1f},{:.1f},'
                     .format(F.mean_az_total_offset,
                             F.mean_el_total_offset)
+                    )
+        # Col 28 29 model
+        ofile.write('{:.1f},{:.1f},'
+                    .format(F.mean_az_point_model_cor,
+                            F.mean_el_point_model_cor)
                     )
 
 class RSRM2FitViewer(RSRViewer):
