@@ -99,6 +99,7 @@ class RSRMapFit():
         self.source = m.source
         self.date = m.date
         self.date_ymd = m.date_ymd
+        self.weather_temperature = m.weather_temperature
         self.obsnum = m.obsnum
         self.n = m.n
     

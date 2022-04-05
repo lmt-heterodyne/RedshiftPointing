@@ -160,6 +160,9 @@ class RSRCC():
             # TEMPERATURE SENSOR Information
             self.T = TempSens(self.nc.variables['Header.TempSens.TempSens'][:]/100.)
 
+            # WEATHER
+            self.weather_temperature = self.nc.variables['Header.Weather.Temperature'][0]
+            
             # Data Block - sometimes this isn't written, so check it and handle exception
             try:
                 if self.receiver == 'RedshiftReceiver':

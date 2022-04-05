@@ -819,7 +819,9 @@ class RSRFitViewer(RSRViewer):
         # Col 26 27 total azoff, eloff
         ofile.write('AzTotalOff,ElTotalOff,')
         # Col 28 29 model
-        ofile.write('AzPointModelCor,ElPointModelCor\n')
+        ofile.write('AzPointModelCor,ElPointModelCor,')
+        # Col 30 ambient temp
+        ofile.write('AmbientTemp\n')
 
     def write_pointing_log_entry(self,F,ofile):
         """Writes a log entry with pointing data for this fit to a file."""
@@ -886,10 +888,14 @@ class RSRFitViewer(RSRViewer):
                             F.mean_el_total_offset)
                     )
         # Col 28 29 model
-        ofile.write('{:.1f},{:.1f}\n'
+        ofile.write('{:.1f},{:.1f},'
                     .format(F.mean_az_point_model_cor,
                             F.mean_el_point_model_cor)
                     )
+        # Col Ambient Temp
+        ofile.write('{:.2f}\n'
+                    .format(F.weather_temperature)
+                   )
 
 class RSRM2FitViewer(RSRViewer):
     """Viewer for M2 Fitting."""
