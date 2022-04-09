@@ -245,7 +245,10 @@ class RSRMapFit():
 
             self.mean_hpbw_az_map = numpy.mean(self.hpbw_x[numpy.nonzero(self.isGood)])
             self.mean_hpbw_el_map = numpy.mean(self.hpbw_y[numpy.nonzero(self.isGood)])
+            self.std_hpbw_az_map = numpy.std(self.hpbw_x[numpy.nonzero(self.isGood)])
+            self.std_hpbw_el_map = numpy.std(self.hpbw_y[numpy.nonzero(self.isGood)])
             self.mean_hpbw_map = numpy.mean(self.hpbw[numpy.nonzero(self.isGood)])
+            self.std_hpbw_map = numpy.std(self.hpbw[numpy.nonzero(self.isGood)])
             
             self.mean_az_model_offset = numpy.mean(self.az_model_offset[numpy.nonzero(self.isGood)])
             self.std_az_model_offset = numpy.std(self.az_model_offset[numpy.nonzero(self.isGood)])
@@ -278,6 +281,9 @@ class RSRMapFit():
             self.mean_hpbw_map = 0
             self.mean_hpbw_az_map = 0
             self.mean_hpbw_el_map = 0
+            self.std_hpbw_map = 0
+            self.std_hpbw_az_map = 0
+            self.std_hpbw_el_map = 0
 
             self.mean_az_model_offset = 0
             self.std_az_model_offset = 0
@@ -299,7 +305,9 @@ class RSRMapFit():
 
             self.mean_ang = 0
             self.std_ang = 0
-            
+
+        # also find hpbw result for pointing log
+        self.find_hpbw_result()
 
     def find_hpbw_result(self):
         """Derives the Half Power Beam Widths of fits."""
