@@ -271,7 +271,9 @@ class RSRMapFit():
             self.mean_ang = numpy.mean(self.ang)
             self.std_ang = numpy.std(self.ang)
 
-            
+            self.mean_intensity = numpy.mean(self.Intensity)
+            self.std_intensity = numpy.std(self.Intensity)
+
         else:
             self.mean_az_map_offset = 0
             self.std_az_map_offset = 0
@@ -306,6 +308,9 @@ class RSRMapFit():
             self.mean_ang = 0
             self.std_ang = 0
 
+            self.mean_intensity = 0
+            self.std_intensity = 0
+            
         # also find hpbw result for pointing log
         self.find_hpbw_result()
 
