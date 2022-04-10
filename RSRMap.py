@@ -84,6 +84,7 @@ class RSRMap(RSRCC):
             self.I = np.zeros(32)
             self.azoff = np.zeros(32)
             self.eloff = np.zeros(32)
+            self.clipped = False
             self.isGood = np.zeros(32)
             self.beamsep = np.zeros(32)
             self.beamang = np.zeros(32)
@@ -278,6 +279,12 @@ class RSRMap(RSRCC):
         self.isGood[board] = (self.goodx[board,1]*self.goodx[board,0])*(self.goody[board,1]*self.goody[board,0])
         self.azoff[board] = (self.xp[board,1]+self.xp[board,0])/2.
         self.eloff[board] = (self.yp[board,1]+self.yp[board,0])/2.
+        az_off_unclipped = self.azoff[board]
+        el_off_unclipped = self.eloff[board]
+        self.azoff[board] = np.clip(self.azoff[board], self.xpos.min(), self.xpos.max())
+        self.eloff[board] = np.clip(self.eloff[board], self.ypos.min(), self.ypos.max())
+        if az_off_unclipped != self.azoff[board] or el_off_unclipped != self.eloff[board]:
+            self.clipped = True
         self.hpbw[board] = (math.sqrt(self.hpx[board,1]*self.hpy[board,1]) +
                             math.sqrt(self.hpx[board,0]*self.hpy[board,0]))/2.
         self.hpbw_x[board] = (self.hpx[board,1]+self.hpx[board,0])/2.
@@ -340,6 +347,12 @@ class RSRMap(RSRCC):
         else:
             self.azoff[board] = self.xp[board,pid]
             self.eloff[board] = self.yp[board,pid]
+        az_off_unclipped = self.azoff[board]
+        el_off_unclipped = self.eloff[board]
+        self.azoff[board] = np.clip(self.azoff[board], self.xpos.min(), self.xpos.max())
+        self.eloff[board] = np.clip(self.eloff[board], self.ypos.min(), self.ypos.max())
+        if az_off_unclipped != self.azoff[board] or el_off_unclipped != self.eloff[board]:
+            self.clipped = True
         self.beamsep[board] = 0.0
         self.beamang[board] = 0.0
         self.hpbw[board] = math.sqrt(self.hpx[board,pid]*self.hpy[board,pid])

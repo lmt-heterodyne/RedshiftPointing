@@ -28,6 +28,7 @@ class RSRMapFit():
         self.isGood = numpy.zeros(nresults)
         self.az_map_offset = numpy.zeros(nresults)
         self.el_map_offset = numpy.zeros(nresults)
+        self.clipped = False
         self.az_model_offset = numpy.zeros(nresults)
         self.el_model_offset = numpy.zeros(nresults)
         self.az_total_offset = numpy.zeros(nresults)
@@ -170,6 +171,9 @@ class RSRMapFit():
             self.fit_beam_single = m.fit_beam_single
             self.fit_beam = m.fit_beam
 
+        if m.clipped:
+            self.clipped = True
+            
         # now load things that change from one board/chassis to the next
         self.chassis_id_numbers[index] = m.chassis
         self.board_id_numbers[index] = board
