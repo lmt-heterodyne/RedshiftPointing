@@ -237,13 +237,20 @@ class RSRMap(RSRCC):
         fit_data = np.array(DATA_LIST)
         v0 = np.array([bmax, xmax, 15., ymax, 15.])
         lsq_fit,lsq_cov,lsq_inf,lsq_msg,lsq_success = leastsq(compute_the_residuals,v0,args=(xdata,ydata,fit_data),full_output=1)
-        lsq_std = np.sqrt(np.diag(lsq_cov))
-        lsq_snr = lsq_fit/lsq_std
+        residuals = compute_the_residuals(lsq_fit,xdata,ydata,fit_data)
+        chisq = np.dot(residuals.transpose(),residuals)
+        npts = len(fit_data)
+        if lsq_cov is None:
+            lsq_err = None
+            lsq_snr = None
+        else:
+            lsq_err = np.sqrt(np.diag(lsq_cov)*chisq/(npts-5))
+            lsq_snr = lsq_fit/lsq_err
         # print('lsq_fit',lsq_fit)
         # print('lsq_cov',lsq_cov)
         # print('lsq_msg',lsq_msg)
         # print('lsq_success',lsq_success)
-        # print('lsq_std',lsq_std)
+        # print('lsq_err',lsq_err)
         # print('lsq_snr',lsq_snr)
 
         self.xmax = xmax
