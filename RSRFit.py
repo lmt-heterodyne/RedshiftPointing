@@ -28,6 +28,8 @@ class RSRMapFit():
         self.isGood = numpy.zeros(nresults)
         self.az_map_offset = numpy.zeros(nresults)
         self.el_map_offset = numpy.zeros(nresults)
+        self.az_map_offset_snr = numpy.zeros(nresults)
+        self.el_map_offset_snr = numpy.zeros(nresults)
         self.clipped = False
         self.az_model_offset = numpy.zeros(nresults)
         self.el_model_offset = numpy.zeros(nresults)
@@ -37,9 +39,12 @@ class RSRMapFit():
         self.el_point_model_cor = numpy.zeros(nresults)
         self.tracking_beam_position = True
         self.Intensity = numpy.zeros(nresults)
+        self.Intensity_snr = numpy.zeros(nresults)
         self.hpbw = numpy.zeros(nresults)
         self.hpbw_x = numpy.zeros(nresults)
         self.hpbw_y = numpy.zeros(nresults)
+        self.hpbw_x_snr = numpy.zeros(nresults)
+        self.hpbw_y_snr = numpy.zeros(nresults)
         self.sep = numpy.zeros(nresults)
         self.ang = numpy.zeros(nresults)
         self.modrev = -1
@@ -230,6 +235,11 @@ class RSRMapFit():
                 self.ang[index] = -m.beamang[board]-m.elev
             else:
                 self.ang[index] = 180.0-m.beamang[board]-m.elev
+        self.az_map_offset_snr[index] = m.azoff_snr[board]
+        self.el_map_offset_snr[index] = m.eloff_snr[board]
+        self.Intensity_snr[index] = m.I_snr[board]
+        self.hpbw_x_snr[index] = m.hpbw_x_snr[board]
+        self.hpbw_y_snr[index] = m.hpbw_y_snr[board]
 
 
     def find_pointing_result(self):
@@ -244,13 +254,22 @@ class RSRMapFit():
         if self.pointing_result:
             self.mean_az_map_offset = numpy.mean(self.az_map_offset[numpy.nonzero(self.isGood)])
             self.std_az_map_offset = numpy.std(self.az_map_offset[numpy.nonzero(self.isGood)])
+            self.mean_az_map_offset_snr = numpy.mean(self.az_map_offset_snr[numpy.nonzero(self.isGood)])
+            self.std_az_map_offset_snr = numpy.std(self.az_map_offset_snr[numpy.nonzero(self.isGood)])
             self.mean_el_map_offset = numpy.mean(self.el_map_offset[numpy.nonzero(self.isGood)])
             self.std_el_map_offset = numpy.std(self.el_map_offset[numpy.nonzero(self.isGood)])
+            self.mean_el_map_offset_snr = numpy.mean(self.el_map_offset_snr[numpy.nonzero(self.isGood)])
+            self.std_el_map_offset_snr = numpy.std(self.el_map_offset_snr[numpy.nonzero(self.isGood)])
 
             self.mean_hpbw_az_map = numpy.mean(self.hpbw_x[numpy.nonzero(self.isGood)])
             self.mean_hpbw_el_map = numpy.mean(self.hpbw_y[numpy.nonzero(self.isGood)])
             self.std_hpbw_az_map = numpy.std(self.hpbw_x[numpy.nonzero(self.isGood)])
             self.std_hpbw_el_map = numpy.std(self.hpbw_y[numpy.nonzero(self.isGood)])
+            self.mean_hpbw_az_map_snr = numpy.mean(self.hpbw_x_snr[numpy.nonzero(self.isGood)])
+            self.mean_hpbw_el_map_snr = numpy.mean(self.hpbw_y_snr[numpy.nonzero(self.isGood)])
+            self.std_hpbw_az_map_snr = numpy.std(self.hpbw_x_snr[numpy.nonzero(self.isGood)])
+            self.std_hpbw_el_map_snr = numpy.std(self.hpbw_y_snr[numpy.nonzero(self.isGood)])
+
             self.mean_hpbw_map = numpy.mean(self.hpbw[numpy.nonzero(self.isGood)])
             self.std_hpbw_map = numpy.std(self.hpbw[numpy.nonzero(self.isGood)])
             
@@ -278,18 +297,30 @@ class RSRMapFit():
             self.mean_intensity = numpy.mean(self.Intensity)
             self.std_intensity = numpy.std(self.Intensity)
 
+            self.mean_intensity_snr = numpy.mean(self.Intensity_snr)
+            self.std_intensity_snr = numpy.std(self.Intensity_snr)
+
         else:
             self.mean_az_map_offset = 0
             self.std_az_map_offset = 0
             self.mean_el_map_offset = 0
             self.std_el_map_offset = 0
 
+            self.mean_az_map_offset_snr = 0
+            self.std_az_map_offset_snr = 0
+            self.mean_el_map_offset_snr = 0
+            self.std_el_map_offset_snr = 0
+
             self.mean_hpbw_map = 0
+            self.std_hpbw_map = 0
             self.mean_hpbw_az_map = 0
             self.mean_hpbw_el_map = 0
-            self.std_hpbw_map = 0
             self.std_hpbw_az_map = 0
             self.std_hpbw_el_map = 0
+            self.mean_hpbw_az_map_snr = 0
+            self.mean_hpbw_el_map_snr = 0
+            self.std_hpbw_az_map_snr = 0
+            self.std_hpbw_el_map_snr = 0
 
             self.mean_az_model_offset = 0
             self.std_az_model_offset = 0
@@ -314,6 +345,8 @@ class RSRMapFit():
 
             self.mean_intensity = 0
             self.std_intensity = 0
+            self.mean_intensity_snr = 0
+            self.std_intensity_snr = 0
             
         # also find hpbw result for pointing log
         self.find_hpbw_result()

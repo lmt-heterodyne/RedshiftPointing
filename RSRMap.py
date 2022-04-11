@@ -70,6 +70,11 @@ class RSRMap(RSRCC):
             self.ap = np.zeros((32,2))
             self.hpx = np.zeros((32,2))
             self.hpy = np.zeros((32,2))
+            self.xp_snr = np.zeros((32,2))
+            self.yp_snr = np.zeros((32,2))
+            self.ap_snr = np.zeros((32,2))
+            self.hpx_snr = np.zeros((32,2))
+            self.hpy_snr = np.zeros((32,2))
             self.goodx = np.zeros((32,2))
             self.goody = np.zeros((32,2))
             self.xmax = 0
@@ -91,6 +96,11 @@ class RSRMap(RSRCC):
             self.hpbw = np.zeros(32)
             self.hpbw_x = np.zeros(32)
             self.hpbw_y = np.zeros(32)
+            self.I_snr = np.zeros(32)
+            self.azoff_snr = np.zeros(32)
+            self.eloff_snr = np.zeros(32)
+            self.hpbw_x_snr = np.zeros(32)
+            self.hpbw_y_snr = np.zeros(32)
             # define space for model
             self.model = np.zeros((32,self.n))
         except AttributeError as e:
@@ -227,16 +237,26 @@ class RSRMap(RSRCC):
         fit_data = np.array(DATA_LIST)
         v0 = np.array([bmax, xmax, 15., ymax, 15.])
         lsq_fit,lsq_cov,lsq_inf,lsq_msg,lsq_success = leastsq(compute_the_residuals,v0,args=(xdata,ydata,fit_data),full_output=1)
-        #print('lsq_fit',lsq_fit)
-        #print('lsq_cov',lsq_cov)
-        #print('lsq_msg',lsq_msg)
-        #print('lsq_success',lsq_success)
+        lsq_std = np.sqrt(np.diag(lsq_cov))
+        lsq_snr = lsq_fit/lsq_std
+        # print('lsq_fit',lsq_fit)
+        # print('lsq_cov',lsq_cov)
+        # print('lsq_msg',lsq_msg)
+        # print('lsq_success',lsq_success)
+        # print('lsq_std',lsq_std)
+        # print('lsq_snr',lsq_snr)
 
         self.xmax = xmax
         self.ymax = ymax
         self.ap[board,pid] = self.peak[pid]*lsq_fit[0]
         self.xp[board,pid] = lsq_fit[1]
         self.yp[board,pid] = lsq_fit[3]
+
+        self.ap_snr[board,pid] = lsq_snr[0]
+        self.xp_snr[board,pid] = lsq_snr[1]
+        self.yp_snr[board,pid] = lsq_snr[3]
+        self.hpx_snr[board,pid] = lsq_snr[2]
+        self.hpy_snr[board,pid] = lsq_snr[4]
 
         if lsq_fit[2] < 0:
             print(('warning: bad gaussian fit in azimuth: obsnum=',self.obsnum,' board=', board,' chassis=',self.chassis))
@@ -276,19 +296,24 @@ class RSRMap(RSRCC):
 
         # then calculate the results
         self.I[board] = self.ap[board,1]-self.ap[board,0]
+        self.I_snr[board] = (self.ap_snr[board,1]+self.ap_snr[board,0])/2.
         self.isGood[board] = (self.goodx[board,1]*self.goodx[board,0])*(self.goody[board,1]*self.goody[board,0])
         self.azoff[board] = (self.xp[board,1]+self.xp[board,0])/2.
         self.eloff[board] = (self.yp[board,1]+self.yp[board,0])/2.
+        self.azoff_snr[board] = (self.xp_snr[board,1]+self.xp_snr[board,0])/2.
+        self.eloff_snr[board] = (self.yp_snr[board,1]+self.yp_snr[board,0])/2.
         az_off_unclipped = self.azoff[board]
         el_off_unclipped = self.eloff[board]
         self.azoff[board] = np.clip(self.azoff[board], self.xpos.min(), self.xpos.max())
         self.eloff[board] = np.clip(self.eloff[board], self.ypos.min(), self.ypos.max())
         if az_off_unclipped != self.azoff[board] or el_off_unclipped != self.eloff[board]:
             self.clipped = True
-        self.hpbw[board] = (math.sqrt(self.hpx[board,1]*self.hpy[board,1]) +
+        self.hpbw[board] = (math.sqrt(self.hpx[board,1]*self.hpx[board,1]) +
                             math.sqrt(self.hpx[board,0]*self.hpy[board,0]))/2.
         self.hpbw_x[board] = (self.hpx[board,1]+self.hpx[board,0])/2.
         self.hpbw_y[board] = (self.hpy[board,1]+self.hpy[board,0])/2.
+        self.hpbw_x_snr[board] = (self.hpx_snr[board,1]+self.hpx_snr[board,0])/2.
+        self.hpbw_y_snr[board] = (self.hpy_snr[board,1]+self.hpy_snr[board,0])/2.
         self.beamsep[board] = math.sqrt((self.xp[board,1]-self.xp[board,0])*(self.xp[board,1]-self.xp[board,0]) + (self.yp[board,1]-self.yp[board,0])*(self.yp[board,1]-self.yp[board,0]))/2.
         self.beamang[board] = math.atan2((self.yp[board,1]-self.yp[board,0]),(self.xp[board,1]-self.xp[board,0]))/math.pi*180.0
         # now calculate the model for this board and save it for later display.
@@ -339,6 +364,8 @@ class RSRMap(RSRCC):
             xpos = self.xpos
             ypos = self.ypos
         self.I[board] = self.peak[pid]*self.ap[board,pid]
+        self.I[board] = self.ap[board,pid]
+        self.I_snr[board] = self.ap_snr[board,pid]
         self.isGood[board] = self.goodx[board,pid]*self.goody[board,pid]
         if self.beam_selected == -1:
             x0,y0,x1,y1 = self.beam_offsets(board)
@@ -347,6 +374,8 @@ class RSRMap(RSRCC):
         else:
             self.azoff[board] = self.xp[board,pid]
             self.eloff[board] = self.yp[board,pid]
+        self.azoff_snr[board] = self.xp_snr[board,pid]
+        self.eloff_snr[board] = self.yp_snr[board,pid]
         az_off_unclipped = self.azoff[board]
         el_off_unclipped = self.eloff[board]
         self.azoff[board] = np.clip(self.azoff[board], self.xpos.min(), self.xpos.max())
@@ -358,6 +387,8 @@ class RSRMap(RSRCC):
         self.hpbw[board] = math.sqrt(self.hpx[board,pid]*self.hpy[board,pid])
         self.hpbw_x[board] = self.hpx[board,pid]
         self.hpbw_y[board] = self.hpy[board,pid]
+        self.hpbw_x_snr[board] = self.hpx_snr[board,pid]
+        self.hpbw_y_snr[board] = self.hpy_snr[board,pid]
         # now calculate the model for this board
         for i in range(self.n):
             self.model[board,i] = self.ap[board,pid]*math.exp(-4.*math.log(2.)*(((xpos[i]-self.xp[board,pid])/self.hpx[board,pid])**2+((ypos[i]-self.yp[board,pid])/self.hpy[board,pid])**2)) + self.bias[board]
