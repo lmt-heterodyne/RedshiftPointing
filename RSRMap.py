@@ -241,17 +241,17 @@ class RSRMap(RSRCC):
         chisq = np.dot(residuals.transpose(),residuals)
         npts = len(fit_data)
         if lsq_cov is None:
-            lsq_err = None
-            lsq_snr = None
+            lsq_err = np.zeros(5)
+            lsq_snr = np.zeros(5)
         else:
             lsq_err = np.sqrt(np.diag(lsq_cov)*chisq/(npts-5))
             lsq_snr = lsq_fit/lsq_err
-        # print('lsq_fit',lsq_fit)
-        # print('lsq_cov',lsq_cov)
-        # print('lsq_msg',lsq_msg)
-        # print('lsq_success',lsq_success)
-        # print('lsq_err',lsq_err)
-        # print('lsq_snr',lsq_snr)
+        print('lsq_fit',lsq_fit)
+        print('lsq_cov',lsq_cov)
+        print('lsq_msg',lsq_msg)
+        print('lsq_success',lsq_success)
+        print('lsq_err',lsq_err)
+        print('lsq_snr',lsq_snr)
 
         self.xmax = xmax
         self.ymax = ymax
