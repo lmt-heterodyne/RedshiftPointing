@@ -371,7 +371,6 @@ class RSRMap(RSRCC):
             xpos = self.xpos
             ypos = self.ypos
         self.I[board] = self.peak[pid]*self.ap[board,pid]
-        self.I[board] = self.ap[board,pid]
         self.I_snr[board] = self.ap_snr[board,pid]
         self.isGood[board] = self.goodx[board,pid]*self.goody[board,pid]
         if self.beam_selected == -1:
