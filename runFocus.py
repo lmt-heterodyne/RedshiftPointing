@@ -17,6 +17,7 @@ if which == 'r':
     obsNumArg = "77687:77689"
     obsNumArg = "95289:95294"
     obsNumArg = "98150:98155"
+    obsNumArg = "98402:98406"
     
 elif which == 'i':
     obsNumArg = "74898:74902"
