@@ -918,7 +918,7 @@ class RSRM2FitViewer(RSRViewer):
                     M.result_relative[index],
                     M.result_absolute[index],
                     result_max,
-                    M.parameters[index,2]/result_max)
+                    M.parameters[index,2]/result_max if result_max != 0 else 0)
                    ))
     
     def print_summary_fit(self,M):
