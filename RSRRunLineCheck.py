@@ -65,7 +65,10 @@ class RSRRunLineCheck():
                     nc.hdu.process_scan()
                     nc.hdu.baseline(order=1, windows=windows, subtract=True)
                 nc.hdu.average_all_repeats(weight='sigma')
-                integ = 2*int(nc.hdu.header.get('Bs.NumRepeats'))*int(nc.hdu.header.get('Bs.TSamp'))
+                try:
+                    integ = 2*int(nc.hdu.header.get('Bs.NumRepeats'))*int(nc.hdu.header.get('Bs.TSamp'))
+                except:
+                    integ = 0
                 tint += integ
                 real_tint += (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()        
                 hdulist.append(nc.hdu)
