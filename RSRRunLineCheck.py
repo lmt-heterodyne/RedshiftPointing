@@ -64,6 +64,8 @@ class RSRRunLineCheck():
                 else:
                     nc.hdu.process_scan()
                     nc.hdu.baseline(order=1, windows=windows, subtract=True)
+                if nc.hdu.header['Dcs']['ObsNum'].getValue() > 101107  and chassis == 2:
+                    nc.hdu.blank_frequencies({4: [(104,111)]})
                 nc.hdu.average_all_repeats(weight='sigma')
                 try:
                     integ = 2*int(nc.hdu.header.get('Bs.NumRepeats'))*int(nc.hdu.header.get('Bs.TSamp'))
