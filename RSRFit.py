@@ -10,6 +10,7 @@ from RSRMap import RSRMap
 from RSRUtilities import m2_model, TempSens
 import numpy
 import math
+import traceback
 
 class RSRMapFit():
     """RSRMapFit holds and analyzes variables from pointing fits."""
@@ -402,75 +403,80 @@ class RSRM2Fit():
         for index in range(self.n):
             self.board_id[index] = F[0].board_id_numbers[index]
             self.chassis_id[index] = F[0].chassis_id_numbers[index]
+        self.m2pos = -1
 
-        # now we load the data for each of the scans
-        for scan_id in range(self.nscans):
-            for index in range(self.n):
-                self.data[scan_id,index] = F[scan_id].Intensity[index]
-        # determine x,y,z or zernike
-        M2zReq = []
-        M2yReq = []
-        M2xReq = []
-        M1zer0 = []
-        for scan_id in range(self.nscans):
-            M2zReq.append(F[scan_id].m2z)
-            M2yReq.append(F[scan_id].m2y)
-            M2xReq.append(F[scan_id].m2x)
-            M1zer0.append(F[scan_id].m1ZernikeC0)
-        M2z = [item for sublist in M2zReq for item in sublist]
-        M2y = [item for sublist in M2yReq for item in sublist]
-        M2x = [item for sublist in M2xReq for item in sublist]
-        M1zer0 = [item for sublist in M1zer0 for item in sublist]
-        dx=max(M2x)-min(M2x)
-        dy=max(M2y)-min(M2y)
-        dz=max(M2z)-min(M2z)
-        dzer=max(M1zer0)-min(M1zer0)
-        if (dx == dy and dx == dz and dx == 0 and dzer == 0):
-            #nothing's changing, an error should be thrown
-            self.msg = "M2 or Zernike offsets are not changing in these files."
-            m2pos = -1
-        elif (dx != 0):
-            if (dy != 0 or dz != 0 or dzer != 0):
-                #more than one offset changing, throw an error
-                self.msg = "More than one M2 offset is changing in these files."
+        try:
+            # now we load the data for each of the scans
+            for scan_id in range(self.nscans):
+                for index in range(self.n):
+                    self.data[scan_id,index] = F[scan_id].Intensity[index]
+            # determine x,y,z or zernike
+            M2zReq = []
+            M2yReq = []
+            M2xReq = []
+            M1zer0 = []
+            for scan_id in range(self.nscans):
+                M2zReq.append(F[scan_id].m2z)
+                M2yReq.append(F[scan_id].m2y)
+                M2xReq.append(F[scan_id].m2x)
+                M1zer0.append(F[scan_id].m1ZernikeC0)
+            M2z = [item for sublist in M2zReq for item in sublist]
+            M2y = [item for sublist in M2yReq for item in sublist]
+            M2x = [item for sublist in M2xReq for item in sublist]
+            M1zer0 = [item for sublist in M1zer0 for item in sublist]
+            dx=max(M2x)-min(M2x)
+            dy=max(M2y)-min(M2y)
+            dz=max(M2z)-min(M2z)
+            dzer=max(M1zer0)-min(M1zer0)
+            if (dx == dy and dx == dz and dx == 0 and dzer == 0):
+                #nothing's changing, an error should be thrown
+                self.msg = "M2 or Zernike offsets are not changing in these files."
                 m2pos = -1
-            else:
-                self.M2zfocus = max(M2z)
-                self.M2yfocus = max(M2y)
-                m2pos = 2
-        elif (dy != 0):
-            if (dx != 0 or dz != 0 or dzer != 0):
-                #more than one offset changing, throw an error
-                self.msg = "More than one M2 or Zernike offset is changing in these files."
-                m2pos = -1
-            else:
-                self.M2zfocus = max(M2z)
-                self.M2xfocus = max(M2x)
-                m2pos = 1
-        elif (dz != 0):
-            if (dx != 0 or dy != 0 or dzer != 0):
-                #more than one offset changing, throw an error
-                self.msg = "More than one M2 or Zernike offset is changing in these files."
-                m2pos = -1
-            else:
-                self.M2yfocus = max(M2y)
-                self.M2xfocus = max(M2x)
-                m2pos = 0
-        elif (dzer != 0):
-            if (dx != 0 or dy != 0 or dz != 0):
-                #more than one offset changing, throw an error
-                self.msg = "More than one M2 or Zernike offset is changing in these files."
-                m2pos = -1
-            else:
-                self.M2xfocus = max(M2x)
-                self.M2yfocus = max(M2y)
-                self.M2zfocus = max(M2z)
-                m2pos = 3
+            elif (dx != 0):
+                if (dy != 0 or dz != 0 or dzer != 0):
+                    #more than one offset changing, throw an error
+                    self.msg = "More than one M2 offset is changing in these files."
+                    m2pos = -1
+                else:
+                    self.M2zfocus = max(M2z)
+                    self.M2yfocus = max(M2y)
+                    m2pos = 2
+            elif (dy != 0):
+                if (dx != 0 or dz != 0 or dzer != 0):
+                    #more than one offset changing, throw an error
+                    self.msg = "More than one M2 or Zernike offset is changing in these files."
+                    m2pos = -1
+                else:
+                    self.M2zfocus = max(M2z)
+                    self.M2xfocus = max(M2x)
+                    m2pos = 1
+            elif (dz != 0):
+                if (dx != 0 or dy != 0 or dzer != 0):
+                    #more than one offset changing, throw an error
+                    self.msg = "More than one M2 or Zernike offset is changing in these files."
+                    m2pos = -1
+                else:
+                    self.M2yfocus = max(M2y)
+                    self.M2xfocus = max(M2x)
+                    m2pos = 0
+            elif (dzer != 0):
+                if (dx != 0 or dy != 0 or dz != 0):
+                    #more than one offset changing, throw an error
+                    self.msg = "More than one M2 or Zernike offset is changing in these files."
+                    m2pos = -1
+                else:
+                    self.M2xfocus = max(M2x)
+                    self.M2yfocus = max(M2y)
+                    self.M2zfocus = max(M2z)
+                    m2pos = 3
 
-        self.m2_position = numpy.zeros(self.nscans)
-        self.m2_pcor = numpy.zeros(self.nscans)
-        self.elev = numpy.zeros(self.nscans)
-        self.m2pos = m2pos
+            self.m2_position = numpy.zeros(self.nscans)
+            self.m2_pcor = numpy.zeros(self.nscans)
+            self.elev = numpy.zeros(self.nscans)
+            self.m2pos = m2pos
+        except Exception as e:
+            self.msg = str(e)
+            traceback.print_exc()
         m2posLabel = {-1: 'Error', 0: 'Z', 1: 'Y', 2: 'X', 3: 'A'}
         print(("m2pos = ", m2pos, m2posLabel[m2pos]))
         if (m2pos == -1):
