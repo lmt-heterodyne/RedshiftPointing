@@ -18,6 +18,15 @@ windows[3] = [(91.,99)]
 windows[4] = [(104.6, 109.7)]
 windows[5] = [(98.,106.)]
 
+source_line_stength = {
+    'I23365': 16,
+    'VIIZw31': 110,
+    'I05189': 55,
+    'I10565': 110,
+    'I12112': 40,
+    'I17208': 110
+}
+
 
 class RSRRunLineCheck():
     def decode_chassis_string(self,chassis_arg):
@@ -93,7 +102,7 @@ class RSRRunLineCheck():
             print('using dreampy_plot')
             pl = RedshiftPlotChart()
             pl.clear()
-            pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
+            pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:]) #, linestyle='steps-mid')
             pl.set_xlim(72.5, 111.5)
             pl.set_xlabel('Frequency (GHz)')
             pl.set_ylabel('TA* (mK)')
@@ -101,13 +110,17 @@ class RSRRunLineCheck():
         else:
             print('using matplotlib_plot')
             import matplotlib.pyplot as pl
-            #pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:], linestyle='steps-mid')
+            #pl.plot(hdu.compfreq, 1000*hdu.compspectrum[0,:]) #, linestyle='steps-mid')
             pl.clf()
             pl.step(hdu.compfreq, 1000*hdu.compspectrum[0,:], where='mid')
             pl.xlim(72.5, 111.5)
             pl.xlabel('Frequency (GHz)')
             pl.ylabel('TA* (mK)')
             pl.title(msg)
+        line_strength = source_line_stength.get(hdu.header.SourceName)
+        if line_strength is not None:
+            pl.plot([72.5, 111.5], [line_strength, line_strength], c='r')
+            pl.annotate(hdu.header.SourceName +' line strength', (90, line_strength))# , c='r')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
         # make it interactive
         # pl.show()
@@ -116,5 +129,7 @@ class RSRRunLineCheck():
 
 if __name__ == '__main__':
     obsNumList = [65971,65972]
+    obsNumList = [95186, 95187]
+    obsNumList = [105232, 105233]
     rsr = RSRRunLineCheck()
     M = rsr.run(sys.argv,obsNumList)
