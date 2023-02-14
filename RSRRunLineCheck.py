@@ -67,6 +67,9 @@ class RSRRunLineCheck():
                 obsnum_chassis_list += [chassis]
 
                 nc = RedshiftNetCDFFile(filename)
+                print(nc.hdu.header.get('Dcs.ObsNum'), nc.hdu.header.get('Dcs.ObsGoal'), nc.hdu.header.get('Dcs.ObsPgm'))
+                if not (nc.hdu.header.get('Dcs.ObsGoal') == 'LineCheck' and nc.hdu.header.get('Dcs.ObsPgm') == 'Bs'):
+                    continue
                 if False:
                     nc.hdu.process_scan(corr_linear=False) 
                     nc.hdu.baseline(order = 0, subtract=False)
