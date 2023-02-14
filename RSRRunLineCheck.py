@@ -64,12 +64,13 @@ class RSRRunLineCheck():
                 if filename == "":
                     continue
 
-                obsnum_chassis_list += [chassis]
-
                 nc = RedshiftNetCDFFile(filename)
                 print(nc.hdu.header.get('Dcs.ObsNum'), nc.hdu.header.get('Dcs.ObsGoal'), nc.hdu.header.get('Dcs.ObsPgm'))
                 if not (nc.hdu.header.get('Dcs.ObsGoal') == 'LineCheck' and nc.hdu.header.get('Dcs.ObsPgm') == 'Bs'):
                     continue
+
+                obsnum_chassis_list += [chassis]
+
                 if False:
                     nc.hdu.process_scan(corr_linear=False) 
                     nc.hdu.baseline(order = 0, subtract=False)
@@ -88,7 +89,9 @@ class RSRRunLineCheck():
                 hdulist.append(nc.hdu)
                 nc.nc.sync()
                 nc.nc.close()
-            actual_chassis_list[obsNum] = obsnum_chassis_list
+
+            if len(obsnum_chassis_list) > 0:
+                actual_chassis_list[obsNum] = obsnum_chassis_list
 
         
         hdu = hdulist[0]  # get the first observation
@@ -134,5 +137,6 @@ if __name__ == '__main__':
     obsNumList = [65971,65972]
     obsNumList = [95186, 95187]
     obsNumList = [105232, 105233]
+    obsNumList = [105380, 105381, 105382, 105383, 105384]
     rsr = RSRRunLineCheck()
     M = rsr.run(sys.argv,obsNumList)
