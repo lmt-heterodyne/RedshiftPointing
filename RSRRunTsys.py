@@ -85,8 +85,9 @@ class RSRRunTsys():
             print('Average Tsys = %6.2f K' % tsys)
             self.plot_tsys(ax, FontProperties, nc)
             #pl.ylim(0.0,3*tsys)
-            ax.hlines(tsys,70,115)
-            ax.annotate("Average Tsys =%6.2fK on  Chassis %d"%(tsys,use_chassis), [71,tsys-1], fontsize=13, fontweight='bold', stretch='250', horizontalalignment='left', verticalalignment='top')
+            if tsys < 1000:
+                ax.hlines(tsys,70,115)
+                ax.annotate("Average Tsys =%6.2fK on  Chassis %d"%(tsys,use_chassis), [71,tsys-1], fontsize=13, fontweight='bold', stretch='250', horizontalalignment='left', verticalalignment='top')
 
         pl.xlabel("Frequency (GHz)")
         pl.savefig('rsr_summary.png', bbox_inches='tight')
@@ -95,6 +96,7 @@ if __name__ == '__main__':
     #obsNumList = [65970]
     obsNumList = [91180]
     obsNumList = [95233]
+    obsNumList = [106904]
     rsr = RSRRunTsys()
     M = rsr.run(sys.argv,obsNumList[-1])
         
