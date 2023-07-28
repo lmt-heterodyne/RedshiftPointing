@@ -162,7 +162,7 @@ class RSRScanViewer(RSRViewer):
         label_x_axis = [False, False, True, False, False, True]
         # now plot all the boards in separate subplots
         for i in board_list:
-            plot_index = 6*m.chassis+i+1
+            plot_index = int(6*m.chassis+i+1)
             ax = pl.subplot(4,6,plot_index)
 
             if m.chassis<3:
@@ -269,7 +269,7 @@ class RSRMapViewer(RSRScanViewer):
             label_y_axis = [False, False, False, False, False, False]            
         label_x_axis = [False, False, True, False, False, True]
         for i in board_list:
-            plot_index = 6*m.chassis+i+1
+            plot_index = int(6*m.chassis+i+1)
             ax = pl.subplot(4,6,plot_index)
             if m.chassis<3:
                 ax.set_xticklabels([])
@@ -975,7 +975,7 @@ class RSRM2FitViewer(RSRViewer):
             if self.nrows == 1 and self.ncols == 1:
                 plot_index = 1
             else:
-                plot_index = self.ncols*M.chassis_id[index]+M.board_id[index]+1
+                plot_index = int(self.ncols*M.chassis_id[index]+M.board_id[index]+1)
             ax = pl.subplot(self.nrows,self.ncols,plot_index)
             pl.plot(M.m2_position,mdata,'o')
             pl.plot(prange,model,'r')
