@@ -289,17 +289,17 @@ class RSRMapFit():
             self.mean_el_point_model_cor = numpy.mean(self.el_point_model_cor[numpy.nonzero(self.isGood)])
             self.std_el_point_model_cor = numpy.std(self.el_point_model_cor[numpy.nonzero(self.isGood)])
 
-            self.mean_sep = numpy.mean(self.sep)
-            self.std_sep = numpy.std(self.sep)
+            self.mean_sep = numpy.mean(self.sep[numpy.nonzero(self.isGood)])
+            self.std_sep = numpy.std(self.sep[numpy.nonzero(self.isGood)])
 
-            self.mean_ang = numpy.mean(self.ang)
-            self.std_ang = numpy.std(self.ang)
+            self.mean_ang = numpy.mean(self.ang[numpy.nonzero(self.isGood)])
+            self.std_ang = numpy.std(self.ang[numpy.nonzero(self.isGood)])
 
-            self.mean_intensity = numpy.mean(self.Intensity)
-            self.std_intensity = numpy.std(self.Intensity)
+            self.mean_intensity = numpy.mean(self.Intensity[numpy.nonzero(self.isGood)])
+            self.std_intensity = numpy.std(self.Intensity[numpy.nonzero(self.isGood)])
 
-            self.mean_intensity_snr = numpy.mean(self.Intensity_snr)
-            self.std_intensity_snr = numpy.std(self.Intensity_snr)
+            self.mean_intensity_snr = numpy.mean(self.Intensity_snr[numpy.nonzero(self.isGood)])
+            self.std_intensity_snr = numpy.std(self.Intensity_snr[numpy.nonzero(self.isGood)])
 
         else:
             self.mean_az_map_offset = 0
