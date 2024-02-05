@@ -39,7 +39,7 @@ def genericFileSearchRecursive (obsnum, baseDirs=None, full = True):
         all = []
         if isinstance(baseDirs, str):
                 baseDirs = [baseDirs]
-        print('genericFileSearchRecursive in', baseDirs)
+        #print('genericFileSearchRecursive in', baseDirs)
         for baseDir in baseDirs:
             for root, dirnames, filenames in os.walk(baseDir, followlinks=True):
                     for ifile in filenames:
