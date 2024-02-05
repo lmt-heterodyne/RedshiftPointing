@@ -35,8 +35,12 @@ class RSRRunTsys():
         for board in boards:
             y_min = numpy.min([y_min, numpy.min(hdu.cal.Tsys[board, :])])
             y_max = numpy.max([y_max, numpy.max(hdu.cal.Tsys[board, :])])
-            pl.plot(hdu.frequencies[board, :], hdu.cal.Tsys[board, :],
-                      linestyle='steps-mid', label='%d.%d' % (int(hdu.header.ChassisNumber), board))
+            try:
+                pl.plot(hdu.frequencies[board, :], hdu.cal.Tsys[board, :],
+                        linestyle='steps-mid', label='%d.%d' % (int(hdu.header.ChassisNumber), board))
+            except:
+                pl.plot(hdu.frequencies[board, :], hdu.cal.Tsys[board, :],
+                        label='%d.%d' % (int(hdu.header.ChassisNumber), board))
         y_min = numpy.max([y_min*1.1, 0])
         y_max = numpy.min([y_max*1.1, 300])
         print('min/max = ', y_min, y_max)
