@@ -9,6 +9,7 @@ import sys
 import numpy
 import os.path
 from genericFileSearch import genericFileSearch
+import traceback
 
 windows = {}
 windows[0] = [(72.5,79.5)]
@@ -45,6 +46,7 @@ class RSRRunLineCheck():
 
     def run(self, argv, obsList):
 
+      try:
         hdulist = []
 
         tint = 0.0
@@ -130,7 +132,8 @@ class RSRRunLineCheck():
         pl.savefig('rsr_summary.png', bbox_inches='tight')
         # make it interactive
         # pl.show()
-
+      except:
+          traceback.print_exc()
 
 
 if __name__ == '__main__':

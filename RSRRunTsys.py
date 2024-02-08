@@ -9,6 +9,7 @@ except:
 import sys
 import os.path
 from genericFileSearch import genericFileSearch
+import traceback
 
 class RSRRunTsys():
 
@@ -64,6 +65,7 @@ class RSRRunTsys():
 
     def run(self, argv, obsNum):
 
+      try:
         self.chassis_list = [0, 1, 2, 3]
         for i,arg in enumerate(argv):
             if arg in ("-c","--chassis"):
@@ -95,6 +97,8 @@ class RSRRunTsys():
 
         pl.xlabel("Frequency (GHz)")
         pl.savefig('rsr_summary.png', bbox_inches='tight')
+      except:
+          traceback.print_exc()
 
 if __name__ == '__main__':
     #obsNumList = [65970]

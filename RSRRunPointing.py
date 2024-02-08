@@ -10,6 +10,7 @@ import traceback
 class RSRRunPointing():
     def run(self, argv, filelist=False):
 
+      try:
         filelist = sorted(filelist)
         print("RSRRunPointing: filelist = ", filelist)
         c = RSRMapController()
@@ -102,6 +103,9 @@ class RSRRunPointing():
                 return results_dict
             
             return F
+
+      except Exception as e:
+        traceback.print_exc()
 
 
 
