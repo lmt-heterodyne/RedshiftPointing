@@ -34,13 +34,15 @@ class RSRRunTsys():
         y_max = 0
         y_min = 300
         for board in boards:
-            y_min = numpy.min([y_min, numpy.min(hdu.cal.Tsys[board, :])])
-            y_max = numpy.max([y_max, numpy.max(hdu.cal.Tsys[board, :])])
+            tsys = hdu.cal.Tsys[board, :]
+            tsys = numpy.clip(tsys, 0, 1000)
+            y_min = numpy.min([y_min, numpy.min(tsys)])
+            y_max = numpy.max([y_max, numpy.max(tsys)])
             try:
-                pl.plot(hdu.frequencies[board, :], hdu.cal.Tsys[board, :],
+                pl.plot(hdu.frequencies[board, :], tsys,
                         linestyle='steps-mid', label='%d.%d' % (int(hdu.header.ChassisNumber), board))
             except:
-                pl.plot(hdu.frequencies[board, :], hdu.cal.Tsys[board, :],
+                pl.plot(hdu.frequencies[board, :], tsys,
                         label='%d.%d' % (int(hdu.header.ChassisNumber), board))
         y_min = numpy.max([y_min*1.1, 0])
         y_max = numpy.min([y_max*1.1, 300])
@@ -87,6 +89,7 @@ class RSRRunTsys():
             #tsys = nanmean(nc.hdu.cal.Tsys.flatten())
             tsys_data = nc.hdu.cal.Tsys.flatten()
             tsys_data = tsys_data[numpy.where(numpy.isfinite(tsys_data))]
+            tsys_data = numpy.clip(tsys_data, 0, 1000)
             tsys = numpy.median (tsys_data)
             print('Average Tsys = %6.2f K' % tsys)
             self.plot_tsys(ax, FontProperties, nc)
