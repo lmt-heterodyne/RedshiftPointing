@@ -8,7 +8,7 @@ except Exception as e:
 import sys
 import numpy
 import os.path
-from genericFileSearch import genericFileSearch
+from genericFileSearch import genericFileSearch, genericFileSearchRecursive
 import traceback
 
 windows = {}
@@ -141,5 +141,12 @@ if __name__ == '__main__':
     obsNumList = [95186, 95187]
     obsNumList = [105232, 105233]
     obsNumList = [105380, 105381, 105382, 105383, 105384]
+    obsNumList = [112315, 112316]
+    obsNumList = [112316]
+    obsNumList = [int(sys.argv[1])]
+    flist = genericFileSearchRecursive(obsNumList[0], None, full = True)
+    print(flist)
     rsr = RSRRunLineCheck()
     M = rsr.run(sys.argv,obsNumList)
+    print(flist)
+
