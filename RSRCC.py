@@ -16,6 +16,8 @@ import datetime
 from scipy.signal import detrend
 from RSRUtilities import TempSens
 from data_lmt import data_lmt
+import matplotlib.pyplot as pl
+from genericFileSearch import genericFileSearchAll
 
 class RSRCC():
     """RSRCC is the base class for compressed continuum data scans"""
@@ -69,8 +71,10 @@ class RSRCC():
             self.beam_throw_angle = 0
             if sys.version_info[0] < 3:
                 self.receiver = ''.join(self.nc.variables['Header.Dcs.Receiver'][:]).strip()
+                self.obspgm = ''.join(self.nc.variables['Header.Dcs.ObsPgm'][:]).strip()
             else:
                 self.receiver = b''.join(self.nc.variables['Header.Dcs.Receiver'][:]).decode().strip()
+                self.obspgm = b''.join(self.nc.variables['Header.Dcs.ObsPgm'][:]).decode().strip()
             if self.receiver == 'RedshiftReceiver':
                 print(('    receiver =', self.receiver))
                 self.beam_selected = self.nc.variables['Header.RedshiftReceiver.BeamSelected'][0]
@@ -460,14 +464,29 @@ class RSRCC():
         if 'spec' in self.filename:
             return self.pixel_list[board]
         return board
-                
-def main():
-    root = data_lmt()
-    filelist = [root + '/ifproc/ifproc_2018-04-16_074753_00_0001.nc']
-    r = RSRCC(filelist, '', 74753, 0)
-    filelist = [root + '/lmttpm/lmttpm_2018-03-16_073677_01_0000.nc']
-    r = RSRCC(filelist, '', 73677, 0)
+
+class RSRRunOn():
+    def run(self, argv, obsList):
+        root = data_lmt()
+        obsnum = obsList[-1]
+        chassis = [0,1,2,3]
+        for ch in chassis:
+            inst = 'RedshiftChassis%d'%ch
+            flist = genericFileSearchAll(inst, obsnum, root, full = True)
+            r = RSRCC(flist, '', obsnum, ch, ch)
+            ax = pl.subplot(1, 4, ch+1)
+            pl.plot(r.data)
+            ax.set_title(f'Chassis {ch}')
+        pl.suptitle(f'RSR {r.obspgm} ObsNum {r.obsnum}')
+        pl.savefig('rsr_summary.png', bbox_inches='tight')
 
 if __name__ == '__main__':
-    main()
+    try:
+        obsnum = int(sys.argv[1])
+    except:
+        obsnum = 113191
+    rsr = RSRRunOn()
+    rsr.run(None, [obsnum])
+    pl.show()
+
     
