@@ -476,7 +476,7 @@ class RSRRunOn():
             r = RSRCC(flist, '', obsnum, ch, ch)
             ax = pl.subplot(1, 4, ch+1)
             pl.plot(r.data)
-            ax.set_title(f'Chassis {ch}')
+            ax.set_title('Chassis %s'%ch)
         pl.suptitle(f'RSR {r.obspgm} ObsNum {r.obsnum}')
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
