@@ -108,6 +108,7 @@ if __name__ == '__main__':
     obsNumList = [91180]
     obsNumList = [95233]
     obsNumList = [106904]
+    obsNumList = [int(sys.argv[1])]
     rsr = RSRRunTsys()
     M = rsr.run(sys.argv,obsNumList[-1])
         
