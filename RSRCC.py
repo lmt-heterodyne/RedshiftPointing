@@ -470,6 +470,7 @@ class RSRRunOn():
         root = data_lmt()
         obsnum = obsList[-1]
         chassis = [0,1,2,3]
+        pl.clf()
         for ch in chassis:
             inst = 'RedshiftChassis%d'%ch
             flist = genericFileSearchAll(inst, obsnum, root, full = True)
