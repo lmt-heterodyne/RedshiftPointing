@@ -136,9 +136,10 @@ except Exception as e:
     pass
 
 
-plist = [[],[1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [1, 2, 3, 4, 5]]
+plist = [[0,1,2,3,4,5],[0,1, 2, 3, 4, 5], [0, 1, 2, 3, 4, 5], [0,1, 2, 3, 4, 5]]
 #plist = [[], [1], [], []]
 argv = ["-d", " ", "-s", str(obsnum), "--chassis", str(chassis), "--board", str(board), "--list", str(plist), "--show", "True"]#, "-r"]
+#argv += ["--beam", "-1"]
 
 if plist is not None:
     argv.append("--list")
@@ -146,6 +147,8 @@ if plist is not None:
 
 rsr = RSRRunPointing()
 F = rsr.run(argv, filelist)
+print(F)
+sys.exit(0)
 #F = rsr.run(argv)
 print(('Average Pointing:      %5.1f %5.1f    %5.1f %5.1f    %5.1f %5.1f            %5.1f %5.1f' % 
        (F.mean_az_map_offset,
