@@ -88,7 +88,9 @@ class RSRRunPointing():
                 results_dict['mean_az_total_offset'] = F.mean_az_total_offset
                 results_dict['mean_el_total_offset'] = F.mean_el_total_offset
                 results_dict['mean_sep'] = F.mean_sep
+                results_dict['std_sep'] = F.std_sep
                 results_dict['mean_ang'] = F.mean_ang
+                results_dict['std_ang'] = F.std_ang
                 results_dict['chassis_id'] = F.chassis_id_numbers.tolist()
                 results_dict['board_id'] = F.board_id_numbers.tolist()
                 print('-------> Intensity', F.Intensity, numpy.shape(F.Intensity), F.isGood)
