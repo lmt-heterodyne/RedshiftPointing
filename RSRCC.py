@@ -468,7 +468,7 @@ class RSRCC():
 class RSRRunOn():
     def run(self, argv, obsList):
         root = data_lmt()
-        obsnum = obsList[-1]
+        obsnum = sorted(obsList[-1])
         chassis = [0,1,2,3]
         pl.clf()
         for ch in chassis:
