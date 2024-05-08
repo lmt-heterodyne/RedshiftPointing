@@ -67,6 +67,7 @@ class RSRRunTsys():
 
     def run(self, argv, obsNum):
 
+      results_dict = {'status': -1}
       try:
         self.chassis_list = [0, 1, 2, 3]
         for i,arg in enumerate(argv):
@@ -74,6 +75,7 @@ class RSRRunTsys():
                 self.decode_chassis_string(argv[i+1])
         pl.clf()
         #pl.figure(figsize=(6,12))
+        results_dict['tsys'] = {0: 0, 1: 0, 2: 0, 3: 0}
         for i,use_chassis in enumerate(self.chassis_list):
             print(use_chassis)
             ax = pl.subplot(len(self.chassis_list), 1, i+1)
@@ -97,11 +99,15 @@ class RSRRunTsys():
             if tsys < 1000:
                 ax.hlines(tsys,70,115)
                 ax.annotate("Average Tsys =%6.2fK on  Chassis %d"%(tsys,use_chassis), [71,tsys-1], fontsize=13, fontweight='bold', stretch='250', horizontalalignment='left', verticalalignment='top')
+            results_dict['tsys'][use_chassis] = tsys
 
         pl.xlabel("Frequency (GHz)")
         pl.savefig('rsr_summary.png', bbox_inches='tight')
+        results_dict['status'] = 0
       except:
           traceback.print_exc()
+
+      return results_dict
 
 if __name__ == '__main__':
     #obsNumList = [65970]
@@ -110,5 +116,6 @@ if __name__ == '__main__':
     obsNumList = [106904]
     obsNumList = [int(sys.argv[1])]
     rsr = RSRRunTsys()
-    M = rsr.run(sys.argv,obsNumList[-1])
+    results_dict = rsr.run(sys.argv,obsNumList[-1])
+    print(results_dict)
         

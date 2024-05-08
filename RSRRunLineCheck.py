@@ -46,6 +46,7 @@ class RSRRunLineCheck():
 
     def run(self, argv, obsList):
 
+      results_dict = {'status': -1}
       try:
         hdulist = []
 
@@ -103,7 +104,9 @@ class RSRRunLineCheck():
         hdu.blank_frequencies({0:[(72, 81),]})
         hdu.make_composite_scan()
         hdu.compspectrum[0,:] = numpy.where((hdu.compspectrum[0,:] >= -1.0) & (hdu.compspectrum[0,:] < 1.0), hdu.compspectrum[0,:], 0.0)
-        msg = "%s -- %s Tint=%f mins" %(str(actual_chassis_list),hdu.header.SourceName, real_tint/4.0/60.0)
+        result_compspectrum = max(hdu.compspectrum[0,:])*1000
+        result_tint = real_tint/4.0
+        msg = "%s -- %s: %.2f mK (%.0f s)" %(str(actual_chassis_list),hdu.header.SourceName, result_compspectrum, result_tint)
         print(msg)
         
         if dreampy_plot:
@@ -132,8 +135,14 @@ class RSRRunLineCheck():
         pl.savefig('rsr_summary.png', bbox_inches='tight')
         # make it interactive
         # pl.show()
+
+        results_dict['status'] = 0
+        results_dict['t_int'] = result_tint
+        results_dict['ta_star'] = result_compspectrum
       except:
           traceback.print_exc()
+
+      return results_dict
 
 
 if __name__ == '__main__':
@@ -147,6 +156,6 @@ if __name__ == '__main__':
     flist = genericFileSearchRecursive(obsNumList[0], None, full = True)
     print(flist)
     rsr = RSRRunLineCheck()
-    M = rsr.run(sys.argv,obsNumList)
-    print(flist)
+    results_dict = rsr.run(sys.argv,obsNumList)
+    print(results_dict)
 
