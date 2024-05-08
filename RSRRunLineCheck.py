@@ -140,6 +140,8 @@ class RSRRunLineCheck():
         results_dict['t_int'] = result_tint
         results_dict['ta_star'] = result_compspectrum
         results_dict['source_name'] = hdu.header.SourceName
+        results_dict['obsnum'] = obsList
+        results_dict['chassis'] = str(actual_chassis_list)
       except:
           traceback.print_exc()
 
