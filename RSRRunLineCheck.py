@@ -139,6 +139,7 @@ class RSRRunLineCheck():
         results_dict['status'] = 0
         results_dict['t_int'] = result_tint
         results_dict['ta_star'] = result_compspectrum
+        results_dict['source_name'] = hdu.header.SourceName
       except:
           traceback.print_exc()
 
