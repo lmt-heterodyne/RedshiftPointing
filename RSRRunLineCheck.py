@@ -94,7 +94,7 @@ class RSRRunLineCheck():
                 nc.nc.close()
 
             if len(obsnum_chassis_list) > 0:
-                actual_chassis_list[obsNum] = obsnum_chassis_list
+                actual_chassis_list[int(obsNum)] = obsnum_chassis_list
 
         
         hdu = hdulist[0]  # get the first observation
@@ -141,7 +141,7 @@ class RSRRunLineCheck():
         results_dict['ta_star'] = result_compspectrum
         results_dict['source_name'] = hdu.header.SourceName
         results_dict['obsnum'] = obsList
-        results_dict['chassis'] = str(actual_chassis_list)
+        results_dict['chassis'] = actual_chassis_list
       except:
           traceback.print_exc()
 
