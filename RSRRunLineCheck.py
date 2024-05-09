@@ -30,6 +30,19 @@ source_line_stength = {
 
 
 class RSRRunLineCheck():
+    def utdate(self):
+        """Returns python datetime equivalent for TimePlace.UTDate"""
+        import datetime
+        utd = self.get_scalar('TimePlace.UTDate')
+        year = int(utd)
+        if year % 4 == 0:
+            days_in_year = 366.
+        else:
+            days_in_year = 365.
+        secs = 24.*3600.*days_in_year*(utd-year)
+        dt = datetime.datetime(year,1,1)+datetime.timedelta(seconds=secs)
+        return dt
+
     def decode_chassis_string(self,chassis_arg):
         """Decodes the argument provided with the -c flag."""
         if chassis_arg[0] == 'a' or chassis_arg[0] == 'n':
@@ -88,7 +101,12 @@ class RSRRunLineCheck():
                 except:
                     integ = 0
                 tint += integ
-                real_tint += (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()        
+                real_tint += (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()
+                if obsNum == obsList[0]:
+                    az = nc.hdu.header.get('Telescope.AzDesPos')
+                    el = nc.hdu.header.get('Telescope.ElDesPos')
+                    utdate = nc.hdu.header.utdate()
+                    print(utdate)
                 hdulist.append(nc.hdu)
                 nc.nc.sync()
                 nc.nc.close()
@@ -140,8 +158,15 @@ class RSRRunLineCheck():
         results_dict['t_int'] = result_tint
         results_dict['ta_star'] = result_compspectrum
         results_dict['source_name'] = hdu.header.SourceName
-        results_dict['obsnum'] = obsList
+        results_dict['obsnum'] = obsList[0]
+        results_dict['obsnum_list'] = obsList
+        results_dict['num'] = len(obsList)
         results_dict['chassis'] = actual_chassis_list
+        results_dict['az'] = az
+        results_dict['el'] = el
+        results_dict['date'] = str(utdate).split(' ')[0]
+        results_dict['time'] = str(utdate).split(' ')[1].split('.')[0]
+        print(results_dict)
       except:
           traceback.print_exc()
 
