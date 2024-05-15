@@ -19,13 +19,13 @@ windows[3] = [(91.,99)]
 windows[4] = [(104.6, 109.7)]
 windows[5] = [(98.,106.)]
 
-source_line_stength = {
-    'I23365': 40,
-    'VIIZw31': 110,
-    'I05189': 55,
-    'I10565': 110,
-    'I12112': 40,
-    'I17208': 110
+source_line_info = {
+    'I23365': (40, 108.282),
+    'VIIZw31': (110, 109.345),
+    'I05189': (55, 110.532),
+    'I10565': (110, 110.501),
+    'I12112': (40, 107.438),
+    'I17208': (110, 110.563),
 }
 
 
@@ -106,7 +106,9 @@ class RSRRunLineCheck():
                     az = nc.hdu.header.get('Telescope.AzDesPos')
                     el = nc.hdu.header.get('Telescope.ElDesPos')
                     utdate = nc.hdu.header.utdate()
-                    print(utdate)
+                    uttime = str(utdate).split(' ')[1].split('.')[0]
+                    utdate = str(utdate).split(' ')[0]
+                    print(utdate, uttime)
                 hdulist.append(nc.hdu)
                 nc.nc.sync()
                 nc.nc.close()
@@ -119,15 +121,23 @@ class RSRRunLineCheck():
         hdu.average_scans(hdulist[1:])#, threshold_sigma=0.1)
         hdu.average_all_repeats()
 
-        hdu.blank_frequencies({0:[(72, 81),]})
+        #hdu.blank_frequencies({0:[(72, 81),]})
         hdu.make_composite_scan()
         hdu.compspectrum[0,:] = numpy.where((hdu.compspectrum[0,:] >= -1.0) & (hdu.compspectrum[0,:] < 1.0), hdu.compspectrum[0,:], 0.0)
-        result_compspectrum = max(hdu.compspectrum[0,:])*1000
+        line_info = source_line_info.get(hdu.header.SourceName)
+        if line_info is not None and line_info[1] != 0:
+            l = [line_info[1]-.25, line_info[1]+.25]
+            spec = numpy.where((hdu.compfreq >= l[0]) & (hdu.compfreq <= l[1]), hdu.compspectrum[0,:], 0.0)
+        else:
+            spec = hdu.compspectrum[0,:]
+        result_compspectrum = max(spec)*1000
+        idx = numpy.where(spec == max(spec))
+        result_freq = hdu.compfreq[idx][0]
         result_tint = real_tint/4.0
-        msg = "%s -- %s: %.2f mK (%.0f s)" %(str(actual_chassis_list),hdu.header.SourceName, result_compspectrum, result_tint)
+        msg = "%s %s %s\n%s: %.2f mK, %.2f GHz, %.0f secs" %(utdate, uttime, str(actual_chassis_list), hdu.header.SourceName, result_compspectrum, result_freq, result_tint)
         print(msg)
         
-        if dreampy_plot:
+        if False and dreampy_plot:
             print('using dreampy_plot')
             pl = RedshiftPlotChart()
             pl.clear()
@@ -146,10 +156,14 @@ class RSRRunLineCheck():
             pl.xlabel('Frequency (GHz)')
             pl.ylabel('TA* (mK)')
             pl.title(msg)
-        line_strength = source_line_stength.get(hdu.header.SourceName)
-        if line_strength is not None:
-            pl.plot([72.5, 111.5], [line_strength, line_strength], c='r')
-            pl.annotate(hdu.header.SourceName +' line strength', (90, line_strength))# , c='r')
+        if line_info is not None:
+            pl.plot([72.5, 111.5], [line_info[0], line_info[0]], c='r')
+            pl.annotate(hdu.header.SourceName +' line strength', (90, line_info[0]*1.02))# , c='r')
+            pl.ylim(-10., line_info[0]*1.2)
+            if line_info[1] != 0:
+                l = [line_info[1]-.25, line_info[1]+.25]
+                pl.axvspan(l[0], l[1], alpha=0.1, color='b')
+            
         pl.savefig('rsr_summary.png', bbox_inches='tight')
         # make it interactive
         # pl.show()
@@ -157,6 +171,7 @@ class RSRRunLineCheck():
         results_dict['status'] = 0
         results_dict['t_int'] = result_tint
         results_dict['ta_star'] = result_compspectrum
+        results_dict['freq'] = result_freq
         results_dict['source_name'] = hdu.header.SourceName
         results_dict['obsnum'] = obsList[0]
         results_dict['obsnum_list'] = obsList
@@ -164,8 +179,8 @@ class RSRRunLineCheck():
         results_dict['chassis'] = actual_chassis_list
         results_dict['az'] = az
         results_dict['el'] = el
-        results_dict['date'] = str(utdate).split(' ')[0]
-        results_dict['time'] = str(utdate).split(' ')[1].split('.')[0]
+        results_dict['date'] = utdate
+        results_dict['time'] = uttime
         print(results_dict)
       except:
           traceback.print_exc()
