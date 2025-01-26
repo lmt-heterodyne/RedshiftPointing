@@ -11,19 +11,8 @@ from RSRMap import RSRMap
 from RSRFit import RSRMapFit
 import numpy
 import matplotlib
-gui_env = ['Agg','TKAgg','GTKAgg','Qt4Agg','WXAgg']
-for gui in gui_env:
-    try:
-        print ("RSR Testing", gui)
-        matplotlib.use(gui)
-        from matplotlib import pyplot as pl
-        from matplotlib import mlab as mlab
-        print ("RSR Using:", matplotlib.get_backend())
-        break
-    except Exception as e:
-        print (e)
-        continue
-
+from matplotlib import pyplot as pl
+from matplotlib import mlab as mlab
 import matplotlib.mlab as mlab
 #from mpl_toolkits.axes_grid import make_axes_locatable
 #   The mpl_toolkits.axes_grid module was deprecated in Matplotlib 2.1 and will be removed two minor releases later.

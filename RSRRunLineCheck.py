@@ -1,18 +1,7 @@
 
 import matplotlib
-gui_env = ['TKAgg','Agg','GTKAgg','Qt4Agg','WXAgg']
-for gui in gui_env:
-    try:
-        print ("RSR Testing", gui)
-        matplotlib.use(gui)
-        from matplotlib import pyplot as pl
-        from matplotlib import mlab as mlab
-        print ("RSR Using:", matplotlib.get_backend())
-        break
-    except Exception as e:
-        print (e)
-        continue
-
+from matplotlib import pyplot as pl
+from matplotlib import mlab as mlab
 import matplotlib.mlab as mlab
 from dreampy3.redshift.netcdf import RedshiftNetCDFFile
 import sys
