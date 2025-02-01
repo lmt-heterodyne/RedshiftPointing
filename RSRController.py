@@ -86,22 +86,26 @@ class RSRMapController():
                 continue
             # process
             for board_id,board in enumerate(blist):
-                print(('           board_id=%d, board=%d'%(board_id,board)))
-                m.process_single_board(board, 
-                                       a.fit_window, 
-                                       a.remove_baseline, 
-                                       a.baseline_elimination_window,
-                                       a.baseline_smoothing_window, 
-                                       a.despike_data, 
-                                       a.eliminate_bad_integrations, 
-                                       a.bad_integration_checksum, 
-                                       a.flag_data, 
-                                       a.flag_windows,
-                                       process_dual_beam=a.dual_beam_map,
-                                       select_beam=a.select_beam
-                                       )
-                F.load_chassis_board_result(m,index,chassis_id,board,board_id)
-                index = index + 1
+                print(('           chassis_id=%d, chassis=%d, board_id=%d, board=%d'%(chassis_id,chassis,board_id,board)))
+                result = m.process_single_board(board, 
+                                                a.fit_window, 
+                                                a.remove_baseline, 
+                                                a.baseline_elimination_window,
+                                                a.baseline_smoothing_window, 
+                                                a.despike_data, 
+                                                a.eliminate_bad_integrations, 
+                                                a.bad_integration_checksum, 
+                                                a.flag_data, 
+                                                a.flag_windows,
+                                                process_dual_beam=a.dual_beam_map,
+                                                select_beam=a.select_beam
+                                                )
+                if result == 0:
+                    F.load_chassis_board_result(m,index,chassis_id,board,board_id)
+                    index = index + 1
+                else:
+                    print(('             bad result from board_id=%d, board=%d'%(board_id,board)))
+                    blist.remove(board)
             m.close()
             # and plot
             if True:
