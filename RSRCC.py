@@ -346,12 +346,14 @@ class RSRCC():
             for i in range(self.n):
                 if self.samples[i,board] != checksum:
                     self.flag[board,i] = 1
-                    print(('Eliminate sample ',i,'  AccSamples =',self.samples[i,board]))
+                    #print(('Eliminate sample ',i,'  AccSamples =',self.samples[i,board]))
                     counter = counter+1        
             if counter > 0:
-                print(('Bad integrations: ',counter))
+                print('            Bad integrations: ', counter, 'should be', checksum)
+            return counter
         else:
             print('AccSamples Array does not exist in file; cannot remove bad integrations'    )
+            return -1
 
     def despike(self,board=0,cut=1):
         """Implements a despike routine which looks for outliers in a running filter."""
