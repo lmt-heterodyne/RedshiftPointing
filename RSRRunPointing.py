@@ -10,6 +10,7 @@ import traceback
 class RSRRunPointing():
     def run(self, argv, filelist=False):
 
+      results_dict = dict()
       try:
         filelist = sorted(filelist)
         print("RSRRunPointing: filelist = ", filelist)
@@ -71,13 +72,7 @@ class RSRRunPointing():
                 new_im.save('rsr_summary.png')
                 #os.system('rm -f rsr_pointing_maps.png lp_spec.png')
 
-            except Exception as e:
-                print(e)
-                traceback.print_exc()
-                pass
-
-            if True:
-                results_dict = dict()
+                results_dict['status'] = 0
                 results_dict['mean_az_map_offset'] = F.mean_az_map_offset
                 results_dict['mean_el_map_offset'] = F.mean_el_map_offset
                 results_dict['std_az_map_offset'] = F.std_az_map_offset
@@ -105,12 +100,19 @@ class RSRRunPointing():
                 results_dict['tracking_beam'] = int(F.tracking_beam)
                 results_dict['fit_beam_single'] = bool(F.fit_beam_single)
                 results_dict['clipped'] = bool(F.clipped)
-                return results_dict
-            
-            return F
+            except Exception as e:
+                print(e)
+                traceback.print_exc()
+                results_dict['status'] = -1
+                results_dict['message'] = str(e)
 
+
+            
       except Exception as e:
         traceback.print_exc()
+        results_dict['status'] = -1
+        results_dict['message'] = str(e)
+      return results_dict
 
 
 
