@@ -424,7 +424,8 @@ class RSRMap(RSRCC):
         """Runs the full fitting procedure for a single specified band."""
         # doing the cleanup
         if(elim_bad_integrations):
-            self.elim_bad_integrations(board,checksum)
+            if self.elim_bad_integrations(board,checksum) != 0:
+                return -1
         if(despike_scan):
             self.despike(board,1)
         if(flag_data):
@@ -437,6 +438,7 @@ class RSRMap(RSRCC):
             self.find_dual_beam(board,w)
         else:
             self.find_selected_beam(board,w,select_beam)
+        return 0
 
 
     def beam_offsets(self, board):
