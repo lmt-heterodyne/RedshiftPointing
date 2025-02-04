@@ -72,6 +72,7 @@ class RSRMapController():
 
         print('********')
         print(('new chassis list', self.chassis_list))
+        print(('new board list', blist))
         print(('new process list', self.process_list))
         print('********')
         
@@ -85,6 +86,7 @@ class RSRMapController():
                 m.close()
                 continue
             # process
+            good_blist = []
             for board_id,board in enumerate(blist):
                 print(('           chassis_id=%d, chassis=%d, board_id=%d, board=%d'%(chassis_id,chassis,board_id,board)))
                 result = m.process_single_board(board, 
@@ -101,12 +103,14 @@ class RSRMapController():
                                                 select_beam=a.select_beam
                                                 )
                 if result == 0:
+                    print(('             load result from board_id=%d, board=%d'%(board_id,board)))
                     F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                     index = index + 1
+                    good_blist.append(board)
                 else:
                     print(('             bad result from board_id=%d, board=%d'%(board_id,board)))
-                    blist.remove(board)
             m.close()
+            blist = good_blist
             # and plot
             if True:
                  if len(blist) > 0:
