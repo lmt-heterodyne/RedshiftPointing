@@ -72,34 +72,38 @@ class RSRRunPointing():
                 new_im.save('rsr_summary.png')
                 #os.system('rm -f rsr_pointing_maps.png lp_spec.png')
 
-                results_dict['status'] = 0
-                results_dict['mean_az_map_offset'] = F.mean_az_map_offset
-                results_dict['mean_el_map_offset'] = F.mean_el_map_offset
-                results_dict['std_az_map_offset'] = F.std_az_map_offset
-                results_dict['std_el_map_offset'] = F.std_el_map_offset
-                results_dict['mean_hpbw_az_map'] = F.mean_hpbw_az_map
-                results_dict['mean_hpbw_el_map'] = F.mean_hpbw_el_map
-                results_dict['std_hpbw_az_map'] = F.std_hpbw_az_map
-                results_dict['std_hpbw_el_map'] = F.std_hpbw_el_map
-                results_dict['mean_az_model_offset'] = F.mean_az_model_offset
-                results_dict['mean_el_model_offset'] = F.mean_el_model_offset
-                results_dict['mean_az_total_offset'] = F.mean_az_total_offset
-                results_dict['mean_el_total_offset'] = F.mean_el_total_offset
-                results_dict['mean_sep'] = F.mean_sep
-                results_dict['std_sep'] = F.std_sep
-                results_dict['mean_ang'] = F.mean_ang
-                results_dict['std_ang'] = F.std_ang
-                results_dict['chassis_id'] = F.chassis_id_numbers.tolist()
-                results_dict['board_id'] = F.board_id_numbers.tolist()
-                print('-------> Intensity', F.Intensity, numpy.shape(F.Intensity), F.isGood)
-                results_dict['intensity'] = F.Intensity.tolist()
-                results_dict['mean_intensity'] = F.mean_intensity
-                results_dict['std_intensity'] = F.std_intensity
-                results_dict['mean_intensity_snr'] = F.mean_intensity_snr
-                results_dict['std_intensity_snr'] = F.std_intensity_snr
-                results_dict['tracking_beam'] = int(F.tracking_beam)
-                results_dict['fit_beam_single'] = bool(F.fit_beam_single)
-                results_dict['clipped'] = bool(F.clipped)
+                if F.isGood.any():
+                    results_dict['status'] = 0
+                    results_dict['mean_az_map_offset'] = F.mean_az_map_offset
+                    results_dict['mean_el_map_offset'] = F.mean_el_map_offset
+                    results_dict['std_az_map_offset'] = F.std_az_map_offset
+                    results_dict['std_el_map_offset'] = F.std_el_map_offset
+                    results_dict['mean_hpbw_az_map'] = F.mean_hpbw_az_map
+                    results_dict['mean_hpbw_el_map'] = F.mean_hpbw_el_map
+                    results_dict['std_hpbw_az_map'] = F.std_hpbw_az_map
+                    results_dict['std_hpbw_el_map'] = F.std_hpbw_el_map
+                    results_dict['mean_az_model_offset'] = F.mean_az_model_offset
+                    results_dict['mean_el_model_offset'] = F.mean_el_model_offset
+                    results_dict['mean_az_total_offset'] = F.mean_az_total_offset
+                    results_dict['mean_el_total_offset'] = F.mean_el_total_offset
+                    results_dict['mean_sep'] = F.mean_sep
+                    results_dict['std_sep'] = F.std_sep
+                    results_dict['mean_ang'] = F.mean_ang
+                    results_dict['std_ang'] = F.std_ang
+                    results_dict['chassis_id'] = F.chassis_id_numbers.tolist()
+                    results_dict['board_id'] = F.board_id_numbers.tolist()
+                    print('-------> Intensity', F.Intensity, numpy.shape(F.Intensity), F.isGood)
+                    results_dict['intensity'] = F.Intensity.tolist()
+                    results_dict['mean_intensity'] = F.mean_intensity
+                    results_dict['std_intensity'] = F.std_intensity
+                    results_dict['mean_intensity_snr'] = F.mean_intensity_snr
+                    results_dict['std_intensity_snr'] = F.std_intensity_snr
+                    results_dict['tracking_beam'] = int(F.tracking_beam)
+                    results_dict['fit_beam_single'] = bool(F.fit_beam_single)
+                    results_dict['clipped'] = bool(F.clipped)
+                else:
+                    results_dict['status'] = -1
+                    results_dict['message'] = 'RSR reduction failed, consult the logs'
             except Exception as e:
                 print(e)
                 traceback.print_exc()
