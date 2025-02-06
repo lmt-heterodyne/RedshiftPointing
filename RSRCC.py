@@ -346,10 +346,10 @@ class RSRCC():
             for i in range(self.n):
                 if self.samples[i,board] != checksum:
                     self.flag[board,i] = 1
-                    #print(('Eliminate sample ',i,'  AccSamples =',self.samples[i,board]))
-                    counter = counter+1        
+                    #print('Eliminate sample ',i,'  AccSamples =',self.samples[i,board], 'should be', checksum)
+                    counter = counter+1
             if counter > 0:
-                print('            Board: ', board, ' Bad integrations: ', counter, 'should be', checksum)
+                print('            Board: ', board, ', ', counter, 'samples of', self.n, 'with bad number of integrations')
             return counter
         else:
             print('AccSamples Array does not exist in file; cannot remove bad integrations'    )
