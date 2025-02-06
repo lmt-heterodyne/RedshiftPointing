@@ -349,7 +349,7 @@ class RSRCC():
                     #print(('Eliminate sample ',i,'  AccSamples =',self.samples[i,board]))
                     counter = counter+1        
             if counter > 0:
-                print('            Bad integrations: ', counter, 'should be', checksum)
+                print('            Board: ', board, ' Bad integrations: ', counter, 'should be', checksum)
             return counter
         else:
             print('AccSamples Array does not exist in file; cannot remove bad integrations'    )
@@ -483,12 +483,24 @@ class RSRRunOn():
         pl.suptitle('RSR %s ObsNum %d'%(r.obspgm, r.obsnum))
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
+class RSRRunCheck():
+    def run(self, argv, obsList):
+        root = data_lmt()
+        obsnum = sorted(obsList)[-1]
+        chassis = [0,1,2,3]
+        for ch in chassis:
+            inst = 'RedshiftChassis%d'%ch
+            flist = genericFileSearchAll(inst, obsnum, root, full = True)
+            r = RSRCC(flist, '', obsnum, ch, ch)
+            for board in range(6):
+                r.elim_bad_integrations(board,checksum=3936)
+
 if __name__ == '__main__':
     try:
         obsnum = int(sys.argv[1])
     except:
         obsnum = 113191
-    rsr = RSRRunOn()
+    rsr = RSRRunCheck()
     rsr.run(None, [obsnum])
     pl.show()
 
