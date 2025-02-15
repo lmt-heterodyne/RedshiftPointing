@@ -102,15 +102,15 @@ class RSRMapController():
                                                 process_dual_beam=a.dual_beam_map,
                                                 select_beam=a.select_beam
                                                 )
+                print(('             load result from board_id=%d, board=%d'%(board_id,board)))
+                F.load_chassis_board_result(m,index,chassis_id,board,board_id)
                 if result == 0:
-                    print(('             load result from board_id=%d, board=%d'%(board_id,board)))
-                    F.load_chassis_board_result(m,index,chassis_id,board,board_id)
-                    index = index + 1
                     good_blist.append(board)
                 else:
                     print(('             bad result from board_id=%d, board=%d'%(board_id,board)))
+                index = index + 1
             m.close()
-            blist = good_blist
+            #blist = good_blist
             # and plot
             if True:
                  if len(blist) > 0:
