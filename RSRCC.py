@@ -65,6 +65,12 @@ class RSRCC():
             self.m2tip = self.nc.variables['Header.M2.TipCmd'][0] #rotation about X
             self.m2tilt = self.nc.variables['Header.M2.TiltCmd'][0] #rotation about Y
 
+            key = 'Header.M1.ReqPos'
+            if key in self.nc.variables:
+                self.m1ReqPos = self.nc.variables[key][:]
+            else:
+                self.m1ReqPos = np.zeros(720)
+
             # sometimes the Receiver designation is wrong; check and warn but don't stop
             self.beam_throw = -1
             self.beam_throw2 = -1
