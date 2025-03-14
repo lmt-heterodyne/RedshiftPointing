@@ -14,6 +14,7 @@ import matplotlib
 from matplotlib import pyplot as pl
 from matplotlib import mlab as mlab
 import matplotlib.mlab as mlab
+from mpl_toolkits.axes_grid1 import make_axes_locatable
 #from mpl_toolkits.axes_grid import make_axes_locatable
 #   The mpl_toolkits.axes_grid module was deprecated in Matplotlib 2.1 and will be removed two minor releases later.
 #   Use mpl_toolkits.axes_grid1 and mpl_toolkits.axisartist, which provide the same functionality instead.
@@ -87,18 +88,23 @@ class RSRViewer():
 
     def show(self):
         pl.show()
+
+    def save(self, filename):
+        pl.savefig(filename, bbox_inches='tight')
                 
 
 class RSRScanViewer(RSRViewer):
     """Viewer with methods to plot basic compressed continuum scans."""
-    def plot_scan(self,m,board,label_it=True):
+    def plot_scan(self,m,board,label_it=True,ax=None):
         """Plots an individual scan from a single board.
 
         m is the input RSRMap
         board specifies which board's data to plot
         the label_it logical variable tells whether to add labels
         """
-        pl.plot(m.data[:,board])
+        if ax is None:
+            ax = pl.gca()
+        ax.plot(m.data[:,board])
         # limits
         maxi = numpy.max(m.data[:,board])
         mini = numpy.min(m.data[:,board])
@@ -106,13 +112,14 @@ class RSRScanViewer(RSRViewer):
         xhi = len(m.data[:,board])
 
         if label_it:
-            pl.xlabel('Sample')
-            pl.ylabel('Data Number')
-            pl.title('Date %s Obsnum %d Chassis %d Board %d'%(m.date,m.obsnum,m.chassis,board))
-            pl.text(xhi,mini+0.8*(maxi-mini),('%d'%(maxi)),horizontalalignment='right')
+            ax.set_xlabel('Sample')
+            ax.set_ylabel('Data Number')
+            #pl.title('Date %s Obsnum %d Chassis %d Board %d'%(m.date,m.obsnum,m.chassis,board))
+            ax.set_title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
+            ax.text(xhi,mini+0.8*(maxi-mini),('%d'%(maxi)),horizontalalignment='right')
         else:
-            pl.text(xhi,mini+0.8*(maxi-mini),('%d'%(maxi)),horizontalalignment='right')
-            pl.text(xhi,mini+0.5*(maxi-mini),('%d'%(board)),horizontalalignment='right')
+            ax.text(xhi,mini+0.8*(maxi-mini),('%d'%(maxi)),horizontalalignment='right')
+            ax.text(xhi,mini+0.5*(maxi-mini),('%d'%(board)),horizontalalignment='right')
     
     def plot_all_scans(self,m,board_list,figno=1):
         """Plots a single figure with data from all boards.
@@ -496,8 +503,11 @@ class RSRMapViewer(RSRScanViewer):
         pl.title('Offset wrt Model %d'%(m.modrev))
     
 
-    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False,valid=True):
+    def plot_map(self,m,board=0,fit_window=16,label_it=True,show_samples=False,valid=True,ax=None,fig=None):
         """Plots a single pointing map."""
+        if ax is None:
+            ax = pl.gca()
+        
         if m.fit_beam_single and m.fit_beam_is_tracking_beam:
             maplimits = [-50, 50, -50, 50]
         else:
@@ -576,41 +586,46 @@ class RSRMapViewer(RSRScanViewer):
                 levels = [0.05*imagemax,0.1*imagemax,0.25*imagemax,0.5*imagemax,0.75*imagemax,0.95*imagemax, 0.99*imagemax]
         #print 'contour'
         try:
-            pl.contour(xi,yi,zi,levels)
+            ax.contour(xi,yi,zi,levels)
         except Exception as e:
             print(e)
             pass
         #print 'image'
-        pl.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
+        im = ax.imshow(zi,interpolation='bicubic',cmap=pl.cm.gray,origin='lower',extent=maplimits)
         if m.fit_beam_is_tracking_beam and m.fit_beam_single:
             if m.fit_beam == 0:
-                pl.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
+                ax.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
             else:
-                pl.plot(plot_circle1[:,0],plot_circle1[:,1],'w')
+                ax.plot(plot_circle1[:,0],plot_circle1[:,1],'w')
         else:
-                pl.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
-                pl.plot(plot_circle1[:,0],plot_circle1[:,1],'k')
+                ax.plot(plot_circle0[:,0],plot_circle0[:,1],'k')
+                ax.plot(plot_circle1[:,0],plot_circle1[:,1],'k')
         if show_samples:
-            pl.plot(xpos,ypos,'.')
+            ax.plot(xpos,ypos,'.')
         if not valid:
             x = [maplimits[0], maplimits[1]]
             y = [maplimits[2], maplimits[3]]
-            pl.plot(x,y,'-r',linewidth=2)
+            ax.plot(x,y,'-r',linewidth=2)
             x = [maplimits[0], maplimits[1]]
             y = [maplimits[3], maplimits[2]]
-            pl.plot(x,y,'-r',linewidth=2)
-        pl.axis('equal')
-        ax = pl.gca()
-        cbar=pl.colorbar()
+            ax.plot(x,y,'-r',linewidth=2)
+        ax.axis('equal')
+        #ax = pl.gca()
+        if fig is None:
+            fig = pl.gcf()
+        divider = make_axes_locatable(ax)
+        cax = divider.append_axes('right', size='5%', pad=0.05)
+        cbar=fig.colorbar(im, cax=cax, orientation='vertical')
+        #cbar=ax.colorbar()
         if label_it:
-            pl.xlabel('Azimuth (arcsec)')
-            pl.ylabel('Elevation (arcsec)')
-            pl.title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
+            ax.set_xlabel('Azimuth (arcsec)')
+            ax.set_ylabel('Elevation (arcsec)')
+            ax.set_title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
         if m.isGood[board] or not valid:
             pltext = '%d.%d'%(m.chassis,m.board_id(board))
         else:
             pltext = '%d.%d Bad Fit'%(m.chassis,m.board_id(board))
-        pl.text(maplimits[0]+0.0*(maplimits[1]-maplimits[0]),
+        ax.text(maplimits[0]+0.0*(maplimits[1]-maplimits[0]),
                 maplimits[3]+0.0*(maplimits[3]-maplimits[2]),
                 pltext,horizontalalignment='left', color='red', fontsize=6,
                 bbox=dict(facecolor='white', alpha=0.5))
