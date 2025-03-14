@@ -22,7 +22,7 @@ def main(argv):
         index = 0
         scan = a.scan_list[0]
         for chassis_id,chassis in enumerate(a.chassis_list):
-            cc = RSRCC(False,a.date,scan,chassis,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
+            cc = RSRCC(False,a.date,scan,chassis_id,chassis,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
             if len(a.chassis_list)>1:
                 if chassis_id == 0:
                     V.init_big_fig(figno=1)
@@ -35,6 +35,6 @@ def main(argv):
                     V.plot_scan(cc,a.process_list[chassis_id][0])
 
             cc.close()
-
+    V.show()
 
 main(sys.argv[1:])

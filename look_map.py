@@ -16,7 +16,8 @@ def main(argv):
         V.init(a)
         scan = a.scan_list[0]
         for chassis_id,chassis in enumerate(a.chassis_list):
-            m = RSRMap(False,a.date,scan,chassis,beamthrow=a.beam_throw,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
+            m = RSRMap(False,a.date,scan,chassis_id,chassis,beamthrow=a.beam_throw,groupscan=a.groupscan,subscan=a.subscan,path=a.path)
+            print(f"{m.check()=}")
             if m.check():
                 if len(a.chassis_list)>1:
                     if chassis_id == 0:
@@ -30,5 +31,6 @@ def main(argv):
                         V.plot_map(m,a.process_list[chassis_id][0])
             m.close()
 
+    V.show()
 
 main(sys.argv[1:])
