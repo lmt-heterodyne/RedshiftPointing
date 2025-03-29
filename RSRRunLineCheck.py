@@ -93,7 +93,7 @@ class RSRRunLineCheck():
 
         fig, axs = pl.subplots(num_plots, 1, gridspec_kw={'height_ratios': [3]+[1]*(num_plots-1)})
         #fig.tight_layout()#h_pad=0.5)
-        fig.set_figheight(2*fig.get_figheight())        
+        #fig.set_figheight(2*fig.get_figheight())
 
         for i,chassis in enumerate(self.chassis_list):
             print('process chassis %d'%chassis)
