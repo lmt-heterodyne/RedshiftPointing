@@ -334,6 +334,10 @@ class RSRCC():
             """Builds an LMT filename from date and obsnum."""
             print('  get filename from date and obsnum')
             filename = ('%s/RedshiftChassis%d/RedshiftChassis%d_%s_%06d_%02d_%04d.nc' % (self.path, self.chassis, self.chassis, self.date,self.scan,self.groupscan,self.subscan))
+            if self.date == '*':
+                import glob
+                fs = glob.glob(filename)
+                filename = fs[0]
         return filename
 
     def check(self):
