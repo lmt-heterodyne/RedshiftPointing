@@ -53,11 +53,18 @@ class RSRMap(RSRCC):
                 self.hpbw = self.nc.variables['Header.Map.HPBW'][0]*206264.8
                 self.xlength = self.nc.variables['Header.Map.XLength'][0]*204264.8
                 self.ylength = self.nc.variables['Header.Map.YLength'][0]*206264.8
+                self.xramp = self.nc.variables['Header.Map.XRamp'][0]*204264.8
+                self.yramp = self.nc.variables['Header.Map.YRamp'][0]*206264.8
                 self.xstep = self.nc.variables['Header.Map.XStep'][0]
                 self.ystep = self.nc.variables['Header.Map.YStep'][0]
                 self.rows = self.nc.variables['Header.Map.RowsPerScan'][0]
             except:
                 print(('    ',self.filename+' does not have map parameters'))
+
+            try:
+                self.backend_hold = self.nc.variables['Data.Tcs.Hold'][:]
+            except:
+                print(('    ',self.filename+' does not have hold parameters'))
     
             # define space for results of indivual beams in chassis
             self.peak = [-1.0,+1.0]
