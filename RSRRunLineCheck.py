@@ -136,7 +136,14 @@ class RSRRunLineCheck():
                 if nc.hdu.header['Dcs']['ObsNum'].getValue() > 101107  and chassis == 2:
                     nc.hdu.blank_frequencies({4: [(104,111)]})
                 nc.hdu.average_all_repeats(weight='sigma')
-                chassis_tint += (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()
+                #chassis_tint += (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()
+                chassis_tint_tmp = (nc.hdu.data.AccSamples/48124.).mean(axis=1).sum()
+                if numpy.isreal(chassis_tint_tmp):
+                    print('is_real', i, chassis, chassis_tint)
+                    chassis_tint += chassis_tint_tmp
+                else:
+                    print('not is_real', i, chassis, chassis_tint)
+                    print(chassis_tint)
                 if nc == chassis_ncs[0]:
                     az = nc.hdu.header.get('Telescope.AzDesPos')
                     el = nc.hdu.header.get('Telescope.ElDesPos')
