@@ -490,10 +490,11 @@ class RSRRunOn():
         for ch in chassis:
             inst = 'RedshiftChassis%d'%ch
             flist = genericFileSearchAll(inst, obsnum, root, full = True)
-            r = RSRCC(flist, '', obsnum, ch, ch)
-            ax = pl.subplot(1, 4, ch+1)
-            pl.plot(r.data)
-            ax.set_title('Chassis %s'%ch)
+            if len(flist) > 0:
+                r = RSRCC(flist, '', obsnum, ch, ch)
+                ax = pl.subplot(1, 4, ch+1)
+                pl.plot(r.data)
+                ax.set_title('Chassis %s'%ch)
         pl.suptitle('RSR %s ObsNum %d'%(r.obspgm, r.obsnum))
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
