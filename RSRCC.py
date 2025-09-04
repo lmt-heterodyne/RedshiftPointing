@@ -5,6 +5,7 @@ Uses:    netCDF4, os, numpy, math, Tempsens
 Author:  FPS
 Date:    May 5, 2014
 Changes: 05/13/2014: caught use of "band" instead of "board" in line 159.
+         09/01/2025: added "hold" conditions
 """
 import netCDF4
 import sys
@@ -183,6 +184,9 @@ class RSRCC():
                     self.duration = self.time[len(self.time)-1]-self.time[0]
                     self.bufpos = self.nc.variables['Data.Dcs.BufPos'][:]
                     self.data = self.nc.variables[this_chassis+'_.AccAverage'][:]
+                    # add hold conditions - FPS - 09/01/2025
+                    self.tcs_hold = self.nc.variables['Data.Tcs.Hold'][:]  
+                    self.ics_hold = self.nc.variables['Data.Ics.Hold'][:]
                     if this_chassis+'_.AccSamples' in list(self.nc.variables.keys()):
                         self.samples = self.nc.variables[this_chassis+'_.AccSamples'][:]
                         self.samples_exist = True

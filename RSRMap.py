@@ -62,7 +62,9 @@ class RSRMap(RSRCC):
                 print(('    ',self.filename+' does not have map parameters'))
 
             try:
-                self.backend_hold = self.nc.variables['Data.Tcs.Hold'][:]
+                # add hold conditions - FPS - 09/01/2025
+                self.tcs_hold = self.nc.variables['Data.Tcs.Hold'][:]
+                self.ics_hold = self.nc.variables['Data.Ics.Hold'][:]
             except:
                 print(('    ',self.filename+' does not have hold parameters'))
     
