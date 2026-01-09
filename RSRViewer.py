@@ -115,7 +115,7 @@ class RSRScanViewer(RSRViewer):
             ax.set_xlabel('Sample')
             ax.set_ylabel('Data Number')
             #pl.title('Date %s Obsnum %d Chassis %d Board %d'%(m.date,m.obsnum,m.chassis,board))
-            ax.set_title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
+            ax.set_title(str(m.obsnum)+' '+m.source[0:20]+'\nChassis='+str(m.chassis)+' Board='+str(board))
             ax.text(xhi,mini+0.8*(maxi-mini),('%d'%(maxi)),horizontalalignment='right')
         else:
             ax.text(xhi,mini+0.8*(maxi-mini),('%d'%(maxi)),horizontalalignment='right')
@@ -150,7 +150,7 @@ class RSRScanViewer(RSRViewer):
         pl.subplot(3,2,1)
         pl.title('%s'%(m.source[0:20]))
         pl.subplot(3,2,2)
-        pl.title('%s %d Chassis %d'%(m.date,m.obsnum,m.chassis))
+        pl.title('%s %d\nChassis %d'%(m.date,m.obsnum,m.chassis))
 
     def master_scan_plot(self,m,board_list):
         """Plots a single figure with data from all chassis/boardss.
@@ -233,7 +233,7 @@ class RSRMapViewer(RSRScanViewer):
             pl.legend(loc=4)
             pl.xlabel('Sample')
             pl.ylabel('Data Number')
-            pl.title('Date %s Obsnum %d Chassis %d Board %d'%(m.date,m.obsnum,m.chassis,board))
+            pl.title('Date %s Obsnum %d\nChassis %d Board %d'%(m.date,m.obsnum,m.chassis,board))
             pl.text(xhi,mini+0.5*(maxi-mini),('%d'%(m.ap[board,m.set_pid[m.chassis][m.fit_beam]])),horizontalalignment='right')
         else:
             pl.text(xhi,mini+0.5*(maxi-mini),('%d'%(m.ap[board,m.set_pid[m.chassis][m.fit_beam]])),horizontalalignment='right')
@@ -267,7 +267,7 @@ class RSRMapViewer(RSRScanViewer):
         pl.subplot(3,2,1)
         pl.title('%s'%(m.source[0:20]))
         pl.subplot(3,2,2)
-        pl.title('%s %d Chassis %d'%(m.date,m.obsnum,m.chassis))
+        pl.title('%s %d\nChassis %d'%(m.date,m.obsnum,m.chassis))
 
     def master_model_scan_plot(self,m,board_list):
         """Plots model scans from all boards in a single figure."""
@@ -398,7 +398,7 @@ class RSRMapViewer(RSRScanViewer):
         pl.subplot(3,2,1)
         pl.title('%s'%(m.source[0:20]))
         pl.subplot(3,2,2)
-        pl.title('%s %d Chassis %d'%(m.date,m.obsnum,m.chassis))
+        pl.title('%s %d\nChassis %d'%(m.date,m.obsnum,m.chassis))
 
     
     def master_map_plot(self,m,chassis,chassis_list=(0,1,2,3),board_list=(0,1,2,3,4,5),figno=1,fit_window=16,show_samples=False):
@@ -620,7 +620,7 @@ class RSRMapViewer(RSRScanViewer):
         if label_it:
             ax.set_xlabel('Azimuth (arcsec)')
             ax.set_ylabel('Elevation (arcsec)')
-            ax.set_title(str(m.obsnum)+' '+m.source[0:20]+' Chassis='+str(m.chassis)+' Board='+str(board))
+            ax.set_title(str(m.obsnum)+' '+m.source[0:20]+'\nChassis='+str(m.chassis)+' Board='+str(board))
         if m.isGood[board] or not valid:
             pltext = '%d.%d'%(m.chassis,m.board_id(board))
         else:
@@ -792,7 +792,7 @@ class RSRFitViewer(RSRViewer):
             textstr = textstr + 'El Model %d Offset:   %6.4f'%(F.modrev, F.mean_el_model_offset)
         props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)
         pl.text(0, axis2[3]*0.9, textstr, horizontalalignment='center', verticalalignment='top', bbox=props, color='red')
-        pl.suptitle('%s %s %s %d'%(F.receiver.strip(), F.source.strip(), F.date,F.obsnum))
+        pl.suptitle('%s %s\n%s %d'%(F.receiver.strip(), F.source.strip(), F.date,F.obsnum))
         pl.savefig('rsr_summary.png', bbox_inches='tight')
 
     def write_temperature_log_entry(self,F,tfile):
@@ -1108,7 +1108,7 @@ class RSRM2FitViewer(RSRViewer):
             titleObsNum = M.obsnum
         else:
             titleObsNum = obsNumArg
-        pl.suptitle('%s %s %s %s' %
+        pl.suptitle('%s %s\n%s %s' %
                  (M.receiver.strip(),
                   M.source.strip(),
                   M.date,
